@@ -8,7 +8,6 @@ import {
   ShoppingCart, 
   CheckCircle2, 
   ArrowUpDown,
-  Sparkles,
   SlidersHorizontal,
   Info,
   Calendar,
@@ -89,23 +88,6 @@ export const BuyerMarketplace: React.FC<BuyerMarketplaceProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Hero / Value Banner for Direct Buyer */}
-      <div className="bg-emerald-600 text-white rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-lg border border-emerald-500/40">
-        <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-80 h-80 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 max-w-3xl space-y-2.5">
-          <div className="inline-flex items-center gap-2 bg-emerald-700/80 text-emerald-100 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-emerald-400/30">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>{t("buyer.directSourcingBadge", lang)}</span>
-          </div>
-          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight font-display">
-            {t("buyer.marketplaceTitle", lang)}
-          </h1>
-          <p className="text-emerald-100 text-xs sm:text-sm font-medium">
-            {t("buyer.marketplaceSubtitle", lang)}
-          </p>
-        </div>
-      </div>
-
       {/* Filter & Search Bar */}
       <div className="bg-white rounded-3xl p-5 border border-emerald-100 shadow-sm space-y-4">
         <div className="flex flex-col md:flex-row md:items-center gap-3">
