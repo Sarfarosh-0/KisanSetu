@@ -190,39 +190,6 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* =================================================================== */}
-        {/* Center: Sleek Search Bar                                           */}
-        {/* =================================================================== */}
-        <div className="hidden md:flex flex-1 max-w-md mx-2 lg:mx-6">
-          <div className="relative w-full group">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-slate-400 group-focus-within:text-[#0F6A53] transition-colors" />
-            </div>
-            <input
-              type="text"
-              value={searchQuery || internalSearch}
-              onChange={(e) => {
-                setInternalSearch(e.target.value);
-                if (onSearchChange) onSearchChange(e.target.value);
-              }}
-              placeholder={user.role === "BUYER" ? "Search crops, lots, mandis, sellers..." : "Search harvest, buyers, benchmark rates..."}
-              className="block w-full pl-9 pr-8 py-1.5 bg-slate-50/80 hover:bg-slate-100/60 focus:bg-white text-xs text-slate-900 placeholder:text-slate-400 border border-slate-200 rounded-xl focus:border-[#0F6A53] focus:ring-2 focus:ring-[#0F6A53]/15 transition-all outline-hidden"
-            />
-            {(searchQuery || internalSearch) && (
-              <button
-                type="button"
-                onClick={() => {
-                  setInternalSearch("");
-                  if (onSearchChange) onSearchChange("");
-                }}
-                className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
-                title="Clear search"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-        </div>
 
         {/* =================================================================== */}
         {/* Right: Language Switcher (Single Source), Notifications, Profile    */}
