@@ -370,66 +370,6 @@ export default function App() {
         />
       )}
 
-      {/* Role-Aware Production Call-to-Action Pre-Footer */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 mt-12 mb-4 w-full">
-        <div className="bg-emerald-800 text-white rounded-3xl p-6 sm:p-8 shadow-sm border border-emerald-700/60 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-1.5 max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 bg-emerald-700/70 text-emerald-100 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border border-emerald-500/30">
-              <ShieldCheck className="w-3.5 h-3.5 text-amber-300" aria-hidden="true" />
-              <span>{currentUser.role === "FARMER" ? t("prefooter.directProducer", lang) : t("prefooter.institutionalExchange", lang)}</span>
-            </div>
-            <h3 className="text-xl sm:text-2xl font-black font-display tracking-tight text-white">
-              {currentUser.role === "FARMER"
-                ? t("prefooter.farmerHeadline", lang)
-                : t("prefooter.buyerHeadline", lang)}
-            </h3>
-            <p className="text-xs sm:text-sm text-emerald-100 font-medium">
-              {currentUser.role === "FARMER"
-                ? t("prefooter.farmerBody", lang)
-                : t("prefooter.buyerBody", lang)}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
-            {currentUser.role === "FARMER" ? (
-              <>
-                <button
-                  onClick={handleOpenNewListing}
-                  className="bg-amber-500 hover:bg-amber-400 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl transition cursor-pointer shadow-xs inline-flex items-center gap-2"
-                >
-                  <PlusCircle className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>{t("prefooter.listHarvestBtn", lang)}</span>
-                </button>
-                <button
-                  onClick={() => setActiveTab("buyer_requests")}
-                  className="bg-emerald-700/90 hover:bg-emerald-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition cursor-pointer border border-emerald-500/40 inline-flex items-center gap-2"
-                >
-                  <span>{t("prefooter.viewDemandsBtn", lang)}</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-emerald-200" aria-hidden="true" />
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => setActiveTab("marketplace")}
-                  className="bg-white text-emerald-900 hover:bg-emerald-50 font-extrabold text-xs px-5 py-2.5 rounded-xl transition cursor-pointer shadow-xs inline-flex items-center gap-2"
-                >
-                  <span>{t("prefooter.exploreMarketplaceBtn", lang)}</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-emerald-700" aria-hidden="true" />
-                </button>
-                <button
-                  onClick={() => setActiveTab("bulk_orders")}
-                  className="bg-emerald-700/90 hover:bg-emerald-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition cursor-pointer border border-emerald-500/40 inline-flex items-center gap-2"
-                >
-                  <Layers className="w-3.5 h-3.5 text-amber-300" aria-hidden="true" />
-                  <span>{t("prefooter.postRfqBtn", lang)}</span>
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
-
       {/* Production-Grade Modern Footer */}
       <Footer
         onSelectTab={setActiveTab}
