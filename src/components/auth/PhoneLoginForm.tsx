@@ -113,8 +113,8 @@ export const PhoneLoginForm: React.FC<PhoneLoginFormProps> = ({
 
           {/* High Contrast 56px Min-Height Input Box */}
           <div className={`relative flex items-center min-h-14 rounded-2xl border-2 bg-white transition-all overflow-hidden ${error
-              ? "border-red-500 ring-2 ring-red-100"
-              : "border-earth-950 focus-within:border-brand-600 focus-within:ring-2 focus-within:ring-brand-100"
+            ? "border-red-500 ring-2 ring-red-100"
+            : "border-earth-950 focus-within:border-brand-600 focus-within:ring-2 focus-within:ring-brand-100"
             }`}>
             <div className="pl-4 pr-2 text-xl pointer-events-none" aria-hidden="true">
               <Phone className="w-5 h-5" />
@@ -184,7 +184,7 @@ export const PhoneLoginForm: React.FC<PhoneLoginFormProps> = ({
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="font-extrabold text-base text-ink-950 flex items-center gap-2">
                 <MessageCircleQuestionMark className="text-brand-600" />
-                <span>{lang === "hi" ? "लॉगिन में समस्या? (Login Guidance)" : "How to Log In"}</span>
+                <span>{lang === "hi" ? "लॉगिन में सहायता (Login Guidance)" : "How to Log In"}</span>
               </h3>
               <button
                 type="button"
@@ -196,24 +196,59 @@ export const PhoneLoginForm: React.FC<PhoneLoginFormProps> = ({
             </div>
 
             <div className="space-y-3 text-xs text-ink-700 font-medium">
+              {/* Step 1 */}
               <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-brand-50 border border-brand-100">
                 <CheckCircle2 className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
-                <p><strong>1. Role Selection:</strong> Choose <strong>Farmer</strong> if selling crops or <strong>Buyer</strong> if purchasing.</p>
+                <p>
+                  {lang === "hi" ? (
+                    <>
+                      <strong>1. भूमिका चुनें (Role):</strong> फसल बेचने के लिए <strong>'किसान'</strong> या खरीदने के लिए <strong>'खरीददार'</strong> का चयन करें।
+                    </>
+                  ) : (
+                    <>
+                      <strong>1. Role Selection:</strong> Choose <strong>Farmer</strong> if selling crops or <strong>Buyer</strong> if purchasing.
+                    </>
+                  )}
+                </p>
               </div>
+
+              {/* Step 2 */}
               <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-brand-50 border border-brand-100">
                 <CheckCircle2 className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
-                <p><strong>2. Enter Phone Number:</strong> Input your 10-digit mobile number connected to your SIM.</p>
+                <p>
+                  {lang === "hi" ? (
+                    <>
+                      <strong>2. मोबाइल नंबर दर्ज करें:</strong> अपना 10 अंकों का सक्रिय मोबाइल नंबर दर्ज करें।
+                    </>
+                  ) : (
+                    <>
+                      <strong>2. Enter Phone Number:</strong> Input your 10-digit mobile number connected to your SIM.
+                    </>
+                  )}
+                </p>
               </div>
+
+              {/* Step 3 */}
               <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-brand-50 border border-brand-100">
                 <CheckCircle2 className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
-                <p><strong>3. Verify OTP:</strong> Enter the 6-digit code received via SMS to complete login.</p>
+                <p>
+                  {lang === "hi" ? (
+                    <>
+                      <strong>3. OTP दर्ज करें:</strong> SMS द्वारा प्राप्त 6 अंकों का सुरक्षा कोड दर्ज करके लॉगिन पूरा करें।
+                    </>
+                  ) : (
+                    <>
+                      <strong>3. Verify OTP:</strong> Enter the 6-digit code received via SMS to complete login.
+                    </>
+                  )}
+                </p>
               </div>
             </div>
 
             <button
               type="button"
               onClick={() => setShowHelpModal(false)}
-              className="w-full min-h-12 rounded-xl bg-brand-600 text-white font-extrabold text-xs cursor-pointer"
+              className="w-full min-h-12 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs cursor-pointer transition-colors"
             >
               {lang === "hi" ? "समझ गया (Got It)" : "Close Helper"}
             </button>
