@@ -62,12 +62,6 @@ export const AuthFooter: React.FC<AuthFooterProps> = ({
           </button>
           .
         </p>
-
-        {/* Security badge indicator */}
-        <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] text-ink-500/80 font-medium pt-0.5">
-          <ShieldCheck className="w-3.5 h-3.5 text-brand-500" aria-hidden="true" />
-          <span>Bank-grade 256-bit encryption • APMC compliant</span>
-        </div>
       </footer>
 
       {/* Accessible Legal Modals */}

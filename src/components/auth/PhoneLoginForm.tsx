@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Phone, ArrowRight, Loader2, AlertCircle, Sprout } from "lucide-react";
+import { Phone, ArrowRight, Loader2, AlertCircle, HelpCircle, X, CheckCircle2, FileQuestionMark, Info, MessageCircleQuestionMark, Globe } from "lucide-react";
 import { UserRole } from "../../types/auth";
 import { RoleSelector } from "./RoleSelector";
 import { SocialLogin } from "./SocialLogin";
@@ -23,9 +23,9 @@ export const PhoneLoginForm: React.FC<PhoneLoginFormProps> = ({
   const [phone, setPhone] = useState(initialPhone);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [lang, setLang] = useState<"en" | "hi">("hi");
+  const [showHelpModal, setShowHelpModal] = useState(false);
 
-  // Clean numeric phone input handling (India 10-digit format)
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/\D/g, "");
     if (rawValue.length <= 10) {
@@ -37,181 +37,189 @@ export const PhoneLoginForm: React.FC<PhoneLoginFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (phone.length === 0) {
-      setError("Please enter your 10-digit mobile number");
+      setError(lang === "hi" ? "कृपया अपना 10 अंकों का मोबाइल नंबर दर्ज करें" : "Please enter your 10-digit mobile number");
       return;
     }
     if (phone.length < 10) {
-      setError("Mobile number must be exactly 10 digits");
+      setError(lang === "hi" ? "मोबाइल नंबर पूरे 10 अंकों का होना चाहिए" : "Mobile number must be exactly 10 digits");
       return;
     }
 
     setIsSubmitting(true);
-    // Simulate lightweight network dispatch
     setTimeout(() => {
       setIsSubmitting(false);
       onSubmitPhone(phone);
     }, 400);
   };
 
-  // Format phone for visual clarity (e.g. 98765 43210)
-  const formattedDisplay = phone.length > 5 
-    ? `${phone.slice(0, 5)} ${phone.slice(5)}` 
-    : phone;
+  const formattedDisplay = phone.length > 5 ? `${phone.slice(0, 5)} ${phone.slice(5)}` : phone;
 
   return (
-    <div className="w-full space-y-3.5 sm:space-y-4 animate-in fade-in duration-200">
-      {/* Mobile-only Brand Header */}
-      <div className="lg:hidden flex flex-col items-center text-center space-y-1 mb-3">
-        <div className="w-10 h-10 rounded-xl bg-brand-500 text-white flex items-center justify-center shadow-md">
-          <Sprout className="w-5 h-5 text-white" aria-hidden="true" />
+    <div className="w-full space-y-5 animate-in fade-in duration-200">
+      {/* Top Header & Language Toggle Bar */}
+      <div className="flex items-center justify-between border-b-2 border-surface-200 pb-3">
+        <div className="flex items-center gap-2">
+          <img src="favicon.svg" alt="" />
+          <div>
+            <h1 className="text-lg font-black text-ink-950 font-display leading-tight">
+              किसान<span className="text-brand-600">Setu</span>
+            </h1>
+            <p className="text-[11px] text-ink-500 font-bold">
+              {lang === "hi" ? "डिजिटल कृषि मंडी" : "Digital Agri Marketplace"}
+            </p>
+          </div>
         </div>
-        <div>
-          <span className="font-extrabold text-lg tracking-tight text-ink-950 font-display">
-            किसान<span className="text-brand-500">Setu</span>
-          </span>
-          <p className="text-[11px] text-ink-500 font-medium">
-            National Digital Agriculture Platform
-          </p>
-        </div>
-      </div>
 
-      {/* Header & Role-Adaptive Supporting Content */}
-      <div className="space-y-0.5 text-center lg:text-left">
-        <h2 className="text-xl sm:text-2xl font-extrabold text-ink-950 tracking-tight font-display">
-          Welcome back 👋
-        </h2>
-        
-        {/* Dynamic supporting text with compact min-height */}
-        <div 
-          id={`role-panel-${role}`}
-          role="region" 
-          aria-live="polite"
-          className="min-h-[1.5rem] flex items-center justify-center lg:justify-start transition-opacity duration-200"
+        {/* Prominent English / Hindi Toggle */}
+        <button
+          type="button"
+          onClick={() => setLang(lang === "en" ? "hi" : "en")}
+          className="min-h-10 px-3 py-1.5 rounded-xl bg-brand-50 border-2 border-brand-200 text-brand-700 font-extrabold text-xs flex items-center gap-1.5 hover:bg-brand-100 transition-colors cursor-pointer"
         >
-          <p className="text-xs text-ink-500 leading-normal font-normal">
-            {role === "farmer"
-              ? "Access your crops, pricing insights and buyer requests."
-              : "Discover fresh produce directly from verified farmers."}
-          </p>
-        </div>
+          <Globe className="w-4 h-4 font-bold" />
+          <span>{lang === "en" ? "हिंदी में बदलें" : "Switch to English"}</span>
+        </button>
       </div>
 
-      {/* Segmented Role Selector */}
-      <div className="pt-0.5">
-        <RoleSelector 
-          role={role} 
-          onChange={onRoleChange} 
-          disabled={isSubmitting} 
-        />
+      {/* Hero Welcome & Visual Role Context */}
+      <div className="space-y-1 bg-earth-50 p-3.5 rounded-2xl border-2 border-surface-200">
+        <h2 className="text-lg font-extrabold text-ink-950">
+          {lang === "hi" ? "खाते में प्रवेश करें" : "Login to Your Account"}
+        </h2>
+        <p className="text-xs text-ink-700 font-medium">
+          {role === "farmer"
+            ? (lang === "hi" ? "अपनी फसल बेचें और मंडी भाव देखें।" : "List your harvest and view mandi rates.")
+            : (lang === "hi" ? "सीधे किसानों से ताज़ा फसल खरीदें।" : "Buy fresh produce directly from verified farmers.")}
+        </p>
       </div>
 
-      {/* Main Phone Login Form */}
-      <form onSubmit={handleSubmit} className="space-y-2.5 pt-0.5" noValidate>
-        <div className="space-y-1.5 text-left">
-          <label 
-            htmlFor="phone-input" 
-            className="flex items-center gap-2 text-xs font-bold text-ink-700"
+      {/* Role Selection */}
+      <RoleSelector
+        role={role}
+        onChange={onRoleChange}
+        disabled={isSubmitting}
+        lang={lang}
+      />
+
+      {/* Primary Phone Login Form */}
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        <div className="space-y-1.5">
+          <label
+            htmlFor="phone-input"
+            className="flex items-center justify-between text-xs font-bold text-ink-950 uppercase tracking-wider"
           >
-            <span className="w-0.5 h-3.5 bg-gradient-to-b from-brand-400 to-brand-600 rounded-full" aria-hidden="true" />
-            Phone Number
+            <span>{lang === "hi" ? "2. मोबाइल नंबर दर्ज करें" : "2. Enter Mobile Number"}</span>
           </label>
 
-          <div 
-            className={`relative flex items-center rounded-xl border transition-all duration-200 bg-white/90 shadow-[inset_0_1px_3px_rgba(0,0,0,0.04)] ${
-              error 
-                ? "border-red-400 ring-2 ring-red-100" 
-                : "border-surface-200/80 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-100 focus-within:shadow-none focus-within:bg-white"
-            }`}
-          >
-            {/* Country Code Prefix */}
-            <div className="pl-3 pr-2 py-2 flex items-center gap-1 border-r border-surface-200 text-ink-700 select-none">
-              <span className="text-xs sm:text-sm font-bold">🇮🇳 +91</span>
+          {/* High Contrast 56px Min-Height Input Box */}
+          <div className={`relative flex items-center min-h-14 rounded-2xl border-2 bg-white transition-all overflow-hidden ${error
+              ? "border-red-500 ring-2 ring-red-100"
+              : "border-earth-950 focus-within:border-brand-600 focus-within:ring-2 focus-within:ring-brand-100"
+            }`}>
+            <div className="pl-4 pr-2 text-xl pointer-events-none" aria-hidden="true">
+              <Phone className="w-5 h-5" />
             </div>
-
-            {/* Input Field */}
-            <div className="relative flex-1 flex items-center">
-              <Phone 
-                className="absolute left-3 w-3.5 h-3.5 text-ink-500 pointer-events-none" 
-                aria-hidden="true" 
-              />
-              <input
-                id="phone-input"
-                name="phone"
-                type="tel"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                autoComplete="tel-national"
-                placeholder="98765 43210"
-                value={formattedDisplay}
-                onChange={handlePhoneChange}
-                disabled={isSubmitting}
-                aria-describedby={error ? "phone-error" : "phone-hint"}
-                aria-invalid={error ? "true" : "false"}
-                className="w-full min-h-[40px] pl-8 pr-3 py-2 text-xs sm:text-sm font-semibold text-ink-950 placeholder:text-ink-500/60 bg-transparent rounded-r-xl focus:outline-hidden"
-              />
-            </div>
+            <input
+              id="phone-input"
+              name="phone"
+              type="tel"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              placeholder="98765 43210"
+              value={formattedDisplay}
+              onChange={handlePhoneChange}
+              disabled={isSubmitting}
+              className="w-full min-h-14 pr-4 text-2xl font-bold font-mono text-ink-950 placeholder:text-ink-500/40 bg-transparent outline-none focus:outline-none focus:ring-0"
+            />
           </div>
 
-          {/* Accessible Validation Feedback */}
-          {error ? (
-            <div 
-              id="phone-error" 
-              role="alert" 
-              aria-live="polite"
-              className="flex items-center gap-1.5 text-xs text-red-600 font-medium animate-in fade-in duration-150"
-            >
-              <AlertCircle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+          {/* High-Visibility Banner Error Message */}
+          {error && (
+            <div role="alert" className="p-3 rounded-xl bg-red-50 border-2 border-red-200 flex items-center gap-2 text-xs text-red-700 font-bold">
+              <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
-          ) : (
-            <p id="phone-hint" className="text-[11px] text-ink-500 font-normal">
-              We'll send a 6-digit one-time verification code via SMS
-            </p>
           )}
         </div>
 
-        {/* Primary CTA */}
+        {/* Primary Action Button (Min 56px Target) */}
         <button
           type="submit"
           disabled={isSubmitting || phone.length < 10}
-          className="w-full min-h-[42px] px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 active:from-brand-700 active:to-brand-800 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:shadow-lg hover:shadow-brand-500/20 cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-brand-500 disabled:hover:to-brand-600 disabled:shadow-none"
+          className="w-full min-h-14 px-6 py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 active:bg-brand-700 text-white font-extrabold text-base flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg disabled:opacity-50 cursor-pointer border-2 border-brand-700"
         >
           {isSubmitting ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-              <span>Sending code...</span>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>{lang === "hi" ? "ओटीपी भेजा जा रहा है..." : "Sending Code..."}</span>
             </>
           ) : (
             <>
-              <span>Continue</span>
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              <span>{lang === "hi" ? "आगे बढ़ें (OTP प्राप्त करें)" : "Get OTP Code"}</span>
+              <ArrowRight className="w-5 h-5" />
             </>
           )}
         </button>
       </form>
 
-      {/* Divider */}
-      <div className="relative flex items-center justify-center py-0.5">
-        <div className="w-full border-t border-surface-200/60" aria-hidden="true" />
-        <span className="absolute bg-white/80 backdrop-blur-sm px-3 text-[11px] uppercase tracking-wider font-semibold text-ink-400">
-          OR
-        </span>
+      {/* Need Help / सहायता Button */}
+      <div className="flex items-center justify-center gap-2 pt-3 border-t border-surface-200">
+        <button
+          type="button"
+          onClick={() => setShowHelpModal(true)}
+          className="min-h-11 px-2 py-1 rounded-xl bg-surface-50 hover:bg-surface-100 border border-slate-300 text-ink-950 font-bold text-xs inline-flex items-center gap-2 cursor-pointer"
+        >
+          <HelpCircle className="w-4 h-4 text-brand-600" />
+          <span className="text-brand-600">{lang === "hi" ? "मदद चाहिए? (Need Help?)" : "Need Help Logging In?"}</span>
+        </button>
       </div>
 
-      {/* Google Alternative Login */}
-      <SocialLogin 
-        role={role} 
-        onGoogleSuccess={onGoogleSuccess} 
-        disabled={isSubmitting} 
-      />
+      <SocialLogin role={role} onGoogleSuccess={onGoogleSuccess} disabled={isSubmitting} />
+      <AuthFooter isSignUp={false} />
 
-      {/* Auth Footer with Terms and Sign up Toggle */}
-      <div className="pt-0.5">
-        <AuthFooter 
-          isSignUp={isSignUp} 
-          onToggleSignUp={() => setIsSignUp(!isSignUp)} 
-        />
-      </div>
+      {/* Visual Support Drawer / Modal */}
+      {showHelpModal && (
+        <div className="fixed inset-0 z-50 bg-ink-950/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-4">
+          <div className="bg-white w-full max-w-md rounded-3xl p-6 space-y-4 border-2 border-brand-500 shadow-2xl animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between border-b pb-3">
+              <h3 className="font-extrabold text-base text-ink-950 flex items-center gap-2">
+                <MessageCircleQuestionMark className="text-brand-600" />
+                <span>{lang === "hi" ? "लॉगिन में समस्या? (Login Guidance)" : "How to Log In"}</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowHelpModal(false)}
+                className="p-1 rounded-lg hover:bg-surface-100 text-ink-500 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs text-ink-700 font-medium">
+              <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-brand-50 border border-brand-100">
+                <CheckCircle2 className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
+                <p><strong>1. Role Selection:</strong> Choose <strong>Farmer</strong> if selling crops or <strong>Buyer</strong> if purchasing.</p>
+              </div>
+              <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-brand-50 border border-brand-100">
+                <CheckCircle2 className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
+                <p><strong>2. Enter Phone Number:</strong> Input your 10-digit mobile number connected to your SIM.</p>
+              </div>
+              <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-brand-50 border border-brand-100">
+                <CheckCircle2 className="w-4 h-4 text-brand-600 shrink-0 mt-0.5" />
+                <p><strong>3. Verify OTP:</strong> Enter the 6-digit code received via SMS to complete login.</p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowHelpModal(false)}
+              className="w-full min-h-12 rounded-xl bg-brand-600 text-white font-extrabold text-xs cursor-pointer"
+            >
+              {lang === "hi" ? "समझ गया (Got It)" : "Close Helper"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

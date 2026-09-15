@@ -6,91 +6,61 @@ interface RoleSelectorProps {
   role: UserRole;
   onChange: (role: UserRole) => void;
   disabled?: boolean;
+  lang?: "en" | "hi";
 }
 
 export const RoleSelector: React.FC<RoleSelectorProps> = ({
   role,
   onChange,
-  disabled = false
+  disabled = false,
+  lang = "en"
 }) => {
-  const roles: Array<{ id: UserRole; label: string; icon: React.ComponentType<{ className?: string }> }> = [
-    {
-      id: "farmer",
-      label: "Farmer / FPO",
-      icon: Sprout
-    },
-    {
-      id: "buyer",
-      label: "Buyer",
-      icon: ShoppingBag
-    }
-  ];
-
-  const handleKeyDown = (e: React.KeyboardEvent, targetRole: UserRole) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      onChange(targetRole);
-    } else if (e.key === "ArrowRight") {
-      e.preventDefault();
-      onChange("buyer");
-    } else if (e.key === "ArrowLeft") {
-      e.preventDefault();
-      onChange("farmer");
-    }
-  };
-
   return (
-    <div className="w-full">
-      <label id="role-selector-label" className="sr-only">
-        Select account role
+    <div className="w-full space-y-1.5">
+      <label className="block text-xs font-bold text-ink-950 uppercase tracking-wider">
+        {lang === "hi" ? "1. अपनी भूमिका चुनें (Select Role)" : "1. Select Your Role"}
       </label>
 
-      {/* Segmented Control Container */}
-      <div 
-        role="tablist" 
-        aria-labelledby="role-selector-label"
-        className="relative bg-surface-100/70 p-1 rounded-xl border border-surface-200/60 flex items-center justify-between shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]"
+      <div
+        role="tablist"
+        aria-label="Account Role Selection"
+        className="grid grid-cols-2 gap-2 bg-earth-100/60 p-1.5 rounded-2xl border-2 border-surface-200"
       >
-        {/* Animated Sliding Highlight Pill */}
-        <div 
-          className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white/90 rounded-lg shadow-xs border border-surface-200/60 transition-transform duration-200 ease-out pointer-events-none ${
-            role === "buyer" ? "translate-x-full" : "translate-x-0"
-          }`}
-          aria-hidden="true"
-        />
+        <button
+          type="button"
+          role="tab"
+          aria-selected={role === "farmer"}
+          disabled={disabled}
+          onClick={() => onChange("farmer")}
+          className={`min-h-14 px-3 py-2 rounded-xl flex items-center justify-center gap-2.5 font-bold text-sm sm:text-base transition-all cursor-pointer border-2 ${role === "farmer"
+            ? "bg-brand-600 text-white border-brand-700 shadow-md scale-[1.02]"
+            : "bg-white text-ink-700 border-transparent hover:bg-earth-50"
+            }`}
+        >
+          <span className="text-xl" aria-hidden="true"><Sprout /></span>
+          <div className="text-left leading-tight">
+            <div>{lang === "hi" ? "किसान" : "Farmer"}</div>
+            <div className="text-[10px] opacity-80 font-normal">FPO / Producer</div>
+          </div>
+        </button>
 
-        {roles.map((item) => {
-          const Icon = item.icon;
-          const isSelected = role === item.id;
-
-          return (
-            <button
-              key={item.id}
-              role="tab"
-              type="button"
-              id={`role-tab-${item.id}`}
-              aria-selected={isSelected}
-              aria-controls={`role-panel-${item.id}`}
-              tabIndex={isSelected ? 0 : -1}
-              disabled={disabled}
-              onClick={() => onChange(item.id)}
-              onKeyDown={(e) => handleKeyDown(e, item.id)}
-              className={`relative z-10 w-1/2 min-h-[36px] sm:min-h-[38px] py-1.5 flex items-center justify-center gap-2 rounded-lg text-xs sm:text-sm font-semibold transition-colors duration-150 cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 disabled:opacity-60 disabled:cursor-not-allowed ${
-                isSelected 
-                  ? "text-brand-700 font-bold" 
-                  : "text-ink-500 hover:text-ink-700 hover:bg-white/40"
-              }`}
-            >
-              <Icon 
-                className={`w-3.5 h-3.5 transition-colors shrink-0 ${
-                  isSelected ? "text-brand-600" : "text-ink-500"
-                }`} 
-                aria-hidden="true" 
-              />
-              <span>{item.label}</span>
-            </button>
-          );
-        })}
+        <button
+          type="button"
+          role="tab"
+          aria-selected={role === "buyer"}
+          disabled={disabled}
+          onClick={() => onChange("buyer")}
+          className={`min-h-14 px-3 py-2 rounded-xl flex items-center justify-center gap-2.5 font-bold text-sm sm:text-base transition-all cursor-pointer border-2 ${role === "buyer"
+            ? "bg-brand-600 text-white border-brand-700 shadow-md scale-[1.02]"
+            : "bg-white text-ink-700 border-transparent hover:bg-earth-50"
+            }`}
+        >
+          <span className="text-xl" aria-hidden="true"><ShoppingBag /></span>
+          <div className="text-left leading-tight">
+            <div>{lang === "hi" ? "खरीददार" : "Buyer"}</div>
+            <div className="text-[10px] opacity-80 font-normal">Trader / Business</div>
+          </div>
+        </button>
       </div>
     </div>
   );

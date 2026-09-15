@@ -32,7 +32,7 @@ export const SocialLogin: React.FC<SocialLoginProps> = ({
         onClick={handleGoogleClick}
         disabled={disabled || loading}
         aria-label="Continue with Google account"
-        className="w-full min-h-[40px] px-3.5 py-2 rounded-xl border border-surface-200/80 bg-surface-50/80 hover:bg-surface-100 text-ink-700 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2.5 transition-all duration-200 shadow-2xs hover:shadow-xs cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 disabled:opacity-60 disabled:cursor-not-allowed"
+        className="w-full min-h-10 px-3.5 py-2 rounded-xl border border-surface-200/80 bg-surface-50/80 hover:bg-surface-100 text-ink-700 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2.5 transition-all duration-200 shadow-2xs hover:shadow-xs cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {loading ? (
           <>
