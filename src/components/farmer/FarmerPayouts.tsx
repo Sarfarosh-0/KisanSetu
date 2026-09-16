@@ -73,7 +73,7 @@ export const FarmerPayouts: React.FC<FarmerPayoutsProps> = ({
         </div>
 
         {/* Linked Bank Account Card */}
-        <div className="bg-[#F0FDF4] p-4 rounded-2xl border border-emerald-200 text-xs min-w-[280px]">
+        <div className="bg-[#F0FDF4] p-4 rounded-2xl border border-emerald-200 text-xs min-w-70">
           <div className="flex items-center justify-between">
             <span className="text-slate-500 font-bold uppercase text-[10px]">
               {lang === "hi" ? "जुड़ा हुआ बैंक खाता" : "Linked Payout Account"}
