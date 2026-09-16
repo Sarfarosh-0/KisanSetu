@@ -50,6 +50,25 @@ class CropListingCreate(BaseModel):
     expected_price_per_quintal: float
     notes: Optional[str] = None
     image_url: Optional[str] = None
+    images: Optional[List[str]] = Field(default_factory=list)
+
+class CropListingUpdate(BaseModel):
+    crop_name: Optional[str] = None
+    variety: Optional[str] = None
+    quantity_quintals: Optional[float] = None
+    quality_grade: Optional[str] = None
+    harvest_date: Optional[str] = None
+    district: Optional[str] = None
+    state: Optional[str] = None
+    pincode: Optional[str] = None
+    lat: Optional[float] = None
+    lng: Optional[float] = None
+    is_organic: Optional[bool] = None
+    expected_price_per_quintal: Optional[float] = None
+    notes: Optional[str] = None
+    image_url: Optional[str] = None
+    images: Optional[List[str]] = None
+    status: Optional[str] = None
 
 class CropListingResponse(CropListingCreate):
     id: int
@@ -59,6 +78,7 @@ class CropListingResponse(CropListingCreate):
     ai_recommended_target: float
     status: str
     created_at: datetime
+    images: Optional[List[str]] = Field(default_factory=list)
     farmer_name: Optional[str] = None
     farmer_trust_score: Optional[float] = None
     farmer_verified: Optional[bool] = None

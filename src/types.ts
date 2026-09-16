@@ -43,6 +43,7 @@ export interface CropListing {
   status: "ACTIVE" | "SOLD" | "IN_NEGOTIATION" | "EXPIRED";
   notes?: string;
   imageUrl?: string;
+  images?: string[];
   createdAt: string;
   farmerName?: string;
   farmerTrustScore?: number;

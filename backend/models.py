@@ -82,6 +82,7 @@ class CropListing(Base):
     status = Column(String(20), default=ListingStatus.ACTIVE)
     notes = Column(Text, nullable=True)
     image_url = Column(String(255), nullable=True)
+    images = Column(Text, nullable=True)  # JSON-encoded array of image URLs
     created_at = Column(DateTime, default=datetime.utcnow)
 
     farmer = relationship("User", back_populates="listings")

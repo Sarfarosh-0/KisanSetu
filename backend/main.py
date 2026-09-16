@@ -3,16 +3,19 @@ FastAPI Backend Application - SIH26033: Direct Farmer-to-Consumer Digital Agri-M
 """
 
 import os
+import json
+import uuid
 from typing import List, Optional
 from datetime import datetime
-from fastapi import FastAPI, Depends, HTTPException, Query, status
+from fastapi import FastAPI, Depends, HTTPException, Query, status, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
 from database import engine, Base, get_db
 from models import User, CropListing, Order, MandiPrice, LogisticsBatch, UserRole, QualityGrade, ListingStatus, OrderStatus, PaymentStatus
 from schemas import (
-    UserResponse, LoginRequest, CropListingCreate, CropListingResponse,
+    UserResponse, LoginRequest, CropListingCreate, CropListingUpdate, CropListingResponse,
     PricePredictionRequest, PricePredictionResponse, OrderCreate,
     OrderStatusUpdate, OrderResponse, UPIPaymentVerifyRequest,
     RouteOptimizationResponse
@@ -20,8 +23,9 @@ from schemas import (
 from ml_engine import price_engine, BASE_CROP_MANDI_RATES
 from route_optimizer import optimize_logistics_batch
 
-# Ensure database tables exist
+# Ensure database tables and upload directory exist
 Base.metadata.create_all(bind=engine)
+os.makedirs("uploads", exist_ok=True)
 
 app = FastAPI(
     title="KisanSetu API — Direct Farmer-to-Consumer Agri-Marketplace",
@@ -30,6 +34,8 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc"
 )
+
+app.mount("/static/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 app.add_middleware(
     CORSMiddleware,
@@ -84,8 +90,48 @@ def get_users(role: Optional[str] = None, db: Session = Depends(get_db)):
     return query.all()
 
 # ----------------------------------------------------
-# 3. Direct Farmer Listings
+# 3. Direct Farmer Listings & Image Uploads
 # ----------------------------------------------------
+@app.post("/api/upload", tags=["Marketplace"])
+async def upload_images(files: List[UploadFile] = File(...)):
+    """Uploads listing photos (max 10 files, <=5MB each, image/* types). Returns array of image URLs."""
+    if len(files) > 10:
+        raise HTTPException(status_code=400, detail="Maximum 10 photos allowed per listing.")
+
+    allowed_types = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/jpg"]
+    uploaded_urls = []
+
+    for file in files:
+        if file.content_type and file.content_type.lower() not in allowed_types:
+            raise HTTPException(status_code=400, detail=f"File '{file.filename}' is not a supported image type (JPEG, PNG, WEBP).")
+
+        content = await file.read()
+        if len(content) > 5 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail=f"File '{file.filename}' exceeds maximum allowed size of 5MB.")
+
+        # Check if Cloudinary is configured via environment variable
+        cloudinary_url = os.getenv("CLOUDINARY_URL")
+        if cloudinary_url:
+            try:
+                import cloudinary
+                import cloudinary.uploader
+                upload_res = cloudinary.uploader.upload(content, folder="kisansetu_crops")
+                uploaded_urls.append(upload_res.get("secure_url"))
+                continue
+            except Exception as e:
+                pass  # Fallback to local storage if Cloudinary upload fails
+
+        # Local storage fallback
+        ext = os.path.splitext(file.filename or "")[1] or ".jpg"
+        filename = f"{uuid.uuid4().hex}{ext}"
+        filepath = os.path.join("uploads", filename)
+        with open(filepath, "wb") as f:
+            f.write(content)
+        uploaded_urls.append(f"/static/uploads/{filename}")
+
+    return {"urls": uploaded_urls}
+
+
 @app.get("/api/listings", response_model=List[CropListingResponse], tags=["Marketplace"])
 def get_listings(
     crop: Optional[str] = Query(None, description="Filter by crop name (e.g. Onion, Wheat)"),
@@ -111,16 +157,27 @@ def get_listings(
 
     listings = query.order_by(CropListing.created_at.desc()).all()
 
-    # Populate farmer details in response
+    # Populate farmer details & parse images JSON in response
     results = []
     for l in listings:
         resp = CropListingResponse.model_validate(l)
+        if l.images:
+            try:
+                resp.images = json.loads(l.images)
+            except Exception:
+                resp.images = [l.image_url] if l.image_url else []
+        elif l.image_url:
+            resp.images = [l.image_url]
+        else:
+            resp.images = []
+
         if l.farmer:
             resp.farmer_name = l.farmer.name
             resp.farmer_trust_score = l.farmer.trust_score
             resp.farmer_verified = l.farmer.verified
         results.append(resp)
     return results
+
 
 @app.post("/api/listings", response_model=CropListingResponse, tags=["Marketplace"])
 def create_crop_listing(payload: CropListingCreate, db: Session = Depends(get_db)):
@@ -138,6 +195,9 @@ def create_crop_listing(payload: CropListingCreate, db: Session = Depends(get_db
         state=payload.state,
         is_organic=payload.is_organic
     )
+
+    images_list = payload.images or ([payload.image_url] if payload.image_url else [])
+    primary_image = images_list[0] if len(images_list) > 0 else payload.image_url
 
     new_listing = CropListing(
         farmer_id=payload.farmer_id,
@@ -159,7 +219,8 @@ def create_crop_listing(payload: CropListingCreate, db: Session = Depends(get_db
         ai_recommended_target=ai_guidance["recommended_target_price"],
         status=ListingStatus.ACTIVE,
         notes=payload.notes,
-        image_url=payload.image_url
+        image_url=primary_image,
+        images=json.dumps(images_list)
     )
 
     db.add(new_listing)
@@ -167,10 +228,80 @@ def create_crop_listing(payload: CropListingCreate, db: Session = Depends(get_db
     db.refresh(new_listing)
 
     resp = CropListingResponse.model_validate(new_listing)
+    resp.images = images_list
     resp.farmer_name = farmer.name
     resp.farmer_trust_score = farmer.trust_score
     resp.farmer_verified = farmer.verified
     return resp
+
+
+@app.put("/api/listings/{listing_id}", response_model=CropListingResponse, tags=["Marketplace"])
+def update_crop_listing(listing_id: int, payload: CropListingUpdate, db: Session = Depends(get_db)):
+    """Farmers update an existing crop listing details and photos."""
+    listing = db.query(CropListing).filter(CropListing.id == listing_id).first()
+    if not listing:
+        raise HTTPException(status_code=404, detail="Crop listing not found.")
+
+    update_data = payload.model_dump(exclude_unset=True)
+
+    if "images" in update_data and update_data["images"] is not None:
+        images_list = update_data["images"]
+        listing.images = json.dumps(images_list)
+        if len(images_list) > 0:
+            listing.image_url = images_list[0]
+        elif "image_url" not in update_data:
+            listing.image_url = None
+        del update_data["images"]
+
+    # Re-calculate AI fair price if core fields changed
+    if any(k in update_data for k in ["crop_name", "quantity_quintals", "quality_grade", "district", "state", "is_organic"]):
+        ai_guidance = price_engine.predict_fair_price(
+            crop_name=update_data.get("crop_name", listing.crop_name),
+            quantity_quintals=update_data.get("quantity_quintals", listing.quantity_quintals),
+            quality_grade=update_data.get("quality_grade", listing.quality_grade),
+            district=update_data.get("district", listing.district),
+            state=update_data.get("state", listing.state),
+            is_organic=update_data.get("is_organic", listing.is_organic)
+        )
+        listing.mandi_benchmark_price = ai_guidance["mandi_benchmark_price"]
+        listing.ai_recommended_min = ai_guidance["min_fair_price"]
+        listing.ai_recommended_max = ai_guidance["max_fair_price"]
+        listing.ai_recommended_target = ai_guidance["recommended_target_price"]
+
+    for field, val in update_data.items():
+        setattr(listing, field, val)
+
+    db.commit()
+    db.refresh(listing)
+
+    resp = CropListingResponse.model_validate(listing)
+    if listing.images:
+        try:
+            resp.images = json.loads(listing.images)
+        except Exception:
+            resp.images = [listing.image_url] if listing.image_url else []
+    elif listing.image_url:
+        resp.images = [listing.image_url]
+    else:
+        resp.images = []
+
+    if listing.farmer:
+        resp.farmer_name = listing.farmer.name
+        resp.farmer_trust_score = listing.farmer.trust_score
+        resp.farmer_verified = listing.farmer.verified
+    return resp
+
+
+@app.delete("/api/listings/{listing_id}", tags=["Marketplace"])
+def delete_crop_listing(listing_id: int, db: Session = Depends(get_db)):
+    """Deletes a crop listing by ID."""
+    listing = db.query(CropListing).filter(CropListing.id == listing_id).first()
+    if not listing:
+        raise HTTPException(status_code=404, detail="Crop listing not found.")
+
+    db.delete(listing)
+    db.commit()
+    return {"message": "Crop listing deleted successfully.", "id": listing_id}
 
 # ----------------------------------------------------
 # 4. AI-Based Fair Price Recommendation Engine

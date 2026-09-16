@@ -183,9 +183,20 @@ export default function App() {
 
   // Callback when a new listing is created
   const handleListingCreated = (newListing: CropListing) => {
-    setListings((prev) => [newListing, ...prev]);
+    setListings((prev) => [newListing, ...prev.filter((l) => l.id !== newListing.id)]);
     setActiveTab("inventory");
     setOpenCreateListingModal(false);
+  };
+
+  // Callback when a listing is updated
+  const handleListingUpdated = (updatedListing: CropListing) => {
+    setListings((prev) => prev.map((l) => (l.id === updatedListing.id ? updatedListing : l)));
+    setActiveTab("inventory");
+  };
+
+  // Callback when a listing is deleted
+  const handleListingDeleted = (deletedId: number) => {
+    setListings((prev) => prev.filter((l) => l.id !== deletedId));
   };
 
   // Callback when order status is updated
@@ -328,6 +339,8 @@ export default function App() {
             listings={listings}
             orders={orders}
             onListingCreated={handleListingCreated}
+            onListingUpdated={handleListingUpdated}
+            onListingDeleted={handleListingDeleted}
             onOrderStatusUpdate={handleOrderStatusUpdate}
             lang={lang}
             openCreateModal={openCreateListingModal}

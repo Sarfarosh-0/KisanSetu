@@ -74,6 +74,53 @@ export const API = {
     });
   },
 
+  async updateListing(id: number, listingData: Partial<CropListing>): Promise<CropListing> {
+    return safeFetchJson<CropListing>(`/api/listings/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(listingData)
+    });
+  },
+
+  async deleteListing(id: number): Promise<{ message: string; id: number }> {
+    return safeFetchJson<{ message: string; id: number }>(`/api/listings/${id}`, {
+      method: "DELETE"
+    });
+  },
+
+  async uploadImages(files: File[]): Promise<string[]> {
+    if (!files || files.length === 0) return [];
+    try {
+      const formData = new FormData();
+      for (const file of files) {
+        formData.append("files", file);
+      }
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.urls && Array.isArray(json.urls)) {
+          return json.urls;
+        }
+      }
+    } catch (err) {
+      console.warn("Backend image upload failed, falling back to data URL encoding:", err);
+    }
+    // Fallback: Data URLs
+    const dataUrls: string[] = [];
+    for (const file of files) {
+      const url = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+      dataUrls.push(url);
+    }
+    return dataUrls;
+  },
+
   async getPriceRecommendation(params: {
     cropName: string;
     quantityQuintals: number;

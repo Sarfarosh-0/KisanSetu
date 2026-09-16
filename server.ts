@@ -224,6 +224,7 @@ interface CropListing {
   status: "ACTIVE" | "SOLD" | "IN_NEGOTIATION" | "EXPIRED";
   notes?: string;
   imageUrl?: string;
+  images?: string[];
   createdAt: string;
   farmerName?: string;
   farmerTrustScore?: number;
@@ -372,6 +373,7 @@ function getInitialData() {
       status: "ACTIVE",
       notes: "Export quality, tightly sorted, single-center dry outer skin. Low moisture content suitable for storage.",
       imageUrl: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=600&auto=format&fit=crop&q=80",
+      images: ["https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=600&auto=format&fit=crop&q=80"],
       createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
       farmerName: "Ramesh Kumar Patel",
       farmerTrustScore: 4.9,
@@ -665,6 +667,11 @@ app.post("/api/listings", (req, res) => {
     isOrganic: !!data.isOrganic
   });
 
+  const imagesList: string[] = Array.isArray(data.images) && data.images.length > 0 
+    ? data.images 
+    : (data.imageUrl ? [data.imageUrl] : []);
+  const primaryImage = imagesList[0] || data.imageUrl || "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=80";
+
   const newListing: CropListing = {
     id: store.listings.length + 1,
     farmerId: farmer.id,
@@ -686,7 +693,8 @@ app.post("/api/listings", (req, res) => {
     aiRecommendedTarget: aiGuidance.recommendedTargetPrice,
     status: "ACTIVE",
     notes: data.notes || "Freshly harvested direct farm produce.",
-    imageUrl: data.imageUrl || "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=80",
+    imageUrl: primaryImage,
+    images: imagesList.length > 0 ? imagesList : [primaryImage],
     createdAt: new Date().toISOString(),
     farmerName: farmer.name,
     farmerTrustScore: farmer.trustScore,
@@ -695,6 +703,44 @@ app.post("/api/listings", (req, res) => {
 
   store.listings.unshift(newListing);
   res.status(201).json(newListing);
+});
+
+app.put("/api/listings/:id", (req, res) => {
+  const listingIndex = store.listings.findIndex(l => l.id === Number(req.params.id));
+  if (listingIndex === -1) {
+    return res.status(404).json({ error: "Listing not found" });
+  }
+
+  const existing = store.listings[listingIndex];
+  const data = req.body;
+
+  let imagesList = data.images;
+  if (!Array.isArray(imagesList)) {
+    imagesList = existing.images || (existing.imageUrl ? [existing.imageUrl] : []);
+  }
+
+  const primaryImage = imagesList.length > 0 ? imagesList[0] : (data.imageUrl || existing.imageUrl);
+
+  const updatedListing: CropListing = {
+    ...existing,
+    ...data,
+    quantityQuintals: data.quantityQuintals !== undefined ? Number(data.quantityQuintals) : existing.quantityQuintals,
+    expectedPricePerQuintal: data.expectedPricePerQuintal !== undefined ? Number(data.expectedPricePerQuintal) : existing.expectedPricePerQuintal,
+    imageUrl: primaryImage,
+    images: imagesList
+  };
+
+  store.listings[listingIndex] = updatedListing;
+  res.json(updatedListing);
+});
+
+app.delete("/api/listings/:id", (req, res) => {
+  const listingIndex = store.listings.findIndex(l => l.id === Number(req.params.id));
+  if (listingIndex === -1) {
+    return res.status(404).json({ error: "Listing not found" });
+  }
+  const deleted = store.listings.splice(listingIndex, 1)[0];
+  res.json({ message: "Listing deleted successfully", id: deleted.id });
 });
 
 app.get("/api/listings/:id", (req, res) => {
