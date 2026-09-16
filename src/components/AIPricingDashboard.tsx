@@ -13,7 +13,8 @@ import {
   Leaf,
   Landmark,
   Briefcase,
-  Tag
+  Tag,
+  Sprout 
 } from "lucide-react";
 import { FairPriceResult, MandiComparison } from "../types";
 import { API } from "../api";
@@ -33,9 +34,33 @@ const SUPPORTED_CROPS = [
   { name: "Soybean", state: "Madhya Pradesh", district: "Indore" },
   { name: "Mustard", state: "Rajasthan", district: "Bharatpur" },
   { name: "Cotton", state: "Gujarat", district: "Rajkot" },
-  { name: "Maize", state: "Bihar", district: "Gulabbagh" }
+  { name: "Maize", state: "Bihar", district: "Gulabbagh" },
+  { name: "Apple", state: "Jammu and Kashmir", district: "Sopore" },
+  { name: "Turmeric", state: "Tamil Nadu", district: "Erode" },
+  { name: "Tea", state: "Assam", district: "Dibrugarh" },
+  { name: "Sugarcane", state: "Uttar Pradesh", district: "Muzaffarnagar" },
+  { name: "Banana", state: "Maharashtra", district: "Jalgaon" },
+  { name: "Black Pepper", state: "Kerala", district: "Wayanad" },
+  { name: "Gram (Chana)", state: "Madhya Pradesh", district: "Vidisha" },
+  { name: "Groundnut", state: "Gujarat", district: "Junagadh" },
+  { name: "Coffee", state: "Karnataka", district: "Chikkamagaluru" },
+  { name: "Cardamom", state: "Kerala", district: "Idukki" },
+  { name: "Cumin (Jeera)", state: "Gujarat", district: "Unjha" },
+  { name: "Pomegranate", state: "Maharashtra", district: "Solapur" },
+  { name: "Garlic", state: "Madhya Pradesh", district: "Mandsaur" },
+  { name: "Mango (Alphonso)", state: "Maharashtra", district: "Ratnagiri" },
+  { name: "Orange", state: "Maharashtra", district: "Nagpur" },
+  { name: "Arhar (Tur Dal)", state: "Karnataka", district: "Kalaburagi" },
+  { name: "Cashew", state: "Goa", district: "North Goa" },
+  { name: "Saffron", state: "Jammu and Kashmir", district: "Pulwama" },
+  { name: "Ginger", state: "Meghalaya", district: "Ri-Bhoi" },
+  { name: "Rubber", state: "Kerala", district: "Kottayam" },
+  { name: "Jute", state: "West Bengal", district: "Hooghly" },
+  { name: "Walnut", state: "Jammu and Kashmir", district: "Anantnag" },
+  { name: "Grape", state: "Maharashtra", district: "Sangli" },
+  { name: "Arecanut", state: "Karnataka", district: "Shivamogga" },
+  { name: "Coriander", state: "Rajasthan", district: "Kota" }
 ];
-
 export const AIPricingDashboard: React.FC<AIPricingDashboardProps> = ({ lang }) => {
   const [selectedCrop, setSelectedCrop] = useState("Onion");
   const [grade, setGrade] = useState("Grade A");

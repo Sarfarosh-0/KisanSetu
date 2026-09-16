@@ -15,7 +15,8 @@ import {
   CreditCard,
   CloudSun,
   Building,
-  Lock
+  Lock,
+  Sprout
 } from "lucide-react";
 import { CropListing, FairPriceResult, Order, QualityGrade, User } from "../types";
 import { API } from "../api";
@@ -229,12 +230,12 @@ export const FarmerView: React.FC<FarmerViewProps> = ({
       {/* Modal: Create Crop Listing with Live AI Price Engine Guidance */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-emerald-100">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto scrollbar-thin  border border-emerald-100">
             {/* Modal Header */}
             <div className="sticky top-0 bg-white px-6 py-4 border-b border-emerald-100 flex items-center justify-between z-10">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
-                  <Package className="w-5 h-5" />
+                  <Sprout className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="font-extrabold text-slate-900 text-lg font-display">
@@ -414,6 +415,7 @@ export const FarmerView: React.FC<FarmerViewProps> = ({
                   <input
                     type="number"
                     min="100"
+                    step="1000"
                     value={expectedPrice}
                     onChange={(e) => setExpectedPrice(Number(e.target.value))}
                     required
@@ -462,7 +464,7 @@ export const FarmerView: React.FC<FarmerViewProps> = ({
                   {lang === "hi" ? "अतिरिक्त विवरण (नमी, छँटाई, पैकिंग)" : "Produce Quality & Packaging Notes"}
                 </label>
                 <textarea
-                  rows={2}
+                  rows={8}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder={lang === "hi" ? "उदा. अच्छी तरह सूखी फसल, नमी < 12%, हवादार भंडार गृह में सुरक्षित, निरीक्षण के लिए तैयार।" : "e.g. Well-cured crop, moisture < 12%, stored in ventilated farm shed, ready for inspection."}
