@@ -52,7 +52,7 @@ export const Footer: React.FC<FooterProps> = ({
     >
       {/* Background Farm Landscape Silhouette Graphic (Bottom Right) */}
       <div 
-        className="absolute right-0 bottom-0 pointer-events-none select-none overflow-hidden opacity-25 lg:opacity-35 w-[320px] sm:w-[420px] md:w-[500px] h-[140px] sm:h-[170px]" 
+        className="absolute right-0 bottom-0 pointer-events-none select-none overflow-hidden opacity-25 lg:opacity-35 w-[320px] sm:w-105 md:w-125 h-35 sm:h-42" 
         aria-hidden="true"
       >
         <svg
@@ -162,7 +162,7 @@ export const Footer: React.FC<FooterProps> = ({
             <div className="space-y-2.5">
               {/* Brand Logo & Name - Matches App Logo precisely */}
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-[#0F6A53] to-[#0B5745] flex items-center justify-center text-white shadow-xs border border-emerald-500/20 shrink-0">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-linear-to-br from-[#0F6A53] to-[#0B5745] flex items-center justify-center text-white shadow-xs border border-emerald-500/20 shrink-0">
                   <Sprout className="w-4 h-4 sm:w-5 sm:h-5 text-white" strokeWidth={2.2} aria-hidden="true" />
                 </div>
 
@@ -233,7 +233,7 @@ export const Footer: React.FC<FooterProps> = ({
               <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">
                 {t("footer.quickLinks", lang)}
               </h3>
-              <div className="w-7 h-[2px] bg-[#4ADE80] rounded-full mt-1.5" />
+              <div className="w-7 h-0.5 bg-[#4ADE80] rounded-full mt-1.5" />
             </div>
 
             <ul className="space-y-2 pt-0.5">
@@ -291,7 +291,7 @@ export const Footer: React.FC<FooterProps> = ({
               <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">
                 {t("footer.forFarmers", lang)}
               </h3>
-              <div className="w-7 h-[2px] bg-[#4ADE80] rounded-full mt-1.5" />
+              <div className="w-7 h-0.5 bg-[#4ADE80] rounded-full mt-1.5" />
             </div>
 
             <ul className="space-y-2 pt-0.5">
@@ -349,7 +349,7 @@ export const Footer: React.FC<FooterProps> = ({
               <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">
                 {t("footer.contact", lang)}
               </h3>
-              <div className="w-7 h-[2px] bg-[#4ADE80] rounded-full mt-1.5" />
+              <div className="w-7 h-0.5 bg-[#4ADE80] rounded-full mt-1.5" />
             </div>
 
             <ul className="space-y-2 pt-0.5 text-xs sm:text-sm text-[#C4DDD2]">

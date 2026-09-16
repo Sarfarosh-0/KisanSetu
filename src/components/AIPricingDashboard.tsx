@@ -200,7 +200,7 @@ export const AIPricingDashboard: React.FC<AIPricingDashboardProps> = ({ lang }) 
 
           {/* Organic Toggle */}
           <div className="flex flex-col justify-end">
-            <label className="flex items-center gap-2 bg-slate-50 hover:bg-emerald-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 cursor-pointer h-[38px] transition-colors">
+            <label className="flex items-center gap-2 bg-slate-50 hover:bg-emerald-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 cursor-pointer h-9.5 transition-colors">
               <input
                 type="checkbox"
                 checked={isOrganic}
