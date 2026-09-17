@@ -13,10 +13,99 @@ import {
   Filter,
   Edit3,
   Trash2,
-  Camera
+  Camera,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { CropListing, Order, User } from "../../types";
 import { t, translateCrop, translateStatus, translateGrade } from "../../i18n";
+
+const DEFAULT_INVENTORY_IMAGE = "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=80";
+
+// ─── Per-card gallery component ─────────────────────────────────────────────
+interface InventoryCardImageProps {
+  listing: CropListing;
+  lang: "en" | "hi";
+}
+
+const InventoryCardImage: React.FC<InventoryCardImageProps> = ({ listing, lang }) => {
+  const images: string[] =
+    listing.images && listing.images.length > 0
+      ? listing.images
+      : listing.imageUrl
+      ? [listing.imageUrl]
+      : [DEFAULT_INVENTORY_IMAGE];
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const currentImage = images[activeIndex] || images[0] || DEFAULT_INVENTORY_IMAGE;
+
+  return (
+    <div className="relative h-36 bg-slate-100 overflow-hidden group/inv">
+      <img
+        src={currentImage}
+        alt={listing.cropName}
+        referrerPolicy="no-referrer"
+        className="w-full h-full object-cover transition-transform duration-300 group-hover/inv:scale-105"
+      />
+
+      {/* Arrow navigation – only when multiple images exist */}
+      {images.length > 1 && (
+        <>
+          <button
+            type="button"
+            aria-label="Previous image"
+            onClick={(e) => { e.stopPropagation(); setActiveIndex((activeIndex - 1 + images.length) % images.length); }}
+            className="absolute left-1.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center opacity-0 group-hover/inv:opacity-100 transition-opacity duration-200 cursor-pointer backdrop-blur-sm z-10"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+          </button>
+          <button
+            type="button"
+            aria-label="Next image"
+            onClick={(e) => { e.stopPropagation(); setActiveIndex((activeIndex + 1) % images.length); }}
+            className="absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center opacity-0 group-hover/inv:opacity-100 transition-opacity duration-200 cursor-pointer backdrop-blur-sm z-10"
+          >
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+          {/* Counter */}
+          <div className="absolute bottom-9 right-2 bg-black/55 backdrop-blur-sm text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full z-10">
+            {activeIndex + 1}/{images.length}
+          </div>
+        </>
+      )}
+
+      {/* Grade & Organic badges */}
+      <div className="absolute top-3 left-3 flex items-center gap-1.5">
+        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase shadow-xs ${
+          listing.qualityGrade === "Grade A" 
+            ? "bg-emerald-600 text-white" 
+            : "bg-amber-500 text-white"
+        }`}>
+          {translateGrade(listing.qualityGrade, lang)}
+        </span>
+        {listing.isOrganic && (
+          <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 inline-flex items-center gap-1">
+            <Leaf className="w-3 h-3 text-emerald-600 shrink-0" aria-hidden="true" />
+            <span>{t("common.organic", lang)}</span>
+          </span>
+        )}
+      </div>
+
+      {/* Quantity & photo count */}
+      <div className="absolute bottom-3 right-3 flex items-center gap-1.5">
+        {images.length > 1 && (
+          <span className="bg-slate-900/80 backdrop-blur-xs text-white text-[11px] font-bold px-2 py-1 rounded-lg flex items-center gap-1">
+            <Camera className="w-3 h-3 text-emerald-400" />
+            <span>{images.length}</span>
+          </span>
+        )}
+        <span className="bg-slate-900/80 backdrop-blur-xs text-white text-xs font-bold px-2.5 py-1 rounded-lg">
+          {listing.quantityQuintals} {t("common.quintals", lang)}
+        </span>
+      </div>
+    </div>
+  );
+};
 
 interface FarmerInventoryProps {
   farmer: User;
@@ -117,40 +206,7 @@ export const FarmerInventory: React.FC<FarmerInventoryProps> = ({
                   className="bg-white rounded-3xl border border-emerald-100 shadow-sm hover:border-emerald-300 transition-all overflow-hidden flex flex-col justify-between"
                 >
                   <div>
-                    <div className="relative h-36 bg-slate-100 overflow-hidden">
-                      <img 
-                        src={listing.imageUrl} 
-                        alt={listing.cropName}
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase shadow-xs ${
-                          listing.qualityGrade === "Grade A" 
-                            ? "bg-emerald-600 text-white" 
-                            : "bg-amber-500 text-white"
-                        }`}>
-                          {translateGrade(listing.qualityGrade, lang)}
-                        </span>
-                        {listing.isOrganic && (
-                          <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 inline-flex items-center gap-1">
-                            <Leaf className="w-3 h-3 text-emerald-600 shrink-0" aria-hidden="true" />
-                            <span>{t("common.organic", lang)}</span>
-                          </span>
-                        )}
-                      </div>
-                      <div className="absolute bottom-3 right-3 flex items-center gap-1.5">
-                        {listing.images && listing.images.length > 0 && (
-                          <span className="bg-slate-900/80 backdrop-blur-xs text-white text-[11px] font-bold px-2 py-1 rounded-lg flex items-center gap-1">
-                            <Camera className="w-3 h-3 text-emerald-400" />
-                            <span>{listing.images.length}</span>
-                          </span>
-                        )}
-                        <span className="bg-slate-900/80 backdrop-blur-xs text-white text-xs font-bold px-2.5 py-1 rounded-lg">
-                          {listing.quantityQuintals} {t("common.quintals", lang)}
-                        </span>
-                      </div>
-                    </div>
+                    <InventoryCardImage listing={listing} lang={lang} />
 
                     <div className="p-4 space-y-2.5">
                       <div className="flex items-start justify-between gap-1">

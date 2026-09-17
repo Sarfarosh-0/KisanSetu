@@ -11,7 +11,9 @@ import {
   SlidersHorizontal,
   Info,
   Calendar,
-  Leaf
+  Leaf,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { CropListing, User } from "../types";
 import { t, translateCrop, translateGrade } from "../i18n";
@@ -57,13 +59,40 @@ const BuyerListingCard: React.FC<BuyerListingCardProps> = ({ listing, onOpenOrde
   return (
     <div className="bg-white rounded-3xl border border-emerald-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between group">
       <div>
-        <div className="relative h-48 bg-slate-100 overflow-hidden">
+        <div className="relative h-48 bg-slate-100 overflow-hidden group/img">
           <img
             src={currentImage}
             alt={listing.cropName}
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
+
+          {/* Left / Right Arrow Navigation */}
+          {images.length > 1 && (
+            <>
+              <button
+                type="button"
+                aria-label="Previous image"
+                onClick={(e) => { e.stopPropagation(); setActiveImageIndex((activeImageIndex - 1 + images.length) % images.length); }}
+                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 cursor-pointer backdrop-blur-sm z-10"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                aria-label="Next image"
+                onClick={(e) => { e.stopPropagation(); setActiveImageIndex((activeImageIndex + 1) % images.length); }}
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 cursor-pointer backdrop-blur-sm z-10"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+              {/* Image counter pill */}
+              <div className="absolute bottom-10 right-2 bg-black/55 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10">
+                {activeImageIndex + 1}/{images.length}
+              </div>
+            </>
+          )}
+
           <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
             <span className={`text-[11px] font-bold px-3 py-1 rounded-full uppercase shadow-xs ${
               listing.qualityGrade === "Grade A"

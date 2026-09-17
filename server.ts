@@ -1,11 +1,22 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
+import crypto from "crypto";
 import { createServer as createViteServer } from "vite";
 
 const app = express();
 const PORT = 3000;
 
-app.use(express.json());
+// Increase JSON body limit to handle data-URL image payloads gracefully
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+// Serve locally uploaded images as static files
+const UPLOADS_DIR = path.join(process.cwd(), "uploads");
+if (!fs.existsSync(UPLOADS_DIR)) {
+  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
+app.use("/static/uploads", express.static(UPLOADS_DIR));
 
 // ----------------------------------------------------
 // Agricultural Intelligence & Datasets (Aligned with Scikit-learn Baseline)
@@ -619,6 +630,85 @@ app.get("/api/auth/users", (req, res) => {
     return res.json(store.users.filter(u => u.role === (role as string).toUpperCase()));
   }
   res.json(store.users);
+});
+
+// Upload endpoint – accepts multipart/form-data with field name "files"
+app.post("/api/upload", (req, res) => {
+  const contentType = req.headers["content-type"] || "";
+  if (!contentType.includes("multipart/form-data")) {
+    return res.status(400).json({ error: "Expected multipart/form-data" });
+  }
+
+  const boundary = contentType.split("boundary=")[1];
+  if (!boundary) {
+    return res.status(400).json({ error: "Missing multipart boundary" });
+  }
+
+  const chunks: Buffer[] = [];
+  req.on("data", (chunk: Buffer) => chunks.push(chunk));
+  req.on("error", () => res.status(500).json({ error: "Upload stream error" }));
+  req.on("end", () => {
+    try {
+      const body = Buffer.concat(chunks);
+      const sep = Buffer.from("--" + boundary);
+      const urls: string[] = [];
+
+      // Split body on boundary markers
+      let start = 0;
+      const parts: Buffer[] = [];
+      while (start < body.length) {
+        const idx = body.indexOf(sep, start);
+        if (idx === -1) break;
+        const partStart = idx + sep.length;
+        if (body[partStart] === 45 && body[partStart + 1] === 45) break; // --boundary--
+        // skip CRLF after boundary
+        const contentStart = partStart + 2; // skip \r\n
+        const nextBoundary = body.indexOf(sep, contentStart);
+        const partEnd = nextBoundary === -1 ? body.length : nextBoundary - 2; // strip \r\n before boundary
+        parts.push(body.slice(contentStart, partEnd));
+        start = nextBoundary === -1 ? body.length : nextBoundary;
+      }
+
+      if (parts.length === 0) {
+        return res.status(400).json({ error: "No files found in upload" });
+      }
+      if (parts.length > 10) {
+        return res.status(400).json({ error: "Maximum 10 photos allowed per listing" });
+      }
+
+      for (const part of parts) {
+        // Find end of headers (double CRLF)
+        const headerEnd = part.indexOf("\r\n\r\n");
+        if (headerEnd === -1) continue;
+        const headers = part.slice(0, headerEnd).toString();
+        const fileData = part.slice(headerEnd + 4);
+
+        // Extract filename and content-type from headers
+        const filenameMatch = headers.match(/filename="([^"]+)"/i);
+        const ctMatch = headers.match(/Content-Type:\s*([^\r\n]+)/i);
+        const originalName = filenameMatch ? filenameMatch[1] : "upload.jpg";
+        const ct = ctMatch ? ctMatch[1].trim().toLowerCase() : "image/jpeg";
+        const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/jpg"];
+        if (!allowed.includes(ct)) {
+          return res.status(400).json({ error: `Unsupported type '${ct}' for file '${originalName}'` });
+        }
+        if (fileData.length > 5 * 1024 * 1024) {
+          return res.status(400).json({ error: `File '${originalName}' exceeds 5MB limit` });
+        }
+
+        const ext = path.extname(originalName) || ".jpg";
+        const filename = crypto.randomUUID() + ext;
+        const filepath = path.join(UPLOADS_DIR, filename);
+        fs.writeFileSync(filepath, fileData);
+        urls.push("/static/uploads/" + filename);
+      }
+
+      res.json({ urls });
+    } catch (err: any) {
+      console.error("Upload parse error:", err);
+      res.status(500).json({ error: "Failed to process upload" });
+    }
+  });
 });
 
 // 3. Listings

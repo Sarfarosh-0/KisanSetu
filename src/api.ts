@@ -90,6 +90,9 @@ export const API = {
 
   async uploadImages(files: File[]): Promise<string[]> {
     if (!files || files.length === 0) return [];
+
+    // Attempt multipart upload to the server
+    let serverError: string | null = null;
     try {
       const formData = new FormData();
       for (const file of files) {
@@ -104,11 +107,26 @@ export const API = {
         if (json.urls && Array.isArray(json.urls)) {
           return json.urls;
         }
+      } else {
+        // Server explicitly rejected the upload (wrong type, size, etc.) – surface the error
+        const text = await res.text();
+        try {
+          const json = JSON.parse(text);
+          serverError = json.error || json.detail || `Upload failed (${res.status})`;
+        } catch {
+          serverError = `Upload failed (${res.status})`;
+        }
+        throw new Error(serverError);
       }
-    } catch (err) {
-      console.warn("Backend image upload failed, falling back to data URL encoding:", err);
+    } catch (err: any) {
+      // If this is a server-side validation error, re-throw so the UI can show it
+      if (serverError) throw err;
+      // Otherwise it's a network/connectivity issue – fall back to data URLs silently
+      console.warn("Network error during image upload, falling back to data URL encoding:", err);
     }
-    // Fallback: Data URLs
+
+    // Fallback: encode files as base64 data URLs and embed directly in the listing payload.
+    // The 50mb JSON limit on the server can handle up to ~10 photos of 4MB each as data URLs.
     const dataUrls: string[] = [];
     for (const file of files) {
       const url = await new Promise<string>((resolve) => {
