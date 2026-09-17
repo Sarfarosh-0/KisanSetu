@@ -180,7 +180,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* App Name & Branding */}
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#0F6A53] to-[#0B5745] flex items-center justify-center text-white shadow-2xs shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-linear-to-br from-[#0F6A53] to-[#0B5745] flex items-center justify-center text-white shadow-2xs shrink-0">
               <Sprout className="w-4 h-4 text-white" strokeWidth={2.2} />
             </div>
             <div className="flex items-baseline min-w-0">
@@ -343,7 +343,7 @@ export const Header: React.FC<HeaderProps> = ({
               aria-expanded={profileMenuOpen}
               aria-haspopup="true"
             >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0F6A53] to-[#0B5745] text-white font-bold flex items-center justify-center text-xs shadow-2xs shrink-0">
+              <div className="w-8 h-8 rounded-full bg-linear-to-br from-[#0F6A53] to-[#0B5745] text-white font-bold flex items-center justify-center text-xs shadow-2xs shrink-0">
                 {userInitial}
               </div>
             </button>
@@ -355,7 +355,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <div className="px-4 pb-3 border-b border-slate-100">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0F6A53] to-[#0B5745] text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
+                    <div className="w-10 h-10 rounded-xl bg-linear-to-br from-[#0F6A53] to-[#0B5745] text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
                       {userInitial}
                     </div>
                     <div className="min-w-0 flex-1">
