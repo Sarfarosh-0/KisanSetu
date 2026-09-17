@@ -219,63 +219,8 @@ export const Footer: React.FC<FooterProps> = ({
             </div>
           </div>
 
-          {/* Column 2: Quick Links */}
-          <div className="lg:col-span-2 xl:col-span-2 space-y-2.5">
-            <div>
-              <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">
-                {t("footer.quickLinks", lang)}
-              </h3>
-              <div className="w-7 h-0.5 bg-[#4ADE80] rounded-full mt-1.5" />
-            </div>
 
-            <ul className="space-y-2 pt-0.5">
-              <li>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("inventory")}
-                  className="flex items-center gap-2.5 text-xs sm:text-sm text-[#C4DDD2] hover:text-[#4ADE80] transition-colors cursor-pointer group text-left"
-                >
-                  <Home className="w-3.5 h-3.5 text-[#4ADE80] group-hover:scale-110 transition-transform shrink-0" strokeWidth={1.8} />
-                  <span>{t("footer.home", lang)}</span>
-                </button>
-              </li>
-
-              <li>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("marketplace", "BUYER")}
-                  className="flex items-center gap-2.5 text-xs sm:text-sm text-[#C4DDD2] hover:text-[#4ADE80] transition-colors cursor-pointer group text-left"
-                >
-                  <ShoppingBag className="w-3.5 h-3.5 text-[#4ADE80] group-hover:scale-110 transition-transform shrink-0" strokeWidth={1.8} />
-                  <span>{t("footer.products", lang)}</span>
-                </button>
-              </li>
-
-              <li>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("pricing_ai")}
-                  className="flex items-center gap-2.5 text-xs sm:text-sm text-[#C4DDD2] hover:text-[#4ADE80] transition-colors cursor-pointer group text-left"
-                >
-                  <Users className="w-3.5 h-3.5 text-[#4ADE80] group-hover:scale-110 transition-transform shrink-0" strokeWidth={1.8} />
-                  <span>{t("footer.aboutUs", lang)}</span>
-                </button>
-              </li>
-
-              <li>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("logistics")}
-                  className="flex items-center gap-2.5 text-xs sm:text-sm text-[#C4DDD2] hover:text-[#4ADE80] transition-colors cursor-pointer group text-left"
-                >
-                  <Mail className="w-3.5 h-3.5 text-[#4ADE80] group-hover:scale-110 transition-transform shrink-0" strokeWidth={1.8} />
-                  <span>{t("footer.contactUs", lang)}</span>
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 3: For Farmers */}
+          {/* Column 2: For Farmers */}
           <div className="lg:col-span-3 space-y-2.5">
             <div>
               <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">
@@ -360,20 +305,6 @@ export const Footer: React.FC<FooterProps> = ({
                   <span>+91 98765 43210</span>
                 </a>
               </li>
-
-              <li>
-                <div className="flex items-center gap-2.5">
-                  <MapPin className="w-3.5 h-3.5 text-[#4ADE80] shrink-0" strokeWidth={1.8} />
-                  <span>{t("footer.india", lang)}</span>
-                </div>
-              </li>
-
-              <li>
-                <div className="flex items-center gap-2.5">
-                  <Clock className="w-3.5 h-3.5 text-[#4ADE80] shrink-0" strokeWidth={1.8} />
-                  <span>{t("footer.workingHours", lang)}</span>
-                </div>
-              </li>
             </ul>
           </div>
 
@@ -384,7 +315,6 @@ export const Footer: React.FC<FooterProps> = ({
           <div className="flex items-center gap-2 sm:gap-3 text-xs text-[#C4DDD2] font-medium text-center">
             <Leaf className="w-4 h-4 text-[#4ADE80] shrink-0" strokeWidth={2} />
             <span>{t("footer.copyright", lang)}</span>
-            <Leaf className="w-4 h-4 text-[#4ADE80] shrink-0 -scale-x-100" strokeWidth={2} />
           </div>
         </div>
 
