@@ -50,7 +50,7 @@ export const Footer: React.FC<FooterProps> = ({
   return (
     <footer
       id="app-footer"
-      className="relative bg-[#0F6A53] text-[#D1E3DA] overflow-hidden border-t border-[#0C382B] selection:bg-[#4ADE80] selection:text-[#06241B]"
+      className="relative bg-[#084738] text-[#D1E3DA] overflow-hidden border-t border-[#0C382B] selection:bg-[#4ADE80] selection:text-[#06241B]"
       aria-label="Site Footer"
     >
       {/* Background Farm Landscape Icons (Replacing SVG Silhouette) */}
