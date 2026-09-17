@@ -30,7 +30,7 @@ export const Layout: React.FC<LayoutProps> = ({
   onOpenApiDocs,
   onSelectUserRole
 }) => {
-  // Unified single source of truth for sidebar open/closed state
+  // Single source of truth for desktop sidebar open/closed state
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(() => {
     try {
       if (typeof window !== "undefined" && window.innerWidth < 1024) {
@@ -49,7 +49,7 @@ export const Layout: React.FC<LayoutProps> = ({
   // Global search state
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Persist sidebar state
+  // Persist desktop sidebar state
   useEffect(() => {
     try {
       localStorage.setItem("kisansetu_sidebar_open", String(isSidebarOpen));
@@ -58,32 +58,17 @@ export const Layout: React.FC<LayoutProps> = ({
     }
   }, [isSidebarOpen]);
 
-  // Lock mobile body scroll when drawer is open on small screens
-  useEffect(() => {
-    if (isSidebarOpen && typeof window !== "undefined" && window.innerWidth < 1024) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isSidebarOpen]);
-
-  // Keyboard shortcuts: Cmd/Ctrl + B toggles sidebar; Escape closes sidebar
+  // Keyboard shortcut: Cmd/Ctrl + B toggles desktop sidebar
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "b") {
         e.preventDefault();
         setIsSidebarOpen(prev => !prev);
       }
-      if (e.key === "Escape" && isSidebarOpen) {
-        setIsSidebarOpen(false);
-      }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isSidebarOpen]);
+  }, []);
 
   const handleToggleSidebar = useCallback(() => {
     setIsSidebarOpen(prev => !prev);
@@ -95,8 +80,7 @@ export const Layout: React.FC<LayoutProps> = ({
 
   return (
     <div className="min-h-screen bg-[#F0FDF4] text-slate-900 flex flex-col font-sans selection:bg-emerald-200 antialiased">
-      
-      {/* Modern Vertical Collapsible Sidebar */}
+      {/* Sidebar Component (Desktop Sidebar & Mobile Bottom Nav) */}
       <Sidebar
         user={user}
         activeTab={activeTab}
@@ -112,13 +96,12 @@ export const Layout: React.FC<LayoutProps> = ({
         onSelectUserRole={onSelectUserRole}
       />
 
-      {/* Main Content Area (Fluidly offsets according to sidebar open state) */}
-      <div 
-        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out ${
-          isSidebarOpen ? "lg:pl-64" : "lg:pl-0"
-        }`}
+      {/* Main Content Area (Fluidly offsets according to sidebar open state on desktop) */}
+      <div
+        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out pb-20 lg:pb-0 ${isSidebarOpen ? "lg:pl-64" : "lg:pl-0"
+          }`}
       >
-        {/* Header with App Name, Conditional Toggle, Search & Language Switcher */}
+        {/* Header */}
         <Header
           user={user}
           activeTab={activeTab}
@@ -135,12 +118,11 @@ export const Layout: React.FC<LayoutProps> = ({
           onOpenApiDocs={onOpenApiDocs}
         />
 
-        {/* Dynamic Page Content */}
+        {/* Page Content */}
         <div className="flex-1 flex flex-col w-full">
           {children}
         </div>
       </div>
-
     </div>
   );
 };

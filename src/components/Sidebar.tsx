@@ -7,8 +7,7 @@ import {
   MapPin,
   LogOut,
   Layers,
-  Truck,
-  X
+  Truck
 } from "lucide-react";
 import type { User, UserRole } from "../types";
 
@@ -38,6 +37,8 @@ interface NavItemConfig {
   targetTab: string;
   labelEn: string;
   labelHi: string;
+  shortLabelEn: string;
+  shortLabelHi: string;
   icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
 }
 
@@ -46,24 +47,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
   activeTab,
   onSelectTab,
   lang,
-  isOpen,
-  onClose,
-  onToggle,
-  isCollapsed,
-  onToggleCollapse,
-  isMobileOpen,
-  onCloseMobile,
+  isOpen = true,
   onOpenNewListing,
-  onSignOut,
-  onSelectUserRole
+  onSignOut
 }) => {
-  // Role-appropriate navigation items with zero promo badges or clutter
   const farmerNavItems: NavItemConfig[] = [
     {
       id: "inventory",
       targetTab: "inventory",
       labelEn: "Farm Inventory",
       labelHi: "मेरी फसल व उपज",
+      shortLabelEn: "Inventory",
+      shortLabelHi: "उपज",
       icon: Sprout
     },
     {
@@ -71,6 +66,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       targetTab: "buyer_requests",
       labelEn: "Buyer Demands",
       labelHi: "खरीदार मांग (RFQ)",
+      shortLabelEn: "Demands",
+      shortLabelHi: "मांग",
       icon: Layers
     },
     {
@@ -78,6 +75,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       targetTab: "payouts",
       labelEn: "Payouts & Escrow",
       labelHi: "भुगतान व एस्क्रो",
+      shortLabelEn: "Payouts",
+      shortLabelHi: "भुगतान",
       icon: CreditCard
     },
     {
@@ -85,6 +84,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       targetTab: "pricing",
       labelEn: "Mandi Rates",
       labelHi: "लाइव मंडी भाव",
+      shortLabelEn: "Mandi Rates",
+      shortLabelHi: "मंडी भाव",
       icon: Radio
     }
   ];
@@ -95,6 +96,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       targetTab: "bulk_orders",
       labelEn: "Bulk RFQs",
       labelHi: "थोक मांग",
+      shortLabelEn: "Bulk RFQs",
+      shortLabelHi: "थोक मांग",
       icon: Layers
     },
     {
@@ -102,6 +105,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       targetTab: "contracts",
       labelEn: "Contracts Tracking",
       labelHi: "अनुबंध ट्रैकिंग",
+      shortLabelEn: "Contracts",
+      shortLabelHi: "अनुबंध",
       icon: Truck
     },
     {
@@ -109,6 +114,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       targetTab: "payments",
       labelEn: "Payments & Escrow",
       labelHi: "भुगतान व एस्क्रो",
+      shortLabelEn: "Payments",
+      shortLabelHi: "भुगतान",
       icon: CreditCard
     },
     {
@@ -116,37 +123,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
       targetTab: "pricing",
       labelEn: "Mandi Rates",
       labelHi: "लाइव मंडी भाव",
+      shortLabelEn: "Mandi Rates",
+      shortLabelHi: "मंडी भाव",
       icon: Radio
     }
   ];
 
   const navItems = user.role === "FARMER" ? farmerNavItems : buyerNavItems;
-
-  // Determine sidebar visibility from unified or legacy props
-  const isSidebarOpen = isOpen !== undefined
-    ? isOpen
-    : (isMobileOpen !== undefined ? isMobileOpen : !isCollapsed);
-
-  const handleClose = () => {
-    if (onClose) {
-      onClose();
-    } else if (onCloseMobile) {
-      onCloseMobile();
-    } else if (onToggleCollapse && !isCollapsed) {
-      onToggleCollapse();
-    } else if (onToggle) {
-      onToggle();
-    }
-  };
-
   const userInitial = user.name ? user.name.charAt(0).toUpperCase() : "U";
-
-  const handleNavClick = (item: NavItemConfig) => {
-    onSelectTab(item.targetTab);
-    if (typeof window !== "undefined" && window.innerWidth < 1024) {
-      handleClose();
-    }
-  };
 
   const handleQuickAction = () => {
     if (user.role === "FARMER") {
@@ -158,41 +142,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
     } else {
       onSelectTab("bulk_orders");
     }
-    if (typeof window !== "undefined" && window.innerWidth < 1024) {
-      handleClose();
-    }
   };
+
+  // Split farmer navigation into left/right groups for mobile bottom bar center CTA slot
+  const farmerLeftNav = farmerNavItems.slice(0, 2);
+  const farmerRightNav = farmerNavItems.slice(2, 4);
 
   return (
     <>
-      {/* Mobile Backdrop Overlay (Active only when sidebar is open on small screens) */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-30 lg:hidden animate-in fade-in duration-200"
-          onClick={handleClose}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Modern Collapsible Sidebar Panel */}
+      {/* =================================================================== */}
+      {/* DESKTOP SIDEBAR (Visible on lg and above)                           */}
+      {/* =================================================================== */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-40 w-64 bg-white border-r border-slate-200/80 transition-transform duration-300 ease-in-out flex flex-col select-none shadow-xl lg:shadow-none ${isSidebarOpen ? "translate-x-0" : "-translate-x-full pointer-events-none"
+        className={`hidden lg:flex fixed top-0 bottom-0 left-0 z-40 w-64 bg-white border-r border-slate-200/80 transition-transform duration-300 ease-in-out flex-col select-none ${isOpen ? "translate-x-0" : "-translate-x-full pointer-events-none"
           }`}
         aria-label="Application Sidebar"
-        aria-hidden={!isSidebarOpen}
       >
-        {/* =================================================================== */}
-        {/* 1. Header with App Branding & Close Button (X)                      */}
-        {/* =================================================================== */}
+        {/* Branding Header */}
         <div className="p-4 flex items-center justify-between border-b border-slate-200/70 shrink-0">
           <button
             type="button"
             onClick={() => {
               const defaultTab = user.role === "FARMER" ? "inventory" : "bulk_orders";
               onSelectTab(defaultTab);
-              if (typeof window !== "undefined" && window.innerWidth < 1024) {
-                handleClose();
-              }
             }}
             className="flex items-center gap-2.5 text-left rounded-xl cursor-pointer group focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]/30"
             title="किसानSetu Agricultural Exchange"
@@ -212,25 +184,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </span>
             </div>
           </button>
-
-          {/* Close button (X) inside the expanded Sidebar */}
-          <button
-            type="button"
-            onClick={handleClose}
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 border border-transparent hover:border-slate-200/80 transition cursor-pointer"
-            title="Close navigation sidebar"
-            aria-label="Close navigation sidebar"
-          >
-            <X className="w-4 h-4 text-slate-600" />
-          </button>
         </div>
 
-
-        {/* =================================================================== */}
-        {/* 2. Streamlined Navigation Menu Items                                */}
-        {/* =================================================================== */}
-        <div className="flex-1 overflow-y-auto px-3 py-2">
-          <nav className="space-y-1" role="navigation" aria-label="Sidebar Navigation">
+        {/* Navigation Items */}
+        <div className="flex-1 overflow-y-auto px-3 py-3">
+          <nav className="space-y-1.5" role="navigation" aria-label="Sidebar Navigation">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.targetTab;
@@ -240,39 +198,31 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => handleNavClick(item)}
-                  className={`w-full group relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors duration-150 cursor-pointer text-left ${isActive
-                      ? "bg-[#F0F8F5] text-[#0F6A53] font-semibold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70"
+                  onClick={() => onSelectTab(item.targetTab)}
+                  className={`w-full group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 cursor-pointer text-left focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]/40 ${isActive
+                      ? "bg-[#0F6A53] text-white shadow-xs"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80"
                     }`}
                   aria-current={isActive ? "page" : undefined}
                 >
                   <Icon
-                    className={`w-5 h-5 shrink-0 transition-transform duration-150 ${isActive ? "text-[#0F6A53]" : "text-slate-400 group-hover:text-slate-600"
+                    className={`w-5 h-5 shrink-0 ${isActive ? "text-white" : "text-slate-400 group-hover:text-slate-600"
                       }`}
-                    strokeWidth={isActive ? 2.2 : 1.8}
+                    strokeWidth={isActive ? 2.4 : 1.8}
                   />
                   <span className="truncate">{itemLabel}</span>
-
-                  {/* Active indicator bar on left */}
-                  {isActive && (
-                    <span className="absolute left-0 top-2 bottom-2 w-1 bg-[#0F6A53] rounded-r-full" />
-                  )}
                 </button>
               );
             })}
           </nav>
         </div>
 
-
-        {/* =================================================================== */}
-        {/* 3. Quick Action CTA (Role-Aware)                                    */}
-        {/* =================================================================== */}
+        {/* Quick Action CTA */}
         <div className="p-3 shrink-0">
           <button
             type="button"
             onClick={handleQuickAction}
-            className="w-full h-10 px-3 rounded-xl flex items-center justify-center gap-2 font-semibold text-xs text-white bg-gradient-to-r from-[#0F6A53] to-[#0B5745] hover:brightness-105 active:scale-[0.99] transition shadow-xs hover:shadow cursor-pointer"
+            className="w-full h-10 px-3 rounded-xl flex items-center justify-center gap-2 font-semibold text-xs text-white bg-gradient-to-r from-[#0F6A53] to-[#0B5745] hover:brightness-105 active:scale-[0.99] transition shadow-xs hover:shadow cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]/40"
           >
             <Plus className="w-4 h-4 text-white" strokeWidth={2.4} />
             <span>
@@ -283,10 +233,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
 
-
-        {/* =================================================================== */}
-        {/* 4. User Profile Footer Card & Sign Out                              */}
-        {/* =================================================================== */}
+        {/* User Profile Footer Card */}
         <div className="p-3 border-t border-slate-200/70 bg-slate-50/50 shrink-0">
           <div className="space-y-2.5">
             <div className="flex items-center gap-2.5">
@@ -304,15 +251,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
             </div>
 
-            {/* Sign Out Option */}
             {onSignOut && (
               <button
                 type="button"
-                onClick={() => {
-                  onSignOut();
-                  handleClose();
-                }}
-                className="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-rose-600 hover:bg-rose-50 text-[11px] font-bold transition cursor-pointer"
+                onClick={onSignOut}
+                className="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-rose-600 hover:bg-rose-50 text-[11px] font-bold transition cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-rose-500/30"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>{lang === "hi" ? "लॉग आउट करें" : "Sign Out"}</span>
@@ -320,8 +263,106 @@ export const Sidebar: React.FC<SidebarProps> = ({
             )}
           </div>
         </div>
-
       </aside>
+
+      {/* =================================================================== */}
+      {/* MOBILE BOTTOM NAVIGATION BAR (Visible on screens below lg)          */}
+      {/* =================================================================== */}
+      <nav
+        className="flex lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200/90 shadow-lg px-2 py-1 items-center justify-around min-h-[56px] pb-[max(0.35rem,env(safe-area-inset-bottom))]"
+        aria-label="Mobile Navigation"
+      >
+        {user.role === "FARMER" ? (
+          <>
+            {/* Left 2 Farmer Nav Items */}
+            {farmerLeftNav.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.targetTab;
+              const shortLabel = lang === "hi" ? item.shortLabelHi : item.shortLabelEn;
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => onSelectTab(item.targetTab)}
+                  className={`flex-1 flex flex-col items-center justify-center min-h-[56px] py-1 px-1 text-center transition-colors cursor-pointer rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]/30 ${isActive ? "text-[#0F6A53] font-bold" : "text-slate-500 hover:text-slate-800 font-medium"
+                    }`}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  <Icon
+                    className={`w-5 h-5 ${isActive ? "text-[#0F6A53]" : "text-slate-400"}`}
+                    strokeWidth={isActive ? 2.4 : 1.8}
+                  />
+                  <span className="text-[10px] leading-tight mt-1 truncate max-w-[64px]">{shortLabel}</span>
+                </button>
+              );
+            })}
+
+            {/* Prominent Center "Add New Crop" Action Button */}
+            <div className="flex flex-col items-center justify-center -mt-4 shrink-0 px-1">
+              <button
+                type="button"
+                onClick={handleQuickAction}
+                aria-label={lang === "hi" ? "नई फसल जोड़ें" : "List New Harvest"}
+                className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0F6A53] to-[#0B5745] text-white flex items-center justify-center shadow-md hover:brightness-105 active:scale-95 transition-transform border-2 border-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]"
+              >
+                <Plus className="w-6 h-6 text-white" strokeWidth={2.6} />
+              </button>
+              <span className="text-[10px] font-bold text-[#0F6A53] mt-0.5 truncate max-w-[68px]">
+                {lang === "hi" ? "नई फसल" : "Add Crop"}
+              </span>
+            </div>
+
+            {/* Right 2 Farmer Nav Items */}
+            {farmerRightNav.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.targetTab;
+              const shortLabel = lang === "hi" ? item.shortLabelHi : item.shortLabelEn;
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => onSelectTab(item.targetTab)}
+                  className={`flex-1 flex flex-col items-center justify-center min-h-[56px] py-1 px-1 text-center transition-colors cursor-pointer rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]/30 ${isActive ? "text-[#0F6A53] font-bold" : "text-slate-500 hover:text-slate-800 font-medium"
+                    }`}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  <Icon
+                    className={`w-5 h-5 ${isActive ? "text-[#0F6A53]" : "text-slate-400"}`}
+                    strokeWidth={isActive ? 2.4 : 1.8}
+                  />
+                  <span className="text-[10px] leading-tight mt-1 truncate max-w-[64px]">{shortLabel}</span>
+                </button>
+              );
+            })}
+          </>
+        ) : (
+          /* Buyer Navigation Items */
+          buyerNavItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.targetTab;
+            const shortLabel = lang === "hi" ? item.shortLabelHi : item.shortLabelEn;
+
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onSelectTab(item.targetTab)}
+                className={`flex-1 flex flex-col items-center justify-center min-h-[56px] py-1 px-1 text-center transition-colors cursor-pointer rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]/30 ${isActive ? "text-[#0F6A53] font-bold" : "text-slate-500 hover:text-slate-800 font-medium"
+                  }`}
+                aria-current={isActive ? "page" : undefined}
+              >
+                <Icon
+                  className={`w-5 h-5 ${isActive ? "text-[#0F6A53]" : "text-slate-400"}`}
+                  strokeWidth={isActive ? 2.4 : 1.8}
+                />
+                <span className="text-[10px] leading-tight mt-1 truncate max-w-[64px]">{shortLabel}</span>
+              </button>
+            );
+          })
+        )}
+      </nav>
     </>
   );
 };

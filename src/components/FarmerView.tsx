@@ -34,8 +34,7 @@ export const FarmerView: React.FC<FarmerViewProps> = ({
   lang,
   openCreateModal,
   onCloseCreateModal,
-  activeSubTab = "inventory",
-  onSelectSubTab
+  activeSubTab = "inventory"
 }) => {
   const [internalTab, setInternalTab] = useState<FarmerSubTab>(activeSubTab);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -76,7 +75,6 @@ export const FarmerView: React.FC<FarmerViewProps> = ({
     setEditingListing(null);
   };
 
-  // If farmer is creating or editing a listing, render the full-page FarmerCropForm view!
   if (isFormOpen) {
     return (
       <FarmerCropForm
