@@ -72,12 +72,35 @@ app = FastAPI(
 
 app.mount("/static/uploads", StaticFiles(directory="uploads"), name="uploads")
 
+# ---------------------------------------------------------------------------
+# CORS — Restrict allowed origins
+# ---------------------------------------------------------------------------
+# In production: set ALLOWED_ORIGINS in your Render environment variables.
+# Multiple origins: comma-separated, e.g.
+#   ALLOWED_ORIGINS=https://kisansetu.onrender.com,https://kisansetu.vercel.app
+# In development: falls back to localhost ports automatically.
+# ---------------------------------------------------------------------------
+_dev_origins = [
+    "http://localhost:3000",   # Vite / Express dev server
+    "http://localhost:5173",   # Vite default fallback port
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173",
+]
+
+_env_origins_raw = os.getenv("ALLOWED_ORIGINS", "")
+_prod_origins = [o.strip() for o in _env_origins_raw.split(",") if o.strip()]
+
+# Merge: always include dev origins locally; prod origins added when env var is set
+_allowed_origins = list(dict.fromkeys(_dev_origins + _prod_origins))  # deduplicated, order-preserved
+
+logger.info(f"🌐 CORS allowed origins: {_allowed_origins}")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"],
 )
 
 # ----------------------------------------------------
