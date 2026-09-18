@@ -26,9 +26,36 @@ from schemas import (
 from ml_engine import price_engine, BASE_CROP_MANDI_RATES
 from route_optimizer import optimize_logistics_batch
 
+import logging
+logger = logging.getLogger("kisansetu")
+
 # Ensure database tables and upload directory exist
 Base.metadata.create_all(bind=engine)
 os.makedirs("uploads", exist_ok=True)
+
+# ----------------------------------------------------
+# Cloudinary Initialization (runs once at startup)
+# Set CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@<cloud_name>
+# in your environment / Render dashboard to enable persistent cloud storage.
+# Falls back to local disk when not configured (development mode).
+# ----------------------------------------------------
+_cloudinary_enabled = False
+_cloudinary_url = os.getenv("CLOUDINARY_URL", "")
+if _cloudinary_url:
+    try:
+        import cloudinary
+        import cloudinary.uploader
+        cloudinary.config(cloudinary_url=_cloudinary_url)   # parses URL automatically
+        _cloudinary_enabled = True
+        logger.info("✅ Cloudinary initialized — images will be stored in Cloudinary cloud.")
+    except ImportError:
+        logger.warning("⚠️  CLOUDINARY_URL is set but the 'cloudinary' package is not installed. "
+                       "Run: pip install cloudinary>=1.38.0")
+    except Exception as _e:
+        logger.error(f"❌ Cloudinary initialization failed: {_e}")
+else:
+    logger.info("ℹ️  CLOUDINARY_URL not set — using local disk storage (uploads/ directory). "
+                "Set CLOUDINARY_URL in environment for persistent cloud image storage.")
 
 app = FastAPI(
     title="KisanSetu API — Direct Farmer-to-Consumer Agri-Marketplace",
@@ -57,6 +84,7 @@ def health_check():
         "status": "healthy",
         "service": "KisanSetu Agri-Marketplace API",
         "version": "1.0.0",
+        "image_storage": "cloudinary" if _cloudinary_enabled else "local_disk",
         "timestamp": datetime.utcnow().isoformat()
     }
 
@@ -97,42 +125,84 @@ def get_users(role: Optional[str] = None, db: Session = Depends(get_db)):
 # ----------------------------------------------------
 @app.post("/api/upload", tags=["Marketplace"])
 async def upload_images(files: List[UploadFile] = File(...)):
-    """Uploads listing photos (max 10 files, <=5MB each, image/* types). Returns array of image URLs."""
+    """
+    Upload listing photos (max 10 files, <=5MB each, JPEG/PNG/WEBP).
+    Returns an array of publicly accessible image URLs.
+
+    Storage strategy (automatic):
+      - If CLOUDINARY_URL env var is set → uploads to Cloudinary (persistent, CDN-backed).
+      - Otherwise → saves to local uploads/ directory (development only; ephemeral on cloud hosts).
+    """
     if len(files) > 10:
         raise HTTPException(status_code=400, detail="Maximum 10 photos allowed per listing.")
 
-    allowed_types = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/jpg"]
+    allowed_types = {"image/jpeg", "image/png", "image/webp", "image/gif", "image/jpg"}
     uploaded_urls = []
 
     for file in files:
+        # --- Validate content type ---
         if file.content_type and file.content_type.lower() not in allowed_types:
-            raise HTTPException(status_code=400, detail=f"File '{file.filename}' is not a supported image type (JPEG, PNG, WEBP).")
+            raise HTTPException(
+                status_code=400,
+                detail=f"File '{file.filename}' is not a supported image type (JPEG, PNG, WEBP)."
+            )
 
         content = await file.read()
+
+        # --- Validate file size (5 MB hard cap) ---
         if len(content) > 5 * 1024 * 1024:
-            raise HTTPException(status_code=400, detail=f"File '{file.filename}' exceeds maximum allowed size of 5MB.")
+            raise HTTPException(
+                status_code=400,
+                detail=f"File '{file.filename}' exceeds maximum allowed size of 5 MB."
+            )
 
-        # Check if Cloudinary is configured via environment variable
-        cloudinary_url = os.getenv("CLOUDINARY_URL")
-        if cloudinary_url:
+        # --- Cloudinary upload (production) ---
+        if _cloudinary_enabled:
             try:
-                import cloudinary
                 import cloudinary.uploader
-                upload_res = cloudinary.uploader.upload(content, folder="kisansetu_crops")
-                uploaded_urls.append(upload_res.get("secure_url"))
-                continue
-            except Exception as e:
-                pass  # Fallback to local storage if Cloudinary upload fails
+                # Use original filename stem as public_id for nicer Cloudinary URLs
+                stem = os.path.splitext(file.filename or uuid.uuid4().hex)[0]
+                public_id = f"kisansetu_crops/{uuid.uuid4().hex}_{stem}"
+                upload_res = cloudinary.uploader.upload(
+                    content,
+                    public_id=public_id,
+                    overwrite=False,
+                    resource_type="image",
+                    quality="auto",       # Cloudinary auto-optimizes quality
+                    fetch_format="auto"  # Serves WebP/AVIF to supporting browsers
+                )
+                secure_url = upload_res.get("secure_url", "")
+                if secure_url:
+                    uploaded_urls.append(secure_url)
+                    logger.info(f"Cloudinary upload OK: {secure_url}")
+                    continue
+                else:
+                    logger.error(f"Cloudinary returned no URL for '{file.filename}': {upload_res}")
+                    raise HTTPException(status_code=502, detail="Cloudinary upload failed — no URL returned.")
+            except HTTPException:
+                raise
+            except Exception as cloud_err:
+                logger.error(f"Cloudinary upload error for '{file.filename}': {cloud_err}")
+                raise HTTPException(
+                    status_code=502,
+                    detail=f"Image upload to Cloudinary failed: {cloud_err}. "
+                           f"Check CLOUDINARY_URL and that the 'cloudinary' package is installed."
+                )
 
-        # Local storage fallback
+        # --- Local disk fallback (development only) ---
         ext = os.path.splitext(file.filename or "")[1] or ".jpg"
         filename = f"{uuid.uuid4().hex}{ext}"
         filepath = os.path.join("uploads", filename)
-        with open(filepath, "wb") as f:
-            f.write(content)
-        uploaded_urls.append(f"/static/uploads/{filename}")
+        with open(filepath, "wb") as disk_file:
+            disk_file.write(content)
+        local_url = f"/static/uploads/{filename}"
+        uploaded_urls.append(local_url)
+        logger.debug(f"Local upload saved: {filepath}")
 
-    return {"urls": uploaded_urls}
+    return {
+        "urls": uploaded_urls,
+        "storage": "cloudinary" if _cloudinary_enabled else "local"
+    }
 
 
 @app.get("/api/listings", response_model=List[CropListingResponse], tags=["Marketplace"])
