@@ -11,3 +11,5 @@ passlib[bcrypt]>=1.7.4
 psycopg2-binary>=2.9.9
 cloudinary>=1.38.0
 python-dotenv>=1.0.0
+sentry-sdk[fastapi]>=2.0.0
+slowapi>=0.1.9

@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
+    "@sentry/react": "^8.0.0",
     "@tailwindcss/vite": "^4.1.14",
     "@types/multer": "^2.2.0",
     "@vitejs/plugin-react": "^5.0.4",

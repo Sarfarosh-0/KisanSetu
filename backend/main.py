@@ -40,6 +40,44 @@ logger = logging.getLogger("kisansetu")
 
 from sqlalchemy import text
 
+# ---------------------------------------------------------------------------
+# Sentry — server-side crash & performance reporting
+# Set SENTRY_DSN in backend/.env (or Render env vars) to enable.
+# Omitting it is safe — sentry_sdk.init() is a documented no-op when dsn=''
+# ---------------------------------------------------------------------------
+import sentry_sdk
+from sentry_sdk.integrations.fastapi import FastApiIntegration
+from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+from sentry_sdk.integrations.logging import LoggingIntegration
+
+_sentry_dsn = os.getenv("SENTRY_DSN", "")
+if _sentry_dsn:
+    sentry_sdk.init(
+        dsn=_sentry_dsn,
+        environment=os.getenv("APP_ENV", "production"),
+        integrations=[
+            FastApiIntegration(transaction_style="endpoint"),
+            SqlalchemyIntegration(),
+            LoggingIntegration(level=logging.WARNING, event_level=logging.ERROR),
+        ],
+        # Capture 10% of transactions for performance profiling (free tier)
+        traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.1")),
+        send_default_pii=False,  # GDPR: do not attach user PII to events
+    )
+    logger.info("✅ Sentry initialised — crash reporting is active.")
+else:
+    logger.info("ℹ️  SENTRY_DSN not set — crash reporting disabled (local dev).")
+
+# ---------------------------------------------------------------------------
+# Rate Limiting — slowapi (in-process, per-IP)
+# ---------------------------------------------------------------------------
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from fastapi import Request as FastAPIRequest
+
+limiter = Limiter(key_func=get_remote_address)
+
 # Ensure database tables and upload directory exist
 Base.metadata.create_all(bind=engine)
 os.makedirs("uploads", exist_ok=True)
@@ -91,6 +129,10 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+# Attach slowapi limiter to the app
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 app.mount("/static/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # ---------------------------------------------------------------------------
@@ -141,7 +183,8 @@ def health_check():
 # 2. Auth & Profiles (Role-based with JWT)
 # ----------------------------------------------------
 @app.post("/api/auth/register", response_model=UserResponse, tags=["Authentication"])
-def register_user(payload: UserRegister, db: Session = Depends(get_db)):
+@limiter.limit("10/minute")  # Brute-force protection
+def register_user(request: FastAPIRequest, payload: UserRegister, db: Session = Depends(get_db)):
     """Registers a new user account with secure password hashing and issues a JWT token."""
     existing = db.query(User).filter(User.phone == payload.phone).first()
     if existing:
@@ -171,7 +214,8 @@ def register_user(payload: UserRegister, db: Session = Depends(get_db)):
     return resp
 
 @app.post("/api/auth/login", response_model=UserResponse, tags=["Authentication"])
-def login_or_register(payload: LoginRequest, db: Session = Depends(get_db)):
+@limiter.limit("10/minute")  # Brute-force protection
+def login_or_register(request: FastAPIRequest, payload: LoginRequest, db: Session = Depends(get_db)):
     """Logs in an existing user or creates a demo user, verifies password if set/provided, and issues a JWT token."""
     user = db.query(User).filter(User.phone == payload.phone).first()
     if not user:
@@ -501,7 +545,8 @@ def delete_crop_listing(
 # 4. AI-Based Fair Price Recommendation Engine
 # ----------------------------------------------------
 @app.post("/api/pricing/recommend", response_model=PricePredictionResponse, tags=["AI Price Engine"])
-def predict_fair_price(payload: PricePredictionRequest):
+@limiter.limit("30/minute")  # DoS protection on the public ML endpoint
+def predict_fair_price(request: FastAPIRequest, payload: PricePredictionRequest):
     """
     Predicts a fair price range [Min Price - Max Price] using crop type, quantity,
     quality grade, location, and seasonality inputs.
@@ -518,7 +563,8 @@ def predict_fair_price(payload: PricePredictionRequest):
     return result
 
 @app.get("/api/pricing/mandi-compare/{crop_name}", tags=["AI Price Engine"])
-def compare_mandi_and_fair_price(crop_name: str):
+@limiter.limit("30/minute")  # DoS protection
+def compare_mandi_and_fair_price(request: FastAPIRequest, crop_name: str):
     """
     Side-by-side comparison: Mandi Price vs. AI Recommended Price vs. Buyer Offers vs. Retail.
     """

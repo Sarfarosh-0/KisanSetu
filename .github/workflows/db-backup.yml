@@ -1,0 +1,78 @@
+name: Weekly Database Backup
+
+on:
+  # Run every Sunday at 02:00 UTC
+  schedule:
+    - cron: "0 2 * * 0"
+  # Also allow manual on-demand runs from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  backup:
+    name: pg_dump → gzip → gpg → artifact
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # ------------------------------------------------------------------ #
+      # 1. Install PostgreSQL client tools (provides pg_dump)
+      # ------------------------------------------------------------------ #
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-client gnupg
+
+      # ------------------------------------------------------------------ #
+      # 2. Dump the database
+      # ------------------------------------------------------------------ #
+      - name: Run pg_dump
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          PGPASSWORD: ""   # psycopg2-style URL carries the password inline
+        run: |
+          TIMESTAMP=$(date -u +"%Y%m%d_%H%M%S")
+          DUMP_FILE="kisansetu_backup_${TIMESTAMP}.sql"
+          GZ_FILE="${DUMP_FILE}.gz"
+          GPG_FILE="${GZ_FILE}.gpg"
+
+          echo "▶ Dumping database …"
+          pg_dump "$DATABASE_URL" \
+            --no-owner \
+            --no-acl \
+            --format=plain \
+            --file="$DUMP_FILE"
+
+          echo "▶ Compressing …"
+          gzip -9 "$DUMP_FILE"
+
+          echo "▶ Encrypting with GPG symmetric cipher …"
+          echo "${{ secrets.BACKUP_PASSPHRASE }}" | \
+            gpg --batch --yes --passphrase-fd 0 \
+                --symmetric --cipher-algo AES256 \
+                --output "$GPG_FILE" "$GZ_FILE"
+
+          # Expose filename as an env var for the upload step
+          echo "GPG_FILE=$GPG_FILE" >> "$GITHUB_ENV"
+
+      # ------------------------------------------------------------------ #
+      # 3. Upload as a GitHub Actions artifact (retained for 90 days)
+      # ------------------------------------------------------------------ #
+      - name: Upload encrypted backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kisansetu-db-backup-${{ github.run_number }}
+          path: ${{ env.GPG_FILE }}
+          retention-days: 90
+          if-no-files-found: error
+
+      # ------------------------------------------------------------------ #
+      # 4. (Optional) Slack alert on failure — skipped if secret not set
+      # ------------------------------------------------------------------ #
+      - name: Notify Slack on failure
+        if: failure() && env.SLACK_WEBHOOK_URL != ''
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          curl -s -X POST "$SLACK_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{\"text\": \"❌ *KisanSetu DB Backup FAILED* on run #${{ github.run_number }}. Check: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"

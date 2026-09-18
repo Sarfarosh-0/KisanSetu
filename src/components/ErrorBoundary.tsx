@@ -1,4 +1,5 @@
 import React, { ErrorInfo, ReactNode } from "react";
+import * as Sentry from "@sentry/react";
 import { RefreshCw, Home, ShieldAlert } from "lucide-react";
 
 export interface ErrorBoundaryProps {
@@ -28,8 +29,13 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("ErrorBoundary caught an unhandled component error:", error, errorInfo);
+    // Report to Sentry (no-op when Sentry is not initialised / DSN absent)
+    Sentry.captureException(error, {
+      contexts: { react: { componentStack: errorInfo.componentStack } },
+    });
     this.setState({ errorInfo });
   }
+
 
   public handleReset = () => {
     try {

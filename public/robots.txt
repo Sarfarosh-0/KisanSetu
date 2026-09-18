@@ -1,0 +1,29 @@
+# KisanSetu — robots.txt
+# Allows search engines to index the public produce catalog while
+# blocking auth, admin, and API routes from being indexed.
+
+User-agent: *
+
+# ── Public pages (allow) ─────────────────────────────────────────────────────
+Allow: /$
+Allow: /listings
+Allow: /mandi-prices
+
+# ── Auth / private pages (disallow) ──────────────────────────────────────────
+Disallow: /login
+Disallow: /register
+Disallow: /farmer/
+Disallow: /buyer/
+Disallow: /admin/
+
+# ── Backend API (disallow — should never be indexed) ─────────────────────────
+Disallow: /api/
+
+# ── Build artifacts / source maps ────────────────────────────────────────────
+Disallow: /assets/*.map
+Disallow: /static/
+
+# Crawl-delay for polite bots
+Crawl-delay: 10
+
+Sitemap: https://kisansetu.vercel.app/sitemap.xml
