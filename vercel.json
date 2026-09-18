@@ -9,7 +9,7 @@
     {
       "_comment": "Proxy all /api/* requests to the FastAPI backend on Render (keeps frontend calls relative)",
       "source": "/api/:path*",
-      "destination": "https://kisansetu-backend.onrender.com/api/:path*"
+      "destination": "https://kisansetu-backend-32ox.onrender.com/api/:path*"
     },
     {
       "_comment": "SPA fallback — serve index.html for all non-file routes so React Router handles navigation",
