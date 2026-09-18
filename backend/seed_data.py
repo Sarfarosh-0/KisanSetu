@@ -5,6 +5,7 @@ Run: python seed_data.py
 
 from database import engine, SessionLocal, Base
 from models import User, CropListing, Order, MandiPrice, LogisticsBatch, UserRole, QualityGrade, ListingStatus, OrderStatus, PaymentStatus
+from auth import get_password_hash
 import json
 
 def seed():
@@ -18,6 +19,7 @@ def seed():
         return
 
     print("Seeding database with realistic agricultural marketplace records...")
+    default_pwd_hash = get_password_hash("kisan123")
 
     # 1. Users
     u1 = User(
@@ -25,6 +27,7 @@ def seed():
         name="Ramesh Kumar Patel",
         phone="+91 98220 11223",
         email="ramesh.patel@kisanmail.in",
+        hashed_password=default_pwd_hash,
         role=UserRole.FARMER,
         fpo_name="Sahyadri Krishi Vikas Producer Co.",
         district="Nashik",
@@ -43,6 +46,7 @@ def seed():
         name="Sardar Gurpreet Singh",
         phone="+91 98140 22334",
         email="gurpreet.singh@punjabkisan.in",
+        hashed_password=default_pwd_hash,
         role=UserRole.FARMER,
         fpo_name="Malwa Agro Farmer Producer Org",
         district="Ludhiana",
@@ -61,6 +65,7 @@ def seed():
         name="Venkat Ramanayya",
         phone="+91 94401 55667",
         email="venkat.spices@andhrakisan.in",
+        hashed_password=default_pwd_hash,
         role=UserRole.FARMER,
         fpo_name="Guntur Chilli Growers Federation",
         district="Guntur",
@@ -79,6 +84,7 @@ def seed():
         name="Priya Sharma (GreenBite Organics)",
         phone="+91 98200 44556",
         email="procurement@greenbite.co.in",
+        hashed_password=default_pwd_hash,
         role=UserRole.BUYER,
         fpo_name="GreenBite Retails Ltd",
         district="Mumbai",
@@ -97,6 +103,7 @@ def seed():
         name="Santosh Rao (KisanExpress)",
         phone="+91 98231 99881",
         email="dispatch@kisanexpress.in",
+        hashed_password=default_pwd_hash,
         role=UserRole.LOGISTICS,
         fpo_name="KisanExpress ColdChain Fleet",
         district="Nashik",

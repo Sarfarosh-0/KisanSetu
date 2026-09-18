@@ -23,10 +23,14 @@ from models import (
     UserRole, QualityGrade, ListingStatus, OrderStatus, PaymentStatus
 )
 from schemas import (
-    UserResponse, LoginRequest, CropListingCreate, CropListingUpdate, CropListingResponse,
+    UserResponse, LoginRequest, UserRegister, TokenResponse, CropListingCreate, CropListingUpdate, CropListingResponse,
     PricePredictionRequest, PricePredictionResponse, OrderCreate,
     OrderStatusUpdate, OrderResponse, UPIPaymentVerifyRequest,
     RouteOptimizationResponse, CropRfqCreate, CropRfqResponse
+)
+from auth import (
+    get_current_user, get_optional_current_user, verify_ownership,
+    get_password_hash, verify_password, create_access_token
 )
 from ml_engine import price_engine, BASE_CROP_MANDI_RATES
 from route_optimizer import optimize_logistics_batch
@@ -34,9 +38,26 @@ from route_optimizer import optimize_logistics_batch
 import logging
 logger = logging.getLogger("kisansetu")
 
+from sqlalchemy import text
+
 # Ensure database tables and upload directory exist
 Base.metadata.create_all(bind=engine)
 os.makedirs("uploads", exist_ok=True)
+
+# Safe auto-migration for newly added columns
+try:
+    with engine.connect() as conn:
+        try:
+            conn.execute(text("ALTER TABLE users ADD COLUMN hashed_password VARCHAR(255)"))
+        except Exception:
+            pass
+        try:
+            conn.execute(text("ALTER TABLE crop_listings ADD COLUMN images TEXT"))
+        except Exception:
+            pass
+        conn.commit()
+except Exception:
+    pass
 
 # ----------------------------------------------------
 # Cloudinary Initialization (runs once at startup)
@@ -117,17 +138,48 @@ def health_check():
     }
 
 # ----------------------------------------------------
-# 2. Auth & Profiles (Role-based)
+# 2. Auth & Profiles (Role-based with JWT)
 # ----------------------------------------------------
+@app.post("/api/auth/register", response_model=UserResponse, tags=["Authentication"])
+def register_user(payload: UserRegister, db: Session = Depends(get_db)):
+    """Registers a new user account with secure password hashing and issues a JWT token."""
+    existing = db.query(User).filter(User.phone == payload.phone).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Phone number is already registered.")
+
+    role = payload.role.upper() if payload.role and payload.role.upper() in [r.value for r in UserRole] else UserRole.FARMER
+    new_user = User(
+        name=payload.name,
+        phone=payload.phone,
+        hashed_password=get_password_hash(payload.password),
+        email=payload.email,
+        role=role,
+        fpo_name=payload.fpo_name,
+        district=payload.district,
+        state=payload.state,
+        trust_score=4.8,
+        verified=True,
+        kyc_status="AADHAAR_KYC_VERIFIED" if role == UserRole.FARMER else "GST_ROC_VERIFIED"
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    token = create_access_token({"sub": str(new_user.id), "phone": new_user.phone, "role": new_user.role})
+    resp = UserResponse.model_validate(new_user)
+    resp.access_token = token
+    return resp
+
 @app.post("/api/auth/login", response_model=UserResponse, tags=["Authentication"])
 def login_or_register(payload: LoginRequest, db: Session = Depends(get_db)):
-    """Logs in an existing user or creates a demo user for the specified role."""
+    """Logs in an existing user or creates a demo user, verifies password if set/provided, and issues a JWT token."""
     user = db.query(User).filter(User.phone == payload.phone).first()
     if not user:
-        role = payload.role if payload.role in [r.value for r in UserRole] else UserRole.FARMER
+        role = payload.role.upper() if payload.role and payload.role.upper() in [r.value for r in UserRole] else UserRole.FARMER
         user = User(
             name=f"Demo {role.capitalize()}",
             phone=payload.phone,
+            hashed_password=get_password_hash(payload.password) if payload.password else None,
             role=role,
             district="Nashik",
             state="Maharashtra",
@@ -138,7 +190,21 @@ def login_or_register(payload: LoginRequest, db: Session = Depends(get_db)):
         db.add(user)
         db.commit()
         db.refresh(user)
-    return user
+    else:
+        # If user has a password and password was provided, verify it
+        if user.hashed_password and payload.password:
+            if not verify_password(payload.password, user.hashed_password):
+                raise HTTPException(status_code=401, detail="Invalid phone number or password.")
+
+    token = create_access_token({"sub": str(user.id), "phone": user.phone, "role": user.role})
+    resp = UserResponse.model_validate(user)
+    resp.access_token = token
+    return resp
+
+@app.get("/api/auth/me", response_model=UserResponse, tags=["Authentication"])
+def get_current_user_profile(current_user: User = Depends(get_current_user)):
+    """Returns the profile of the currently authenticated user from Bearer token."""
+    return current_user
 
 @app.get("/api/auth/users", response_model=List[UserResponse], tags=["Authentication"])
 def get_users(role: Optional[str] = None, db: Session = Depends(get_db)):
@@ -281,11 +347,17 @@ def get_listings(
 
 
 @app.post("/api/listings", response_model=CropListingResponse, tags=["Marketplace"])
-def create_crop_listing(payload: CropListingCreate, db: Session = Depends(get_db)):
-    """Farmers or FPOs create a new direct crop listing with automated AI price benchmarks."""
-    farmer = db.query(User).filter(User.id == payload.farmer_id).first()
-    if not farmer:
-        raise HTTPException(status_code=404, detail="Farmer account not found.")
+def create_crop_listing(
+    payload: CropListingCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Farmers or FPOs create a new direct crop listing with automated AI price benchmarks. Requires authentication."""
+    if current_user.role not in [UserRole.FARMER, UserRole.LOGISTICS]:
+        raise HTTPException(status_code=403, detail="Only registered farmers and FPOs can publish produce listings.")
+
+    farmer_id = current_user.id
+    farmer = current_user
 
     # Call AI Price Engine to calculate fair price benchmarks
     ai_guidance = price_engine.predict_fair_price(
@@ -301,7 +373,7 @@ def create_crop_listing(payload: CropListingCreate, db: Session = Depends(get_db
     primary_image = images_list[0] if len(images_list) > 0 else payload.image_url
 
     new_listing = CropListing(
-        farmer_id=payload.farmer_id,
+        farmer_id=farmer_id,
         crop_name=payload.crop_name,
         variety=payload.variety,
         quantity_quintals=payload.quantity_quintals,
@@ -337,11 +409,18 @@ def create_crop_listing(payload: CropListingCreate, db: Session = Depends(get_db
 
 
 @app.put("/api/listings/{listing_id}", response_model=CropListingResponse, tags=["Marketplace"])
-def update_crop_listing(listing_id: int, payload: CropListingUpdate, db: Session = Depends(get_db)):
-    """Farmers update an existing crop listing details and photos."""
+def update_crop_listing(
+    listing_id: int,
+    payload: CropListingUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Farmers update an existing crop listing. Enforces owner verification."""
     listing = db.query(CropListing).filter(CropListing.id == listing_id).first()
     if not listing:
         raise HTTPException(status_code=404, detail="Crop listing not found.")
+
+    verify_ownership(listing.farmer_id, current_user, "crop listing")
 
     update_data = payload.model_dump(exclude_unset=True)
 
@@ -394,11 +473,17 @@ def update_crop_listing(listing_id: int, payload: CropListingUpdate, db: Session
 
 
 @app.delete("/api/listings/{listing_id}", tags=["Marketplace"])
-def delete_crop_listing(listing_id: int, db: Session = Depends(get_db)):
-    """Deletes a crop listing by ID."""
+def delete_crop_listing(
+    listing_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Deletes a crop listing by ID. Enforces owner verification."""
     listing = db.query(CropListing).filter(CropListing.id == listing_id).first()
     if not listing:
         raise HTTPException(status_code=404, detail="Crop listing not found.")
+
+    verify_ownership(listing.farmer_id, current_user, "crop listing")
 
     db.delete(listing)
     db.commit()
@@ -487,11 +572,17 @@ def get_orders(user_id: Optional[int] = None, role: Optional[str] = None, db: Se
     return results
 
 @app.post("/api/orders", response_model=OrderResponse, tags=["Orders"])
-def place_order(payload: OrderCreate, db: Session = Depends(get_db)):
-    """Place a direct purchase order for listed produce."""
+def place_order(
+    payload: OrderCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Place a direct purchase order for listed produce. Requires authenticated buyer."""
     listing = db.query(CropListing).filter(CropListing.id == payload.listing_id).first()
     if not listing:
         raise HTTPException(status_code=404, detail="Listing not found")
+    if current_user.id == listing.farmer_id:
+        raise HTTPException(status_code=400, detail="Farmers cannot purchase their own produce.")
     if payload.quantity_ordered > listing.quantity_quintals:
         raise HTTPException(status_code=400, detail="Ordered quantity exceeds available stock")
 
@@ -505,7 +596,7 @@ def place_order(payload: OrderCreate, db: Session = Depends(get_db)):
     new_order = Order(
         order_number=order_num,
         listing_id=payload.listing_id,
-        buyer_id=payload.buyer_id,
+        buyer_id=current_user.id,
         farmer_id=listing.farmer_id,
         quantity_ordered=payload.quantity_ordered,
         price_per_quintal=listing.expected_price_per_quintal,
@@ -528,14 +619,29 @@ def place_order(payload: OrderCreate, db: Session = Depends(get_db)):
 
     resp = OrderResponse.model_validate(new_order)
     resp.crop_name = f"{listing.crop_name} ({listing.variety})"
+    resp.buyer_name = current_user.name
+    farmer = db.query(User).filter(User.id == listing.farmer_id).first()
+    resp.farmer_name = farmer.name if farmer else "Farmer"
     return resp
 
 @app.patch("/api/orders/{order_id}/status", response_model=OrderResponse, tags=["Orders"])
-def update_order_status(order_id: int, payload: OrderStatusUpdate, db: Session = Depends(get_db)):
-    """Progresses the order lifecycle (CONFIRMED -> IN_TRANSIT -> DELIVERED -> COMPLETED)."""
+def update_order_status(
+    order_id: int,
+    payload: OrderStatusUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Progresses the order lifecycle (CONFIRMED -> IN_TRANSIT -> DELIVERED -> COMPLETED). Verifies party ownership."""
     order = db.query(Order).filter(Order.id == order_id).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
+
+    # Only the buyer, farmer, or logistics partner can change order status
+    if current_user.id not in [order.buyer_id, order.farmer_id] and current_user.role != UserRole.LOGISTICS:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access forbidden: You are not a recognized party to this order."
+        )
 
     # If marking DELIVERED, verify OTP
     if payload.status == OrderStatus.DELIVERED and payload.otp:

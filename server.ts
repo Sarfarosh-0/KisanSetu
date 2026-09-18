@@ -963,7 +963,16 @@ app.post("/api/auth/login", (req, res) => {
     };
     store.users.push(user);
   }
-  res.json(user);
+  const mockToken = `mock-jwt-token-user-${user.id}-${Date.now()}`;
+  res.json({ ...user, access_token: mockToken, token_type: "bearer" });
+});
+
+app.get("/api/auth/me", (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json({ detail: "Authentication required" });
+  }
+  res.json(store.users[0] || null);
 });
 
 app.get("/api/auth/users", (req, res) => {

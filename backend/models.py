@@ -54,6 +54,7 @@ class User(Base):
     kyc_status = Column(String(50), default="KYC_VERIFIED")
     total_trades = Column(Integer, default=12)
     rating_count = Column(Integer, default=10)
+    hashed_password = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     listings = relationship("CropListing", back_populates="farmer")

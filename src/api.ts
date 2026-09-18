@@ -19,11 +19,51 @@ import {
 // ---------------------------------------------------------------------------
 const API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") ?? "";
 
+const TOKEN_KEY = "kisansetu_jwt_token";
+
+export const AuthStorage = {
+  getToken(): string | null {
+    if (typeof window === "undefined") return null;
+    try {
+      return localStorage.getItem(TOKEN_KEY);
+    } catch {
+      return null;
+    }
+  },
+  setToken(token: string): void {
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(TOKEN_KEY, token);
+      } catch {}
+    }
+  },
+  clearToken(): void {
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.removeItem(TOKEN_KEY);
+      } catch {}
+    }
+  }
+};
+
 async function safeFetchJson<T>(url: string, options?: RequestInit, fallback?: T): Promise<T> {
   // Prepend API_BASE so relative paths work locally and absolute URLs work on Vercel/Render
   const fullUrl = url.startsWith("http") ? url : `${API_BASE}${url}`;
+
+  // Automatically attach Bearer token if available and not already provided
+  const headers = new Headers(options?.headers);
+  const token = AuthStorage.getToken();
+  if (token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  const mergedOptions: RequestInit = {
+    ...options,
+    headers
+  };
+
   try {
-    const res = await fetch(fullUrl, options);
+    const res = await fetch(fullUrl, mergedOptions);
     if (!res.ok) {
       if (fallback !== undefined) return fallback;
       const text = await res.text();
@@ -52,12 +92,45 @@ export const API = {
     return safeFetchJson<User[]>(`/api/auth/users${role ? `?role=${role}` : ""}`, undefined, []);
   },
 
-  async login(phone: string, role: string): Promise<User> {
-    return safeFetchJson<User>("/api/auth/login", {
+  async login(phone: string, role: string, password?: string): Promise<User> {
+    const user = await safeFetchJson<User>("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone, role })
+      body: JSON.stringify({ phone, role, password })
     });
+    if ((user as any)?.access_token) {
+      AuthStorage.setToken((user as any).access_token);
+    }
+    return user;
+  },
+
+  async register(userData: {
+    name: string;
+    phone: string;
+    password: string;
+    role?: string;
+    district: string;
+    state: string;
+    fpo_name?: string;
+    email?: string;
+  }): Promise<User> {
+    const user = await safeFetchJson<User>("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userData)
+    });
+    if ((user as any)?.access_token) {
+      AuthStorage.setToken((user as any).access_token);
+    }
+    return user;
+  },
+
+  async getMe(): Promise<User | null> {
+    return safeFetchJson<User | null>("/api/auth/me", undefined, null);
+  },
+
+  logout() {
+    AuthStorage.clearToken();
   },
 
   async getListings(params?: {

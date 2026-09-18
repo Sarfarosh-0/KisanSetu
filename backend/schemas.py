@@ -15,7 +15,17 @@ class UserBase(BaseModel):
     lng: Optional[float] = None
 
 class UserCreate(UserBase):
-    pass
+    password: Optional[str] = None
+
+class UserRegister(BaseModel):
+    name: str
+    phone: str
+    password: str
+    role: Optional[str] = "FARMER"
+    district: str
+    state: str
+    fpo_name: Optional[str] = None
+    email: Optional[str] = None
 
 class UserResponse(UserBase):
     id: int
@@ -25,17 +35,24 @@ class UserResponse(UserBase):
     total_trades: int
     rating_count: int
     created_at: datetime
+    access_token: Optional[str] = None
 
     class Config:
         from_attributes = True
 
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserResponse
+
 class LoginRequest(BaseModel):
     phone: str
+    password: Optional[str] = None
     role: Optional[str] = "FARMER"
 
 # --- Crop Listing Schemas ---
 class CropListingCreate(BaseModel):
-    farmer_id: int
+    farmer_id: Optional[int] = None
     crop_name: str
     variety: str
     quantity_quintals: float
