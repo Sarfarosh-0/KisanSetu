@@ -478,12 +478,20 @@ def delete_crop_listing(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Deletes a crop listing by ID. Enforces owner verification."""
+    """Deletes a crop listing by ID. Enforces owner verification and prevents FK cascade conflicts."""
     listing = db.query(CropListing).filter(CropListing.id == listing_id).first()
     if not listing:
         raise HTTPException(status_code=404, detail="Crop listing not found.")
 
     verify_ownership(listing.farmer_id, current_user, "crop listing")
+
+    # Check if there are existing orders for this listing
+    existing_orders = db.query(Order).filter(Order.listing_id == listing_id).count()
+    if existing_orders > 0:
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot delete produce listing with existing customer orders. Set listing status to EXPIRED or SOLD instead."
+        )
 
     db.delete(listing)
     db.commit()

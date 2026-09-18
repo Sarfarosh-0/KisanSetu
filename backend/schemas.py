@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field
+import json
+from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional
 from datetime import datetime
 
@@ -99,6 +100,19 @@ class CropListingResponse(CropListingCreate):
     farmer_name: Optional[str] = None
     farmer_trust_score: Optional[float] = None
     farmer_verified: Optional[bool] = None
+
+    @field_validator("images", mode="before")
+    @classmethod
+    def parse_images_field(cls, v):
+        if isinstance(v, str):
+            try:
+                parsed = json.loads(v)
+                if isinstance(parsed, list):
+                    return parsed
+                return [v] if v else []
+            except Exception:
+                return [v] if v else []
+        return v or []
 
     class Config:
         from_attributes = True

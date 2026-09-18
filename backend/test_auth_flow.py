@@ -186,10 +186,30 @@ def run_tests():
     assert status_unauth_del == 403, f"Expected 403 for non-owner delete, got {status_unauth_del}: {res_unauth_del}"
     print("[PASS] 11. Cross-user deletion blocked with HTTP 403 Forbidden")
 
-    # 12. Successful DELETE using Farmer Alpha's token (Expect 200)
-    status_auth_del, res_auth_del = make_request("DELETE", f"/api/listings/{listing_id}", token=token_a)
+    # 12. Attempt to DELETE Farmer Alpha's listing with active orders (Expect 400)
+    status_del_ordered, res_del_ordered = make_request("DELETE", f"/api/listings/{listing_id}", token=token_a)
+    assert status_del_ordered == 400, f"Expected 400 when deleting listing with orders, got {status_del_ordered}: {res_del_ordered}"
+    print("[PASS] 12. Active order deletion protection verified with HTTP 400 Bad Request")
+
+    # 13. Create a temporary listing with no orders and verify successful owner deletion (Expect 200)
+    status_create2, listing2 = make_request("POST", "/api/listings", {
+        "crop_name": "Wheat",
+        "variety": "Sharbati",
+        "quantity_quintals": 20,
+        "harvest_date": "2026-11-01",
+        "district": "Nashik",
+        "state": "Maharashtra",
+        "pincode": "422001",
+        "lat": 20.0,
+        "lng": 73.8,
+        "expected_price_per_quintal": 2500
+    }, token=token_a)
+    assert status_create2 == 200
+    listing2_id = listing2["id"]
+
+    status_auth_del, res_auth_del = make_request("DELETE", f"/api/listings/{listing2_id}", token=token_a)
     assert status_auth_del == 200, f"Expected 200 for owner delete, got {status_auth_del}: {res_auth_del}"
-    print("[PASS] 12. Owner deletion succeeded with HTTP 200 OK")
+    print("[PASS] 13. Owner deletion of un-ordered listing succeeded with HTTP 200 OK")
 
     print("==================================================")
     print("   ALL 12 AUTH & SECURITY TESTS PASSED 100%!     ")
