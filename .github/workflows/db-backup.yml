@@ -51,8 +51,6 @@ jobs:
                 --symmetric --cipher-algo AES256 \
                 --output "$GPG_FILE" "$GZ_FILE"
 
-          # Expose filename as an env var for the upload step
-          echo "GPG_FILE=$GPG_FILE" >> "$GITHUB_ENV"
 
       # ------------------------------------------------------------------ #
       # 3. Upload as a GitHub Actions artifact (retained for 90 days)
@@ -61,7 +59,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: kisansetu-db-backup-${{ github.run_number }}
-          path: ${{ env.GPG_FILE }}
+          # Glob picks up the *.sql.gz.gpg file produced in the previous step
+          path: "*.sql.gz.gpg"
           retention-days: 90
           if-no-files-found: error
 

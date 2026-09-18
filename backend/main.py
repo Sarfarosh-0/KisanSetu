@@ -43,24 +43,18 @@ from sqlalchemy import text
 # ---------------------------------------------------------------------------
 # Sentry — server-side crash & performance reporting
 # Set SENTRY_DSN in backend/.env (or Render env vars) to enable.
-# Omitting it is safe — sentry_sdk.init() is a documented no-op when dsn=''
+# sentry-sdk 2.x auto-detects FastAPI, SQLAlchemy, and logging integrations.
+# Omitting the DSN is safe — init() is a no-op when dsn is empty.
 # ---------------------------------------------------------------------------
 import sentry_sdk
-from sentry_sdk.integrations.fastapi import FastApiIntegration
-from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
-from sentry_sdk.integrations.logging import LoggingIntegration
 
 _sentry_dsn = os.getenv("SENTRY_DSN", "")
 if _sentry_dsn:
     sentry_sdk.init(
         dsn=_sentry_dsn,
         environment=os.getenv("APP_ENV", "production"),
-        integrations=[
-            FastApiIntegration(transaction_style="endpoint"),
-            SqlalchemyIntegration(),
-            LoggingIntegration(level=logging.WARNING, event_level=logging.ERROR),
-        ],
-        # Capture 10% of transactions for performance profiling (free tier)
+        # FastAPI, SQLAlchemy, and Logging integrations are auto-detected in 2.x
+        # Capture 10% of transactions for performance profiling (free tier friendly)
         traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.1")),
         send_default_pii=False,  # GDPR: do not attach user PII to events
     )
