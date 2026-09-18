@@ -142,7 +142,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           onBack={handleBackToPhone}
           onVerifySuccess={handleVerifySuccess}
           onResendOtp={() => {
-            console.log("Simulating OTP resend to +91", loginState.phone);
+            // OTP re-send is handled server-side; no client action needed here
           }}
         />
       )}

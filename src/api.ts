@@ -208,7 +208,6 @@ export const API = {
       // If this is a server-side validation error, re-throw so the UI can show it
       if (serverError) throw err;
       // Otherwise it's a network/connectivity issue – fall back to data URLs silently
-      console.warn("Network error during image upload, falling back to data URL encoding:", err);
     }
 
     // Fallback: encode files as base64 data URLs and embed directly in the listing payload.
