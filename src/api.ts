@@ -9,9 +9,21 @@ import {
   CropRfq
 } from "./types";
 
+// ---------------------------------------------------------------------------
+// API Base URL
+// ---------------------------------------------------------------------------
+// LOCAL DEV   : empty string → relative paths (/api/...) hit Express on :3000
+// VERCEL      : set VITE_API_BASE_URL in Vercel project settings, OR leave
+//               empty and rely on vercel.json rewrites to proxy /api/* to Render
+// RENDER ONLY : set VITE_API_BASE_URL=https://your-backend.onrender.com
+// ---------------------------------------------------------------------------
+const API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") ?? "";
+
 async function safeFetchJson<T>(url: string, options?: RequestInit, fallback?: T): Promise<T> {
+  // Prepend API_BASE so relative paths work locally and absolute URLs work on Vercel/Render
+  const fullUrl = url.startsWith("http") ? url : `${API_BASE}${url}`;
   try {
-    const res = await fetch(url, options);
+    const res = await fetch(fullUrl, options);
     if (!res.ok) {
       if (fallback !== undefined) return fallback;
       const text = await res.text();
@@ -99,7 +111,7 @@ export const API = {
       for (const file of files) {
         formData.append("files", file);
       }
-      const res = await fetch("/api/upload", {
+      const res = await fetch(`${API_BASE}/api/upload`, {
         method: "POST",
         body: formData
       });
