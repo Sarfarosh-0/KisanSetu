@@ -160,6 +160,17 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"],
 )
 
+# ---------------------------------------------------------------------------
+# HTTP Security Headers Middleware
+# ---------------------------------------------------------------------------
+@app.middleware("http")
+async def add_security_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    return response
+
 # ----------------------------------------------------
 # 1. Health & Meta
 # ----------------------------------------------------
@@ -626,13 +637,21 @@ def place_order(
     db: Session = Depends(get_db)
 ):
     """Place a direct purchase order for listed produce. Requires authenticated buyer."""
-    listing = db.query(CropListing).filter(CropListing.id == payload.listing_id).first()
+    listing = db.query(CropListing).with_for_update().filter(
+        CropListing.id == payload.listing_id,
+        CropListing.status == ListingStatus.ACTIVE
+    ).first()
     if not listing:
-        raise HTTPException(status_code=404, detail="Listing not found")
+        raise HTTPException(status_code=404, detail="Listing not found or no longer active")
     if current_user.id == listing.farmer_id:
         raise HTTPException(status_code=400, detail="Farmers cannot purchase their own produce.")
     if payload.quantity_ordered > listing.quantity_quintals:
         raise HTTPException(status_code=400, detail="Ordered quantity exceeds available stock")
+
+    # Deduct purchased quantity and mark SOLD if stock reaches zero
+    listing.quantity_quintals = round(listing.quantity_quintals - payload.quantity_ordered, 2)
+    if listing.quantity_quintals <= 0:
+        listing.status = ListingStatus.SOLD
 
     produce_amount = payload.quantity_ordered * listing.expected_price_per_quintal
     logistics_fee = round(payload.quantity_ordered * 45.0 + 500.0, 0)
