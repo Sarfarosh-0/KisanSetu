@@ -1,20 +1,13 @@
 {
-  "_comment": [
-    "BEFORE DEPLOYING TO VERCEL:",
-    "Replace 'https://kisansetu-backend.onrender.com' below with your actual Render backend URL.",
-    "You can find it in: Render Dashboard → your backend web service → top of the page.",
-    "Typical format: https://YOUR-SERVICE-NAME.onrender.com"
-  ],
   "rewrites": [
     {
-      "_comment": "Proxy all /api/* requests to the FastAPI backend on Render (keeps frontend calls relative)",
       "source": "/api/:path*",
       "destination": "https://kisansetu-backend-32ox.onrender.com/api/:path*"
     },
     {
-      "_comment": "SPA fallback — serve index.html for all non-file routes so React Router handles navigation",
       "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
 }
+
