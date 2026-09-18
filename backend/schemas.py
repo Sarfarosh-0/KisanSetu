@@ -188,3 +188,66 @@ class RouteOptimizationResponse(BaseModel):
     co2_saved_kg: float
     spoilage_reduction_pct: float
     optimization_algorithm: str
+
+# --- Crop RFQ Schemas ---
+class CropRfqCreate(BaseModel):
+    listing_id: Optional[int] = Field(None, alias="listingId")
+    buyer_id: Optional[int] = Field(None, alias="buyerId")
+    farmer_id: Optional[int] = Field(None, alias="farmerId")
+    crop_name: Optional[str] = Field(None, alias="cropName")
+    variety: Optional[str] = "Standard"
+    farmer_name: Optional[str] = Field(None, alias="farmerName")
+    fpo_name: Optional[str] = Field(None, alias="fpoName")
+    buyer_name: Optional[str] = Field(None, alias="buyerName")
+    buyer_company: Optional[str] = Field(None, alias="buyerCompany")
+    buyer_phone: Optional[str] = Field(None, alias="buyerPhone")
+    required_quantity_quintals: Optional[float] = Field(None, alias="requiredQuantityQuintals")
+    expected_price_per_quintal: Optional[float] = Field(None, alias="expectedPricePerQuintal")
+    delivery_location: Optional[str] = Field(None, alias="deliveryLocation")
+    delivery_pincode: Optional[str] = Field(None, alias="deliveryPincode")
+    delivery_timeline: Optional[str] = Field("Immediate (Within 48h)", alias="deliveryTimeline")
+    message: Optional[str] = None
+
+    class Config:
+        populate_by_name = True
+
+class CropRfqResponse(BaseModel):
+    id: str
+    listing_id: int
+    buyer_id: int
+    farmer_id: int
+    crop_name: str
+    variety: str
+    farmer_name: Optional[str] = None
+    fpo_name: Optional[str] = None
+    buyer_name: Optional[str] = None
+    buyer_company: Optional[str] = None
+    buyer_phone: Optional[str] = None
+    required_quantity_quintals: float
+    expected_price_per_quintal: float
+    delivery_location: str
+    delivery_pincode: str
+    delivery_timeline: str
+    message: Optional[str] = None
+    status: str
+    created_at: datetime
+
+    # CamelCase mirrors for frontend convenience
+    listingId: Optional[int] = None
+    buyerId: Optional[int] = None
+    farmerId: Optional[int] = None
+    cropName: Optional[str] = None
+    farmerName: Optional[str] = None
+    buyerName: Optional[str] = None
+    buyerCompany: Optional[str] = None
+    buyerPhone: Optional[str] = None
+    requiredQuantityQuintals: Optional[float] = None
+    expectedPricePerQuintal: Optional[float] = None
+    deliveryLocation: Optional[str] = None
+    deliveryPincode: Optional[str] = None
+    deliveryTimeline: Optional[str] = None
+    createdAt: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+        populate_by_name = True

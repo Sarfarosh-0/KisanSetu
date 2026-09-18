@@ -142,3 +142,30 @@ class LogisticsBatch(Base):
     status = Column(String(30), default="SCHEDULED")
     route_data_json = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+class CropRfq(Base):
+    __tablename__ = "crop_rfqs"
+
+    id = Column(String(50), primary_key=True, index=True)
+    listing_id = Column(Integer, ForeignKey("crop_listings.id"), nullable=False)
+    buyer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    farmer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    crop_name = Column(String(100), nullable=False)
+    variety = Column(String(100), nullable=False)
+    farmer_name = Column(String(100), nullable=True)
+    fpo_name = Column(String(150), nullable=True)
+    buyer_name = Column(String(100), nullable=True)
+    buyer_company = Column(String(150), nullable=True)
+    buyer_phone = Column(String(30), nullable=True)
+    required_quantity_quintals = Column(Float, nullable=False)
+    expected_price_per_quintal = Column(Float, nullable=False)
+    delivery_location = Column(String(255), nullable=False)
+    delivery_pincode = Column(String(20), nullable=False)
+    delivery_timeline = Column(String(100), nullable=False)
+    message = Column(Text, nullable=True)
+    status = Column(String(30), default="SUBMITTED")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    listing = relationship("CropListing")
+    buyer = relationship("User", foreign_keys=[buyer_id])
+    farmer = relationship("User", foreign_keys=[farmer_id])

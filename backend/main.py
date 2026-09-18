@@ -13,12 +13,15 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
 from database import engine, Base, get_db
-from models import User, CropListing, Order, MandiPrice, LogisticsBatch, UserRole, QualityGrade, ListingStatus, OrderStatus, PaymentStatus
+from models import (
+    User, CropListing, Order, MandiPrice, LogisticsBatch, CropRfq,
+    UserRole, QualityGrade, ListingStatus, OrderStatus, PaymentStatus
+)
 from schemas import (
     UserResponse, LoginRequest, CropListingCreate, CropListingUpdate, CropListingResponse,
     PricePredictionRequest, PricePredictionResponse, OrderCreate,
     OrderStatusUpdate, OrderResponse, UPIPaymentVerifyRequest,
-    RouteOptimizationResponse
+    RouteOptimizationResponse, CropRfqCreate, CropRfqResponse
 )
 from ml_engine import price_engine, BASE_CROP_MANDI_RATES
 from route_optimizer import optimize_logistics_batch
@@ -472,6 +475,110 @@ def verify_upi_payment(payload: UPIPaymentVerifyRequest, db: Session = Depends(g
         "utr_number": payload.utr_number,
         "timestamp": datetime.utcnow().isoformat()
     }
+
+# ----------------------------------------------------
+# 5.1. Requests for Quotation (RFQs)
+# ----------------------------------------------------
+@app.post("/api/rfqs", response_model=CropRfqResponse, tags=["RFQs"])
+def submit_rfq(payload: CropRfqCreate, db: Session = Depends(get_db)):
+    """Buyers submit a Request for Quotation (RFQ) for bulk produce procurement."""
+    listing_id = payload.listing_id or payload.model_dump().get("listingId")
+    buyer_id = payload.buyer_id or payload.model_dump().get("buyerId")
+    farmer_id = payload.farmer_id or payload.model_dump().get("farmerId")
+
+    listing = db.query(CropListing).filter(CropListing.id == listing_id).first() if listing_id else None
+    buyer = db.query(User).filter(User.id == buyer_id).first() if buyer_id else None
+    farmer = db.query(User).filter(User.id == farmer_id).first() if farmer_id else None
+
+    crop_name = payload.crop_name or (listing.crop_name if listing else "Produce")
+    variety = payload.variety or (listing.variety if listing else "Standard")
+    farmer_name = payload.farmer_name or (farmer.name if farmer else "Farmer")
+    fpo_name = payload.fpo_name or (farmer.fpo_name if farmer else None)
+    buyer_name = payload.buyer_name or (buyer.name if buyer else "Buyer")
+    buyer_company = payload.buyer_company or (buyer.fpo_name if buyer else "Wholesale Buyer")
+    buyer_phone = payload.buyer_phone or (buyer.phone if buyer else "")
+
+    rfq_count = db.query(CropRfq).count() + 1
+    rfq_id = f"RFQ-2026-{1000 + rfq_count}"
+
+    new_rfq = CropRfq(
+        id=rfq_id,
+        listing_id=listing_id or (listing.id if listing else 1),
+        buyer_id=buyer_id or (buyer.id if buyer else 4),
+        farmer_id=farmer_id or (farmer.id if farmer else 1),
+        crop_name=crop_name,
+        variety=variety,
+        farmer_name=farmer_name,
+        fpo_name=fpo_name,
+        buyer_name=buyer_name,
+        buyer_company=buyer_company,
+        buyer_phone=buyer_phone,
+        required_quantity_quintals=payload.required_quantity_quintals or 20.0,
+        expected_price_per_quintal=payload.expected_price_per_quintal or 2000.0,
+        delivery_location=payload.delivery_location or "Warehouse",
+        delivery_pincode=payload.delivery_pincode or "400703",
+        delivery_timeline=payload.delivery_timeline or "Immediate (Within 48h)",
+        message=payload.message,
+        status="SUBMITTED"
+    )
+
+    db.add(new_rfq)
+    db.commit()
+    db.refresh(new_rfq)
+
+    resp = CropRfqResponse.model_validate(new_rfq)
+    resp.listingId = new_rfq.listing_id
+    resp.buyerId = new_rfq.buyer_id
+    resp.farmerId = new_rfq.farmer_id
+    resp.cropName = new_rfq.crop_name
+    resp.farmerName = new_rfq.farmer_name
+    resp.buyerName = new_rfq.buyer_name
+    resp.buyerCompany = new_rfq.buyer_company
+    resp.buyerPhone = new_rfq.buyer_phone
+    resp.requiredQuantityQuintals = new_rfq.required_quantity_quintals
+    resp.expectedPricePerQuintal = new_rfq.expected_price_per_quintal
+    resp.deliveryLocation = new_rfq.delivery_location
+    resp.deliveryPincode = new_rfq.delivery_pincode
+    resp.deliveryTimeline = new_rfq.delivery_timeline
+    resp.createdAt = new_rfq.created_at.isoformat()
+    return resp
+
+@app.get("/api/rfqs", response_model=List[CropRfqResponse], tags=["RFQs"])
+def get_rfqs(
+    buyer_id: Optional[int] = Query(None, alias="buyerId"),
+    farmer_id: Optional[int] = Query(None, alias="farmerId"),
+    listing_id: Optional[int] = Query(None, alias="listingId"),
+    db: Session = Depends(get_db)
+):
+    """Retrieve submitted RFQs filtered optionally by buyerId, farmerId, or listingId."""
+    query = db.query(CropRfq)
+    if buyer_id:
+        query = query.filter(CropRfq.buyer_id == buyer_id)
+    if farmer_id:
+        query = query.filter(CropRfq.farmer_id == farmer_id)
+    if listing_id:
+        query = query.filter(CropRfq.listing_id == listing_id)
+
+    rfqs = query.order_by(CropRfq.created_at.desc()).all()
+    results = []
+    for r in rfqs:
+        resp = CropRfqResponse.model_validate(r)
+        resp.listingId = r.listing_id
+        resp.buyerId = r.buyer_id
+        resp.farmerId = r.farmer_id
+        resp.cropName = r.crop_name
+        resp.farmerName = r.farmer_name
+        resp.buyerName = r.buyer_name
+        resp.buyerCompany = r.buyer_company
+        resp.buyerPhone = r.buyer_phone
+        resp.requiredQuantityQuintals = r.required_quantity_quintals
+        resp.expectedPricePerQuintal = r.expected_price_per_quintal
+        resp.deliveryLocation = r.delivery_location
+        resp.deliveryPincode = r.delivery_pincode
+        resp.deliveryTimeline = r.delivery_timeline
+        resp.createdAt = r.created_at.isoformat()
+        results.append(resp)
+    return results
 
 # ----------------------------------------------------
 # 6. Route Optimization Demo
