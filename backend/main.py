@@ -7,6 +7,11 @@ import json
 import uuid
 from typing import List, Optional
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load .env file for local development (safe no-op in production where env vars are injected by platform)
+load_dotenv()
+
 from fastapi import FastAPI, Depends, HTTPException, Query, status, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
