@@ -22,6 +22,10 @@ export const CROP_TRANSLATIONS: Record<string, { en: string; hi: string }> = {
   "Ginger": { en: "Ginger", hi: "अदरक" },
   "Turmeric": { en: "Turmeric", hi: "हल्दी" },
   "Gram (Chana)": { en: "Gram (Chana)", hi: "चना" },
+  "Rice": { en: "Rice", hi: "चावल (धान)" },
+  "Sugarcane": { en: "Sugarcane", hi: "गन्ना" },
+  "Pulses": { en: "Pulses", hi: "दालें (चना)" },
+  "Seasonal Vegetables": { en: "Seasonal Vegetables", hi: "मौसमी सब्जियां" },
   "All": { en: "All", hi: "सभी फसलें" }
 };
 
@@ -223,6 +227,16 @@ export const TRANSLATIONS: Record<string, { en: string; hi: string }> = {
   "buyer.farmgateRate": { en: "Farm-Gate Rate", hi: "खेत का भाव" },
   "buyer.mandiComparison": { en: "APMC Mandi Rate", hi: "मंडी भाव" },
   "buyer.savings": { en: "Saving vs Mandi", hi: "मंडी से बचत" },
+  "buyer.requestToBuy": { en: "Request to Buy / Send RFQ", hi: "खरीद अनुरोध / RFQ भेजें" },
+  "buyer.viewDetails": { en: "View Crop Details", hi: "पूरी जानकारी देखें" },
+  "buyer.backToMarketplace": { en: "Back to Crop Marketplace", hi: "मार्केटप्लेस पर वापस जाएं" },
+  "buyer.minOrderQty": { en: "Min Order Qty (MOQ)", hi: "न्यूनतम ऑर्डर मात्रा (MOQ)" },
+  "buyer.harvestDate": { en: "Harvest Date", hi: "कटाई की तिथि" },
+  "buyer.availableStock": { en: "Available Quantity", hi: "उपलब्ध मात्रा" },
+  "buyer.rfqModalTitle": { en: "Submit Request to Buy (RFQ)", hi: "खरीद अनुरोध (RFQ) सबमिट करें" },
+  "buyer.reviewRfq": { en: "Review Procurement Terms", hi: "खरीद शर्तों की समीक्षा करें" },
+  "buyer.submitRfq": { en: "Confirm & Send RFQ to Farmer", hi: "पुष्टि करें और किसान को RFQ भेजें" },
+  "buyer.rfqSuccess": { en: "Purchase Request Sent Successfully!", hi: "खरीद अनुरोध सफलतापूर्वक भेजा गया!" },
 
   // Buyer - Bulk Orders & RFQ Posting
   "buyerBulk.title": { en: "Wholesale RFQs & Institutional Volume Sourcing", hi: "थोक मांग (RFQ) व संस्थागत खरीद" },

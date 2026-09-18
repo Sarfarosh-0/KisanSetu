@@ -5,7 +5,8 @@ import {
   Order,
   RouteBatch,
   MarketAnalytics,
-  User
+  User,
+  CropRfq
 } from "./types";
 
 async function safeFetchJson<T>(url: string, options?: RequestInit, fallback?: T): Promise<T> {
@@ -211,6 +212,40 @@ export const API = {
 
   async resetSeedData() {
     return safeFetchJson<{ message: string }>("/api/seed/reset", { method: "POST" });
+  },
+
+  async submitRfq(rfqData: Partial<CropRfq>): Promise<CropRfq> {
+    return safeFetchJson<CropRfq>("/api/rfqs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(rfqData)
+    }, {
+      id: `RFQ-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+      listingId: rfqData.listingId || 1,
+      cropName: rfqData.cropName || "Produce",
+      variety: rfqData.variety || "Standard",
+      farmerId: rfqData.farmerId || 1,
+      farmerName: rfqData.farmerName,
+      fpoName: rfqData.fpoName,
+      buyerId: rfqData.buyerId || 4,
+      buyerName: rfqData.buyerName || "Buyer",
+      requiredQuantityQuintals: rfqData.requiredQuantityQuintals || 20,
+      expectedPricePerQuintal: rfqData.expectedPricePerQuintal || 2000,
+      deliveryLocation: rfqData.deliveryLocation || "Warehouse",
+      deliveryPincode: rfqData.deliveryPincode || "400703",
+      deliveryTimeline: rfqData.deliveryTimeline || "Immediate (Within 48h)",
+      message: rfqData.message,
+      status: "SUBMITTED",
+      createdAt: new Date().toISOString()
+    });
+  },
+
+  async getRfqs(params?: { buyerId?: number; farmerId?: number; listingId?: number }): Promise<CropRfq[]> {
+    const query = new URLSearchParams();
+    if (params?.buyerId) query.append("buyerId", params.buyerId.toString());
+    if (params?.farmerId) query.append("farmerId", params.farmerId.toString());
+    if (params?.listingId) query.append("listingId", params.listingId.toString());
+    return safeFetchJson<CropRfq[]>(`/api/rfqs?${query.toString()}`, undefined, []);
   }
 };
 

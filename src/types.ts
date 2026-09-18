@@ -46,8 +46,13 @@ export interface CropListing {
   images?: string[];
   createdAt: string;
   farmerName?: string;
+  fpoName?: string;
   farmerTrustScore?: number;
   farmerVerified?: boolean;
+  minOrderQuantityQuintals?: number;
+  moisturePct?: number;
+  packagingType?: string;
+  shelfLifeDays?: number;
 }
 
 export interface PriceFactor {
@@ -227,5 +232,27 @@ export interface BulkProcurementRequest {
   deliveryAddress: string;
   urgency: string;
   notes: string;
+  createdAt: string;
+}
+
+export interface CropRfq {
+  id: string;
+  listingId: number;
+  cropName: string;
+  variety: string;
+  farmerId: number;
+  farmerName?: string;
+  fpoName?: string;
+  buyerId: number;
+  buyerName: string;
+  buyerCompany?: string;
+  buyerPhone?: string;
+  requiredQuantityQuintals: number;
+  expectedPricePerQuintal: number;
+  deliveryLocation: string;
+  deliveryPincode: string;
+  deliveryTimeline: "Immediate (Within 48h)" | "Within 7 Days" | "Flexible / Scheduled Supply";
+  message?: string;
+  status: "SUBMITTED" | "UNDER_REVIEW" | "ACCEPTED" | "COUNTER_OFFER" | "REJECTED";
   createdAt: string;
 }
