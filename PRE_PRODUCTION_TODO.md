@@ -1,160 +1,175 @@
-# 🛠️ KisanSetu: Pre-Production Action Items & Missing Requirements
+# 🛠️ KisanSetu: Pre-Hosting & Pre-Production Action Items
 
-This document provides a prioritized, actionable checklist of **everything that is missing, incomplete, or required before deploying KisanSetu to public production**.
+This document tracks **all completed milestones and remaining actionable requirements** before hosting and launching **KisanSetu** to public production.
 
-Tasks are ranked by severity using the **Production Readiness Risk Classification Matrix**:
-* 🔴 **P0 — Blocking**: Must be resolved before the application can function live in production.
-* 🟡 **P1 — High Priority**: Must be completed immediately before or at launch for security and stability.
-* 🟢 **P2 — Medium Priority**: Essential operational tasks scheduled for the first post-launch sprint.
-* ⚪ **P3 — Low Priority / Future**: Nice-to-have enhancements once initial user traffic begins.
-
----
-
-## 🔴 Priority P0 — Blocking (Must Complete Before Production Launch)
-
-### 1. Add Missing Drivers to `backend/requirements.txt` ✅ (COMPLETED)
-* **Status**: Resolved. Added `psycopg2-binary>=2.9.9` and `cloudinary>=1.38.0` to `backend/requirements.txt`.
+Tasks are prioritized using the **Production Readiness Risk Classification Matrix**:
+* 🔴 **P0 — Pre-Hosting Blockers**: Must be configured in cloud platforms for the application to be deployed and live.
+* 🟡 **P1 — Launch Hardening**: Immediate security and stability fixes needed before opening access to users.
+* 🟢 **P2 — Post-Hosting Sprint**: Operational improvements scheduled right after initial deployment.
+* ⚪ **P3 — Future Enhancements**: Advanced production roadmap items.
 
 ---
 
-### 2. Implement Missing `CropRfq` Model & Endpoints in FastAPI
-* **Problem**: The Request for Quotation (RFQ) workflow exists in the React frontend and `server.ts`, but is completely missing from the Python FastAPI backend (`backend/models.py` and `backend/main.py`). In Full-Stack mode, submitting an RFQ currently fails or falls back to in-memory storage.
-* **Action Required**:
-  1. In `backend/models.py`, define the `CropRfq` SQLAlchemy table:
-     ```python
-     class CropRfq(Base):
-         __tablename__ = "crop_rfqs"
-         id = Column(String(50), primary_key=True, index=True)
-         listing_id = Column(Integer, ForeignKey("crop_listings.id"), nullable=False)
-         buyer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-         farmer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-         crop_name = Column(String(100), nullable=False)
-         variety = Column(String(100), nullable=False)
-         required_quantity_quintals = Column(Float, nullable=False)
-         expected_price_per_quintal = Column(Float, nullable=False)
-         delivery_location = Column(String(255), nullable=False)
-         delivery_pincode = Column(String(20), nullable=False)
-         delivery_timeline = Column(String(100), nullable=False)
-         message = Column(Text, nullable=True)
-         status = Column(String(30), default="SUBMITTED")
-         created_at = Column(DateTime, default=datetime.utcnow)
+## ✅ Completed Pre-Production Milestones (Codebase Ready)
+
+* [x] **PostgreSQL & Cloudinary Drivers**: Added `psycopg2-binary>=2.9.9` and `cloudinary>=1.38.0` in `backend/requirements.txt`.
+* [x] **Crop RFQ System**: Fully implemented `CropRfq` SQLAlchemy model (`backend/models.py`), Pydantic schemas (`backend/schemas.py`), and REST endpoints `POST /api/rfqs`, `GET /api/rfqs` (`backend/main.py`).
+* [x] **Server-Side Authentication & JWT**: Implemented `bcrypt` password hashing, JWT bearer token verification (`backend/auth.py`), and object-level IDOR ownership guards. Verified 100% with automated test suite (`backend/test_auth_flow.py`).
+* [x] **Strict CORS Controls**: Restricted API origins in `backend/main.py` using `ALLOWED_ORIGINS` environment variables plus local dev origins, with explicit HTTP methods and headers.
+* [x] **Rate Limiting**: Added `slowapi` brute-force protection to sensitive endpoints (`10/minute` on `/api/auth/register` and `/api/auth/login`).
+* [x] **Application Crash Reporting**: Integrated `sentry-sdk` into FastAPI with GDPR privacy settings (`send_default_pii=False`).
+* [x] **SPA Routing Fallback**: Configured `vercel.json` with `/api/*` proxy rewrite to Render and `/(.*)` rewrite to `index.html`.
+* [x] **Dynamic Frontend API Base**: Configured `src/api.ts` with `VITE_API_BASE_URL` resolver and automated Bearer token attachment.
+* [x] **Automated Database Backups**: Created `.github/workflows/db-backup.yml` for scheduled weekly `pg_dump` + gzip + GPG AES-256 encryption + 90-day GitHub Artifact retention.
+* [x] **SEO Discovery Files**: Created `public/robots.txt` and `public/sitemap.xml`.
+* [x] **Console Output Sanitization**: Removed all unnecessary `console.log` statements across `src/`.
+* [x] **Production Compilation**: Verified `npm run build` succeeds cleanly with zero TypeScript errors.
+
+---
+
+## 🔴 Priority P0 — Pre-Hosting Blockers (Required for Deployment)
+
+### 1. Provision Production PostgreSQL Database (Neon.tech)
+* **Status**: ⏳ Pending User Action
+* **Why Required**: Cloud container platforms (like Render) have ephemeral local filesystems; SQLite (`agrimarket.db`) resets on reboot. A persistent cloud database is mandatory.
+* **Steps**:
+  1. Sign in to [Neon.tech](https://neon.tech/) and create a free PostgreSQL project (e.g., `kisansetu-db`).
+  2. Open the **SQL Editor** in Neon and paste the contents of [`backend/neon_schema.sql`](file:///c:/Users/Sarfarosh%20Alam/Work%20Space/My%20Projects/SIH-2026/SIH-26033-KisanSetu/backend/neon_schema.sql) to create all tables and indexes.
+  3. Copy your Neon PostgreSQL connection string (ensure it ends with `?sslmode=require`).
+
+---
+
+### 2. Set Up Cloudinary Account for Crop Photo Storage
+* **Status**: ⏳ Pending User Action
+* **Why Required**: Uploaded crop images in `backend/uploads/` will be deleted on Render restart without persistent cloud storage.
+* **Steps**:
+  1. Register for a free account at [Cloudinary.com](https://cloudinary.com/) (₹0 / no credit card required).
+  2. Copy the **API Environment variable** from your dashboard (format: `cloudinary://<api_key>:<api_secret>@<cloud_name>`).
+  3. Save this value to inject into Render environment variables.
+
+---
+
+### 3. Deploy FastAPI Backend to Render
+* **Status**: ⏳ Pending User Action
+* **Why Required**: The backend must be live on HTTPS before the frontend can connect.
+* **Steps**:
+  1. Go to [Render Dashboard](https://dashboard.render.com/) ➔ **New +** ➔ **Web Service**.
+  2. Connect your `SIH-26033-KisanSetu` GitHub repository.
+  3. Configure deployment settings:
+     * **Root Directory**: `backend`
+     * **Runtime**: `Python 3`
+     * **Build Command**: `pip install -r requirements.txt`
+     * **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+  4. Add the following **Environment Variables** in Render:
+     * `DATABASE_URL`: *(Your Neon PostgreSQL connection string)*
+     * `CLOUDINARY_URL`: *(Your Cloudinary credentials string)*
+     * `ALLOWED_ORIGINS`: `https://kisansetu.vercel.app,http://localhost:3000`
+     * `JWT_SECRET_KEY`: *(Generate a secure 64-char string)*
+     * `SENTRY_DSN`: *(Optional — from Sentry project settings)*
+  5. Click **Deploy Web Service** and note your assigned URL (e.g., `https://kisansetu-backend.onrender.com`).
+
+---
+
+### 4. Update Vercel Proxy & Deploy Frontend
+* **Status**: ⏳ Pending User Action
+* **Why Required**: The frontend needs the live Render URL to proxy API requests without CORS issues.
+* **Steps**:
+  1. Open [`vercel.json`](file:///c:/Users/Sarfarosh%20Alam/Work%20Space/My%20Projects/SIH-2026/SIH-26033-KisanSetu/vercel.json) in the project root:
+     ```json
+     {
+       "source": "/api/:path*",
+       "destination": "https://YOUR-ACTUAL-RENDER-URL.onrender.com/api/:path*"
+     }
      ```
-  2. In `backend/schemas.py`, add `CropRfqCreate` and `CropRfqResponse` Pydantic schemas.
-  3. In `backend/main.py`, implement:
-     * `POST /api/rfqs` (Submit new RFQ)
-     * `GET /api/rfqs` (Retrieve RFQs filtered by buyer/farmer/listing)
+     Replace with your actual Render service URL.
+  2. Commit and push this change to GitHub.
+  3. Go to [Vercel Dashboard](https://vercel.com/) ➔ **Add New Project** ➔ Import `SIH-26033-KisanSetu`.
+  4. Framework Preset: **Vite** | Build Command: `npm run build` | Output Directory: `dist`.
+  5. Click **Deploy**.
 
 ---
 
-### 3. Connect Cloudinary for Persistent Image Storage
-* **Problem**: Currently, uploaded crop photos are saved to local disk (`backend/uploads/`). Free cloud hosts (like Render) have **ephemeral filesystems**, meaning all uploaded photos will be deleted whenever the server restarts, sleeps, or redeploys.
-* **Action Required**:
-  1. Register a free account at [Cloudinary.com](https://cloudinary.com/) (₹0 / no credit card required).
-  2. Obtain your `CLOUDINARY_URL` from the Cloudinary dashboard.
-  3. Set `CLOUDINARY_URL` in your Render Web Service environment variables.
-  4. Ensure `backend/main.py` utilizes Cloudinary whenever `CLOUDINARY_URL` is detected.
+### 5. Configure GitHub Actions Backup Secrets
+* **Status**: ⏳ Pending User Action
+* **Why Required**: The automated backup workflow ([`.github/workflows/db-backup.yml`](file:///c:/Users/Sarfarosh%20Alam/Work%20Space/My%20Projects/SIH-2026/SIH-26033-KisanSetu/.github/workflows/db-backup.yml)) will fail unless GitHub Actions has access to the database and encryption passphrase.
+* **Steps**:
+  1. Go to your GitHub repository ➔ **Settings** ➔ **Secrets and variables** ➔ **Actions**.
+  2. Add New Repository Secret:
+     * `DATABASE_URL`: *(Neon connection string)*
+     * `BACKUP_PASSPHRASE`: *(A strong passphrase used to encrypt weekly `.sql.gz` dumps via GPG)*
 
 ---
 
-### 4. Provision Production PostgreSQL Database (Neon)
-* **Problem**: The backend currently defaults to a local SQLite file (`agrimarket.db`), which will reset on ephemeral cloud containers.
-* **Action Required**:
-  1. Create a free serverless PostgreSQL instance on [Neon.tech](https://neon.tech/) (0.5 GB permanent free tier).
-  2. Run the DDL schema migration script (from `DEPLOYMENT_ROADMAP.md` Section 4) in the Neon SQL Editor.
-  3. Update `backend/database.py` to enforce `connect_args={"sslmode": "require"}` for PostgreSQL connections.
-  4. Copy the Neon connection string and assign it as `DATABASE_URL` in the Render environment settings.
+## 🟡 Priority P1 — Pre-Launch Hardening (Fix Before Opening to Users)
+
+### 1. Configure Uptime Keep-Alive Ping (UptimeRobot)
+* **Problem**: Render's free tier spins down after 15 minutes of inactivity, causing ~50-second cold starts for visitors.
+* **Action Required**: Create a free HTTP monitor at [UptimeRobot.com](https://uptimerobot.com/) pinging `https://<YOUR-RENDER-URL>/api/health` every 10 minutes.
 
 ---
 
-### 5. Restrict Backend CORS Origins
-* **Problem**: `backend/main.py` currently has `allow_origins=["*"]`, allowing any external website to make cross-origin requests to your API.
-* **Action Required**: Update CORS middleware in `backend/main.py` to restrict access strictly to:
-  - Your production frontend domain (e.g. `https://kisansetu.vercel.app`)
-  - Local development ports (`http://localhost:3000`, `http://localhost:5173`)
+### 2. Guard or Disable Demo Seed Reset in Production
+* **Problem**: In [`src/App.tsx`](file:///c:/Users/Sarfarosh%20Alam/Work%20Space/My%20Projects/SIH-2026/SIH-26033-KisanSetu/src/App.tsx#L220), `handleResetData()` allows any user to restore baseline catalog data via `API.resetSeedData()`, which would wipe active production transactions.
+* **Action Required**: Hide or disable the reset data button in production mode (`import.meta.env.PROD`), or restrict the endpoint to admin roles.
 
 ---
 
-### 6. Create SPA Routing Configuration (`vercel.json`)
-* **Problem**: Without a rewrite configuration, refreshing deep routes (like `/farmer/inventory` or direct listing URLs) on Vercel will trigger an HTTP 404 error because the static server tries to locate a physical directory.
-* **Action Required**: Create `vercel.json` in the project root:
-  ```json
-  {
-    "rewrites": [
-      {
-        "source": "/api/:path*",
-        "destination": "https://kisansetu-backend.onrender.com/api/:path*"
-      },
-      {
-        "source": "/(.*)",
-        "destination": "/index.html"
-      }
-    ]
-  }
-  ```
+### 3. Add HTTP Security Headers
+* **Problem**: Standard security headers are currently missing.
+* **Action Required**: Add security headers in FastAPI middleware or Vercel config:
+  * `X-Content-Type-Options: nosniff`
+  * `X-Frame-Options: DENY`
+  * `Strict-Transport-Security: max-age=31536000; includeSubDomains`
 
 ---
 
-## 🟡 Priority P1 — High Priority (Resolve Immediately Before/At Launch)
-
-### 1. Wire Dynamic Backend Base URL in `src/api.ts`
-* **Problem**: `src/api.ts` currently sends API requests to relative paths (`/api/...`). When deployed on Vercel separately from Render, it must know how to reach the Render backend.
-* **Action Required**: Add an environment variable resolver in `src/api.ts`:
-  ```typescript
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
-  ```
-  Set `VITE_API_BASE_URL="https://kisansetu-backend.onrender.com"` in your Vercel project settings (or rely on `vercel.json` rewrites).
+### 4. Concurrency Protection for Stock Deduction
+* **Problem**: In [`backend/main.py`](file:///c:/Users/Sarfarosh%20Alam/Work%20Space/My%20Projects/SIH-2026/SIH-26033-KisanSetu/backend/main.py#L650), stock decrement (`listing.quantity_quintals -= payload.quantity_ordered`) lacks row locking (`with_for_update()`), creating a race condition if two buyers purchase simultaneously.
+* **Action Required**: Use `db.query(CropListing).with_for_update().filter(...)` inside the order transaction.
 
 ---
 
-### 2. Implement Server-Side Authentication & JWT Verification
-* **Problem**: The authentication flow in `backend/main.py` is currently in demo mode: any phone number and role creates a session without password verification, and API endpoints do not validate JWT bearer tokens.
-* **Action Required**:
-  1. Create `backend/auth.py` using `python-jose` and `passlib[bcrypt]` (already declared in `requirements.txt`).
-  2. Require `Depends(get_current_user)` on mutating endpoints (`POST /api/listings`, `PUT /api/listings/{id}`, `POST /api/orders`).
-  3. Verify that the user modifying a listing or order is the actual owner.
+### 5. Final Production Smoke Test
+* **Action Required**: Immediately upon deployment, verify the live checklist:
+  - [ ] Homepage loads over HTTPS without mixed-content warnings.
+  - [ ] User registration and login succeed with JWT stored.
+  - [ ] Farmer creates crop listing with photo uploaded to Cloudinary.
+  - [ ] Buyer places order; escrow state updates to `ESCROW_HELD`.
+  - [ ] 4-digit OTP releases escrow to farmer.
+  - [ ] Browser console has zero errors.
 
 ---
 
-### 3. Configure Automated Keep-Alive Ping (UptimeRobot)
-* **Problem**: Render's free tier spins down into sleep mode after 15 minutes of inactivity. The first visitor during a demonstration could experience a ~50-second cold start.
-* **Action Required**: Set up a free HTTP monitor at [UptimeRobot.com](https://uptimerobot.com/) pinging `https://kisansetu-backend.onrender.com/api/health` every 10 minutes.
+## 🟢 Priority P2 — Post-Hosting Sprint (First Week Post-Launch)
+
+- [ ] **Automated CI Workflow**: Add `.github/workflows/ci.yml` running `npm run build` and `python backend/test_auth_flow.py` on push/PR.
+- [ ] **Self-Service Password Reset**: Add forgot-password flow with expiring single-use reset tokens.
+- [ ] **Browser History Routing**: Synchronize `activeTab` with browser History API (`window.history.pushState`) so browser Back/Forward buttons navigate between tabs.
+- [ ] **Form Dirty-State Protection**: Warn users before leaving `FarmerCropForm` or `CropRfqModal` with unsaved changes.
+- [ ] **User Account Deletion**: Add self-service data and account deletion endpoint for privacy compliance.
 
 ---
 
-### 4. Remove Debug Console Statements
-* **Problem**: `src/api.ts` and UI views contain lingering `console.log` and unhandled `console.warn` statements.
-* **Action Required**: Clean up non-essential console outputs before running the production build.
+## ⚪ Priority P3 — Future Enhancements
+
+- [ ] **Real Carrier SMS Gateway**: Hook up Fast2SMS or Twilio API for real mobile OTP delivery across India.
+- [ ] **Live Payment Gateway**: Integrate Razorpay or Cashfree webhooks for direct bank-to-bank UPI transfers.
+- [ ] **Custom Domain**: Connect `kisansetu.in` via DNS CNAME records to replace free subdomains.
+- [ ] **Magic-Byte File Inspection**: Add `python-magic` to inspect image binary headers before storage.
 
 ---
 
-## 🟢 Priority P2 — Medium Priority (First Post-Launch Sprint)
+## 📋 Quick Execution Summary Matrix
 
-- [ ] **Automated Database Backups**: Set up a scheduled GitHub Action (`.github/workflows/db-backup.yml`) to run weekly `pg_dump` exports and save them as encrypted GitHub Artifacts.
-- [ ] **SEO Optimization Files**: Add `public/robots.txt` and `public/sitemap.xml` to allow search engines to crawl public produce catalog pages.
-- [ ] **Application Crash Reporting**: Integrate a free tier error tracker like [Sentry.io](https://sentry.io/) to capture client-side and server-side runtime exceptions in real time.
-- [ ] **Rate Limiting**: Add `slowapi` or FastAPI rate-limiting middleware to protect public endpoints (`/api/pricing/recommend`) against denial-of-service abuse.
-
----
-
-## ⚪ Priority P3 — Low Priority / Future Enhancements
-
-- [ ] **Real Carrier SMS Gateway**: Replace the simulated 4-digit OTP delivery system with real SMS delivery via Fast2SMS or Twilio for Indian mobile numbers when funding allows.
-- [ ] **Custom Domain Binding**: Purchase and link `kisansetu.in` via DNS CNAME records to replace the free `.vercel.app` and `.onrender.com` subdomains.
-- [ ] **Redis Rate Caching**: Add an Upstash Redis cache for APMC daily mandi rates to reduce database queries.
-
----
-
-## Quick Execution Summary Checklist
-
-| Task | Target File / Service | Priority | Status |
-| :--- | :--- | :---: | :---: |
-| Add `psycopg2-binary` & `cloudinary` | `backend/requirements.txt` | 🔴 P0 | ✅ Completed |
-| Add `CropRfq` table & REST routes | `backend/models.py`, `backend/main.py` | 🔴 P0 | ⏳ Pending |
-| Configure Cloudinary credentials | Cloudinary Dashboard ➔ Render | 🔴 P0 | ⏳ Pending |
-| Provision PostgreSQL & execute schema | Neon.tech ➔ Render `DATABASE_URL` | 🔴 P0 | ⏳ Pending |
-| Restrict CORS origins | `backend/main.py` | 🔴 P0 | ⏳ Pending |
-| Add SPA rewrite rule | `vercel.json` | 🔴 P0 | ⏳ Pending |
-| Add `VITE_API_BASE_URL` | `src/api.ts` ➔ Vercel Settings | 🟡 P1 | ⏳ Pending |
-| Wire JWT auth guards | `backend/auth.py` | 🟡 P1 | ⏳ Pending |
-| Configure 10-min keep-alive ping | UptimeRobot | 🟡 P1 | ⏳ Pending |
-| Clean debug console logs | `src/api.ts`, `src/components/` | 🟡 P1 | ⏳ Pending |
+| Task | Target Service / File | Priority | Action Type | Status |
+| :--- | :--- | :---: | :---: | :---: |
+| **Neon PostgreSQL** | Neon.tech ➔ `backend/neon_schema.sql` | 🔴 P0 | Cloud Setup | ⏳ Pending User |
+| **Cloudinary Storage** | Cloudinary.com ➔ Render Env | 🔴 P0 | Cloud Setup | ⏳ Pending User |
+| **FastAPI Backend Deploy** | Render Dashboard ➔ `backend/` | 🔴 P0 | Deployment | ⏳ Pending User |
+| **Vercel Frontend Deploy** | `vercel.json` ➔ Vercel Dashboard | 🔴 P0 | Deployment | ⏳ Pending User |
+| **GitHub Backup Secrets** | GitHub Repo ➔ Settings ➔ Secrets | 🔴 P0 | Configuration | ⏳ Pending User |
+| **Keep-Alive Monitor** | UptimeRobot ➔ `/api/health` | 🟡 P1 | Monitoring | ⏳ Pending User |
+| **Disable Demo Reset in Prod** | `src/App.tsx` | 🟡 P1 | Code Tweak | ⏳ Pending Code |
+| **HTTP Security Headers** | `backend/main.py` / `vercel.json` | 🟡 P1 | Code Tweak | ⏳ Pending Code |
+| **Stock Row Locking** | `backend/main.py` | 🟡 P1 | Code Tweak | ⏳ Pending Code |
+| **Live Smoke Test** | Production URL | 🟡 P1 | Verification | ⏳ Pending Live |
