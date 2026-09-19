@@ -436,7 +436,7 @@ export default function App() {
         )}
 
         {/* Farmer Dashboard & Vendor Sub-Views */}
-        {!isUnauthorized && !isUnsupportedRole && currentUser.role === "FARMER" && (
+        {!isUnauthorized && !isUnsupportedRole && currentUser.role === "FARMER" && isFarmerSubTab && (
           <FarmerView
             farmer={currentUser}
             listings={listings}
@@ -448,25 +448,30 @@ export default function App() {
             lang={lang}
             openCreateModal={openCreateListingModal}
             onCloseCreateModal={() => setOpenCreateListingModal(false)}
-            activeSubTab={(["inventory", "buyer_requests", "payouts", "pricing"].includes(activeTab) ? activeTab : "inventory") as FarmerSubTab}
+            activeSubTab={activeTab as FarmerSubTab}
             onSelectSubTab={(subTab) => setActiveTab(subTab)}
             externalSearch={globalSearchQuery}
           />
         )}
 
         {/* Buyer Dashboard & Purchasing Sub-Views */}
-        {!isUnauthorized && !isUnsupportedRole && currentUser.role === "BUYER" && (
+        {!isUnauthorized && !isUnsupportedRole && currentUser.role === "BUYER" && isBuyerSubTab && (
           <BuyerDashboard
             buyer={currentUser}
             listings={listings}
             orders={orders}
             lang={lang}
-            activeTab={(["marketplace", "bulk_orders", "contracts", "payments"].includes(activeTab) ? activeTab : "marketplace") as BuyerSubTab}
+            activeTab={activeTab as BuyerSubTab}
             onSelectTab={(subTab) => setActiveTab(subTab)}
             onOpenOrderModal={(listing) => setActiveListingToOrder(listing)}
             onOrderStatusUpdate={handleOrderStatusUpdate}
             externalSearch={globalSearchQuery}
           />
+        )}
+
+        {/* Mandi Rates for Buyer (if pricing tab clicked while in Buyer role) */}
+        {!isUnauthorized && !isUnsupportedRole && currentUser.role === "BUYER" && activeTab === "pricing" && (
+          <AIPricingDashboard lang={lang} />
         )}
 
         {/* AI Pricing Dashboard — available to all authenticated roles (Gap 1) */}
