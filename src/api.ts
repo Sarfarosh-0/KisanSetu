@@ -294,6 +294,22 @@ export const API = {
     return safeFetchJson<MarketAnalytics>("/api/analytics/summary");
   },
 
+  async getNotifications(userId?: number, role?: string) {
+    const params = new URLSearchParams();
+    if (userId) params.set("userId", String(userId));
+    if (role) params.set("role", role);
+    const qs = params.toString() ? `?${params.toString()}` : "";
+    return safeFetchJson<Array<{
+      id: string;
+      title: string;
+      message: string;
+      time: string;
+      unread: boolean;
+      targetTab?: string;
+      type: "order" | "escrow" | "mandi" | "rfq";
+    }>>(`/api/notifications${qs}`);
+  },
+
   async resetSeedData() {
     return safeFetchJson<{ message: string }>("/api/seed/reset", { method: "POST" });
   },

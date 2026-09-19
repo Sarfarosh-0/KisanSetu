@@ -21,6 +21,7 @@ interface FarmerViewProps {
   onCloseCreateModal?: () => void;
   activeSubTab?: FarmerSubTab;
   onSelectSubTab?: (tab: FarmerSubTab) => void;
+  externalSearch?: string;
 }
 
 export const FarmerView: React.FC<FarmerViewProps> = ({
@@ -34,7 +35,8 @@ export const FarmerView: React.FC<FarmerViewProps> = ({
   lang,
   openCreateModal,
   onCloseCreateModal,
-  activeSubTab = "inventory"
+  activeSubTab = "inventory",
+  externalSearch
 }) => {
   const [internalTab, setInternalTab] = useState<FarmerSubTab>(activeSubTab);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -102,6 +104,7 @@ export const FarmerView: React.FC<FarmerViewProps> = ({
           onOpenCreateModal={handleOpenCreateForm}
           onOpenEditModal={handleOpenEditForm}
           onListingDeleted={onListingDeleted}
+          externalSearch={externalSearch}
         />
       )}
 

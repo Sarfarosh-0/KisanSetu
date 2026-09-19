@@ -881,3 +881,107 @@ def get_market_analytics(db: Session = Depends(get_db)):
         "total_traded_volume_quintals": round(total_volume_qtl, 1),
         "total_turnover_inr": round(total_volume_qtl * 2600.0, 0)
     }
+
+# ----------------------------------------------------
+# 8. Seed Reset (Development Only) — Gap 2
+# ----------------------------------------------------
+@app.post("/api/seed/reset", tags=["Admin / Seed"])
+def reset_seed_data():
+    """Reset database to initial baseline seed data. Strictly disabled in production."""
+    env = os.getenv("ENVIRONMENT", os.getenv("APP_ENV", "development")).lower()
+    if env in ["production", "prod"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Database reset is strictly disabled in production environments."
+        )
+    try:
+        from seed_data import reset_db_and_seed
+        reset_db_and_seed()
+        return {"message": "Database successfully reset to seed data"}
+    except Exception as e:
+        logger.error(f"Failed to reset seed data: {e}")
+        raise HTTPException(status_code=500, detail=f"Reset failed: {str(e)}")
+
+# ----------------------------------------------------
+# 9. Dynamic Notifications Feed — Gap 10
+# ----------------------------------------------------
+@app.get("/api/notifications", tags=["Notifications"])
+def get_notifications(
+    user_id: Optional[int] = Query(None, alias="userId"),
+    role: Optional[str] = Query(None),
+    current_user: Optional[User] = Depends(get_optional_current_user),
+    db: Session = Depends(get_db)
+):
+    """Retrieve dynamic contextual notifications based on real orders, listings, and market alerts."""
+    effective_user = current_user
+    if not effective_user and user_id:
+        effective_user = db.query(User).filter(User.id == user_id).first()
+
+    effective_role = role or (effective_user.role.value if effective_user and hasattr(effective_user.role, 'value') else "FARMER")
+
+    notifications = []
+    
+    # 1. Real Order-based notifications
+    if effective_user:
+        if effective_role == "FARMER":
+            farmer_orders = db.query(Order).filter(Order.farmer_id == effective_user.id).order_by(Order.id.desc()).limit(3).all()
+            for o in farmer_orders:
+                if o.status == OrderStatus.IN_TRANSIT:
+                    notifications.append({
+                        "id": f"ord-{o.id}",
+                        "title": f"Order #{o.order_number} In Transit",
+                        "message": f"{o.quantity_ordered} Qtl produce is in transit. Delivery OTP will verify receipt.",
+                        "time": "Active",
+                        "unread": True,
+                        "targetTab": "inventory",
+                        "type": "order"
+                    })
+                if o.payment_status == PaymentStatus.ESCROW_HELD:
+                    notifications.append({
+                        "id": f"escrow-{o.id}",
+                        "title": "Escrow Payment Secured",
+                        "message": f"₹{o.total_produce_amount:,.0f} held in dual-custody escrow for Order #{o.order_number}.",
+                        "time": "Secured",
+                        "unread": True,
+                        "targetTab": "payouts",
+                        "type": "escrow"
+                    })
+        elif effective_role == "BUYER":
+            buyer_orders = db.query(Order).filter(Order.buyer_id == effective_user.id).order_by(Order.id.desc()).limit(3).all()
+            for o in buyer_orders:
+                notifications.append({
+                    "id": f"ord-buyer-{o.id}",
+                    "title": f"Order #{o.order_number} Update",
+                    "message": f"Status: {o.status.value}. Delivery PIN: {o.delivery_pincode}. OTP: {o.delivery_otp}",
+                    "time": "Active",
+                    "unread": True,
+                    "targetTab": "contracts",
+                    "type": "order"
+                })
+
+    # 2. RFQ notifications
+    recent_rfqs = db.query(CropRfq).order_by(CropRfq.id.desc()).limit(2).all()
+    for r in recent_rfqs:
+        notifications.append({
+            "id": f"rfq-{r.id}",
+            "title": f"Procurement Demand: {r.crop_name}",
+            "message": f"{r.buyer_name} requested {r.required_quantity_quintals} Qtl at target ₹{r.expected_price_per_quintal}/Qtl.",
+            "time": "15m ago",
+            "unread": False,
+            "targetTab": "buyer_requests" if effective_role == "FARMER" else "bulk_orders",
+            "type": "rfq"
+        })
+
+    # 3. Market / Mandi trend alert
+    notifications.append({
+        "id": "mandi-daily-trend",
+        "title": "Mandi Rate Insight",
+        "message": "Nashik & Lasalgaon onion modal price up +8.4%. Direct buyers offering ₹2,450/Qtl.",
+        "time": "Today",
+        "unread": False,
+        "targetTab": "pricing",
+        "type": "mandi"
+    })
+
+    return notifications
+

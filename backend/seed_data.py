@@ -248,5 +248,22 @@ def seed():
     db.close()
     print("Seed completed successfully!")
 
+def reset_db_and_seed():
+    """Wipe current data and reseed initial records."""
+    db = SessionLocal()
+    try:
+        from models import CropRfq
+        db.query(CropRfq).delete()
+    except Exception:
+        pass
+    db.query(Order).delete()
+    db.query(CropListing).delete()
+    db.query(MandiPrice).delete()
+    db.query(LogisticsBatch).delete()
+    db.query(User).delete()
+    db.commit()
+    db.close()
+    seed()
+
 if __name__ == "__main__":
     seed()

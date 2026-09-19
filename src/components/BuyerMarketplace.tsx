@@ -26,6 +26,7 @@ interface BuyerMarketplaceProps {
   listings: CropListing[];
   onOpenOrderModal?: (listing: CropListing) => void;
   lang: "en" | "hi";
+  externalSearch?: string;
 }
 
 const CROP_CATEGORIES = [
@@ -245,7 +246,8 @@ const BuyerListingCard: React.FC<BuyerListingCardProps> = ({
 export const BuyerMarketplace: React.FC<BuyerMarketplaceProps> = ({
   buyer,
   listings,
-  lang
+  lang,
+  externalSearch = ""
 }) => {
   // Use mock listings if incoming listings prop is empty or not yet loaded
   const effectiveListings = useMemo(() => {
@@ -269,6 +271,8 @@ export const BuyerMarketplace: React.FC<BuyerMarketplaceProps> = ({
   const [maxPrice, setMaxPrice] = useState<number>(25000);
   const [sortBy, setSortBy] = useState<"price-low" | "price-high" | "rating" | "quantity">("price-low");
 
+  const effectiveSearch = (searchTerm || externalSearch).trim().toLowerCase();
+
   const filteredListings = useMemo(() => {
     return effectiveListings.filter((item) => {
       if (selectedCategory !== "All") {
@@ -287,8 +291,8 @@ export const BuyerMarketplace: React.FC<BuyerMarketplaceProps> = ({
       if (item.expectedPricePerQuintal > maxPrice) {
         return false;
       }
-      if (searchTerm) {
-        const q = searchTerm.toLowerCase();
+      if (effectiveSearch) {
+        const q = effectiveSearch;
         const matchesName = item.cropName.toLowerCase().includes(q);
         const matchesVariety = item.variety.toLowerCase().includes(q);
         const matchesDistrict = item.district.toLowerCase().includes(q);
@@ -305,7 +309,7 @@ export const BuyerMarketplace: React.FC<BuyerMarketplaceProps> = ({
       if (sortBy === "quantity") return b.quantityQuintals - a.quantityQuintals;
       return 0;
     });
-  }, [effectiveListings, selectedCategory, selectedGrade, organicOnly, maxPrice, searchTerm, sortBy]);
+  }, [effectiveListings, selectedCategory, selectedGrade, organicOnly, maxPrice, effectiveSearch, sortBy]);
 
   // If a crop is selected, render the dedicated Crop Details Page
   if (selectedListing) {

@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Layout } from "./components/Layout";
 import { Footer } from "./components/Footer";
 import { FarmerView, FarmerSubTab } from "./components/FarmerView";
 import { BuyerDashboard, BuyerSubTab } from "./components/buyer/BuyerDashboard";
 import { OrdersAndPaymentModal } from "./components/OrdersAndPaymentModal";
 import { ApiDocsModal } from "./components/ApiDocsModal";
+import { AIPricingDashboard } from "./components/AIPricingDashboard";
+import { RouteOptimizationView } from "./components/RouteOptimizationView";
 import { LoginPage, AuthSuccessPayload } from "./components/auth";
 import { CropListing, Order, User, UserRole } from "./types";
 import { API } from "./api";
@@ -15,10 +17,9 @@ import {
   Scale, 
   X, 
   ArrowRight,
-  PlusCircle,
-  Layers,
   AlertTriangle,
-  ArrowRightLeft
+  ArrowRightLeft,
+  Construction
 } from "lucide-react";
 
 const FALLBACK_USERS: User[] = [
@@ -89,13 +90,29 @@ export default function App() {
     }
   }, [lang]);
 
-  // Navigation tab state (defaults based on role)
-  const [activeTab, setActiveTab] = useState<string>("inventory");
+  // ---------------------------------------------------------------------------
+  // URL Query-Param Deep-Link Sync (Gap 9)
+  // Read initial tab from ?tab= in URL; push updates back on change
+  // ---------------------------------------------------------------------------
+  const getTabFromUrl = (): string => {
+    if (typeof window === "undefined") return "inventory";
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("tab") || "inventory";
+    } catch {
+      return "inventory";
+    }
+  };
+
+  // Navigation tab state — initializes from URL query param
+  const [activeTab, setActiveTab] = useState<string>(getTabFromUrl);
 
   // Modal triggers
   const [activeListingToOrder, setActiveListingToOrder] = useState<CropListing | null>(null);
   const [openCreateListingModal, setOpenCreateListingModal] = useState(false);
   const [activePolicyModal, setActivePolicyModal] = useState<"terms" | "escrow" | "pricing" | null>(null);
+  // Global header search query threaded to active view (Gap 6)
+  const [globalSearchQuery, setGlobalSearchQuery] = useState<string>("");
 
   // Load baseline platform data
   const loadData = async () => {
@@ -132,9 +149,34 @@ export default function App() {
     loadData();
   }, []);
 
-  // Permitted tabs mapping for RBAC enforcement
-  const farmerAllowedTabs = useMemo(() => ["inventory", "buyer_requests", "payouts", "pricing", "auth", "api"], []);
-  const buyerAllowedTabs = useMemo(() => ["marketplace", "bulk_orders", "contracts", "payments", "pricing", "auth", "api"], []);
+  // Permitted tabs mapping for RBAC enforcement (includes ai_pricing + route_optimizer for all roles)
+  const farmerAllowedTabs = useMemo(() => ["inventory", "buyer_requests", "payouts", "pricing", "ai_pricing", "route_optimizer", "auth", "api"], []);
+  const buyerAllowedTabs = useMemo(() => ["marketplace", "bulk_orders", "contracts", "payments", "pricing", "ai_pricing", "route_optimizer", "auth", "api"], []);
+
+  // Sync activeTab → URL query param whenever tab changes (Gap 9)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (activeTab && activeTab !== "auth") {
+        params.set("tab", activeTab);
+        const newUrl = `${window.location.pathname}?${params.toString()}${window.location.hash}`;
+        window.history.replaceState(null, "", newUrl);
+      }
+    } catch {
+      // Ignore history API errors
+    }
+  }, [activeTab]);
+
+  // Support browser Back/Forward navigation with URL query params (Gap 9)
+  useEffect(() => {
+    const handlePopState = () => {
+      const tab = getTabFromUrl();
+      if (tab) setActiveTab(tab);
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   // Switch role handler with strict RBAC tab default
   const handleSelectUserRole = (role: UserRole) => {
@@ -144,7 +186,8 @@ export default function App() {
       if (role === "FARMER") {
         setActiveTab("inventory");
       } else {
-        setActiveTab("bulk_orders");
+        // Default buyer landing tab is marketplace (Gap 4)
+        setActiveTab("marketplace");
       }
     }
   };
@@ -216,8 +259,8 @@ export default function App() {
     API.getListings().then(setListings);
   };
 
-  // Reset baseline market data
-  const handleResetData = async () => {
+  // Reset baseline market data — ONLY available in development mode (Gap 2)
+  const handleResetData = import.meta.env.DEV ? async () => {
     const prompt = lang === "hi" 
       ? "क्या आप मूल कृषि कैटलॉग और लाइव मंडी भाव पुनर्स्थापित करना चाहते हैं?" 
       : "Restore baseline agricultural catalog and live market rates?";
@@ -225,10 +268,27 @@ export default function App() {
       await API.resetSeedData();
       await loadData();
     }
-  };
+  } : undefined;
 
-  // Callback from Login & OTP flow
-  const handleAuthSuccess = (payload: AuthSuccessPayload) => {
+  // Callback from Login & OTP flow — fetch real user profile from backend (Gap 5)
+  const handleAuthSuccess = async (payload: AuthSuccessPayload) => {
+    try {
+      // Attempt to fetch the authenticated user profile from backend
+      const meUser = await API.getMe();
+      if (meUser) {
+        setCurrentUser(meUser);
+        // Refresh full users list in background so role switching stays accurate
+        API.getUsers().then(fresh => {
+          if (Array.isArray(fresh) && fresh.length > 0) setUsers(fresh);
+        }).catch(() => {});
+        const targetTab = meUser.role === "FARMER" ? "inventory" : "marketplace";
+        setActiveTab(targetTab);
+        return;
+      }
+    } catch {
+      // Fall through to fallback handling if backend is unavailable
+    }
+    // Fallback: use in-memory user matching payload role
     if (payload.role === "farmer") {
       const farmerUser = users.find(u => u.role === "FARMER") || currentUser;
       if (farmerUser) setCurrentUser(farmerUser);
@@ -250,8 +310,15 @@ export default function App() {
     if (currentUser.role === "BUYER") {
       return !buyerAllowedTabs.includes(activeTab);
     }
+    // LOGISTICS / GOVT_OFFICIAL roles — not yet fully implemented in frontend (Gap 12)
+    // Treat as authorized so they don't get stuck in RBAC loop; a friendly notice is shown below
     return false;
   }, [currentUser, activeTab, farmerAllowedTabs, buyerAllowedTabs]);
+
+  // Check if the current user's role has no dedicated UI (Gap 12)
+  const isUnsupportedRole = useMemo(() => {
+    return currentUser?.role === "LOGISTICS" || currentUser?.role === "GOVT_OFFICIAL";
+  }, [currentUser]);
 
   if (loading || !currentUser) {
     return (
@@ -271,7 +338,7 @@ export default function App() {
       <LoginPage
         initialRole={currentUser.role === "BUYER" ? "buyer" : "farmer"}
         onLoginSuccess={handleAuthSuccess}
-        onBackToApp={() => setActiveTab(currentUser.role === "FARMER" ? "inventory" : "bulk_orders")}
+        onBackToApp={() => setActiveTab(currentUser.role === "FARMER" ? "inventory" : "marketplace")}
         lang={lang}
       />
     );
@@ -289,6 +356,7 @@ export default function App() {
       onSignOut={() => setActiveTab("auth")}
       onOpenApiDocs={() => setActiveTab("api")}
       onSelectUserRole={handleSelectUserRole}
+      onSearchChange={setGlobalSearchQuery}
     >
       {/* Main View Container with Strict RBAC Guards */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
@@ -332,8 +400,34 @@ export default function App() {
           </div>
         )}
 
+        {/* Unsupported Role Notice (LOGISTICS, GOVT_OFFICIAL) — Gap 12 */}
+        {isUnsupportedRole && (
+          <div className="bg-blue-50 border border-blue-200 rounded-3xl p-8 shadow-xs flex flex-col items-center text-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center">
+              <Construction className="w-7 h-7 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-extrabold text-slate-900 font-display">
+                {lang === "hi" ? "पोर्टल जल्द आ रहा है" : "Portal Coming Soon"}
+              </h3>
+              <p className="text-sm text-slate-600 font-medium mt-1 max-w-md">
+                {lang === "hi"
+                  ? `${currentUser.role === "LOGISTICS" ? "लॉजिस्टिक्स" : "सरकारी अधिकारी"} पोर्टल अभी विकास में है। कृपया किसान या खरीदार खाते से लॉग इन करें।`
+                  : `The ${currentUser.role === "LOGISTICS" ? "Logistics Partner" : "Government Official"} portal is under active development. Please sign in with a Farmer or Buyer account.`
+                }
+              </p>
+            </div>
+            <button
+              onClick={() => setActiveTab("auth")}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl cursor-pointer transition shadow-xs"
+            >
+              {lang === "hi" ? "अलग खाते से लॉग इन करें" : "Sign In with Different Account"}
+            </button>
+          </div>
+        )}
+
         {/* Farmer Dashboard & Vendor Sub-Views */}
-        {!isUnauthorized && currentUser.role === "FARMER" && (
+        {!isUnauthorized && !isUnsupportedRole && currentUser.role === "FARMER" && (
           <FarmerView
             farmer={currentUser}
             listings={listings}
@@ -347,11 +441,12 @@ export default function App() {
             onCloseCreateModal={() => setOpenCreateListingModal(false)}
             activeSubTab={(["inventory", "buyer_requests", "payouts", "pricing"].includes(activeTab) ? activeTab : "inventory") as FarmerSubTab}
             onSelectSubTab={(subTab) => setActiveTab(subTab)}
+            externalSearch={globalSearchQuery}
           />
         )}
 
         {/* Buyer Dashboard & Purchasing Sub-Views */}
-        {!isUnauthorized && currentUser.role === "BUYER" && (
+        {!isUnauthorized && !isUnsupportedRole && currentUser.role === "BUYER" && (
           <BuyerDashboard
             buyer={currentUser}
             listings={listings}
@@ -361,7 +456,18 @@ export default function App() {
             onSelectTab={(subTab) => setActiveTab(subTab)}
             onOpenOrderModal={(listing) => setActiveListingToOrder(listing)}
             onOrderStatusUpdate={handleOrderStatusUpdate}
+            externalSearch={globalSearchQuery}
           />
+        )}
+
+        {/* AI Pricing Dashboard — available to all authenticated roles (Gap 1) */}
+        {activeTab === "ai_pricing" && !isUnsupportedRole && (
+          <AIPricingDashboard lang={lang} />
+        )}
+
+        {/* Route Optimization View — available to all authenticated roles (Gap 1) */}
+        {activeTab === "route_optimizer" && !isUnsupportedRole && (
+          <RouteOptimizationView lang={lang} />
         )}
 
         {/* API & Microservices Documentation Modal/View */}

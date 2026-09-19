@@ -15,6 +15,8 @@ export interface LayoutProps {
   onSignOut?: () => void;
   onOpenApiDocs?: () => void;
   onSelectUserRole?: (role: UserRole) => void;
+  /** Called whenever the global header search value changes (Gap 6) */
+  onSearchChange?: (query: string) => void;
 }
 
 export const Layout: React.FC<LayoutProps> = ({
@@ -28,7 +30,8 @@ export const Layout: React.FC<LayoutProps> = ({
   onResetData,
   onSignOut,
   onOpenApiDocs,
-  onSelectUserRole
+  onSelectUserRole,
+  onSearchChange
 }) => {
   // Single source of truth for desktop sidebar open/closed state
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(() => {
@@ -111,7 +114,10 @@ export const Layout: React.FC<LayoutProps> = ({
           onToggleSidebar={handleToggleSidebar}
           isSidebarOpen={isSidebarOpen}
           searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
+          onSearchChange={(q) => {
+            setSearchQuery(q);
+            onSearchChange?.(q);
+          }}
           onOpenNewListing={onOpenNewListing}
           onResetData={onResetData}
           onSignOut={onSignOut}

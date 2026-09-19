@@ -17,6 +17,7 @@ interface BuyerDashboardProps {
   onOpenOrderModal: (listing: CropListing) => void;
   onOrderStatusUpdate: (orderId: number, status: string, otp?: string) => Promise<void>;
   onVerifyPayment?: (payload: { orderId: number; upiId: string; amount: number }) => Promise<void>;
+  externalSearch?: string;
 }
 
 export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({
@@ -27,7 +28,8 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({
   activeTab,
   onOpenOrderModal,
   onOrderStatusUpdate,
-  onVerifyPayment
+  onVerifyPayment,
+  externalSearch
 }) => {
   return (
     <div className="space-y-6">
@@ -37,6 +39,7 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({
           listings={listings}
           onOpenOrderModal={onOpenOrderModal}
           lang={lang}
+          externalSearch={externalSearch}
         />
       )}
 

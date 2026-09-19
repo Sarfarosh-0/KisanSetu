@@ -116,6 +116,7 @@ interface FarmerInventoryProps {
   onOpenCreateModal: () => void;
   onOpenEditModal?: (listing: CropListing) => void;
   onListingDeleted?: (listingId: number) => void;
+  externalSearch?: string;
 }
 
 export const FarmerInventory: React.FC<FarmerInventoryProps> = ({
@@ -126,7 +127,8 @@ export const FarmerInventory: React.FC<FarmerInventoryProps> = ({
   onOrderStatusUpdate,
   onOpenCreateModal,
   onOpenEditModal,
-  onListingDeleted
+  onListingDeleted,
+  externalSearch = ""
 }) => {
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -134,11 +136,12 @@ export const FarmerInventory: React.FC<FarmerInventoryProps> = ({
   const farmerListings = listings.filter(l => l.farmerId === farmer.id);
   const incomingOrders = orders.filter(o => o.farmerId === farmer.id);
 
+  const effectiveSearch = (searchTerm || externalSearch).trim().toLowerCase();
+
   const filteredListings = farmerListings.filter(l => {
     if (filterStatus !== "ALL" && l.status !== filterStatus) return false;
-    if (searchTerm) {
-      const q = searchTerm.toLowerCase();
-      return l.cropName.toLowerCase().includes(q) || l.variety.toLowerCase().includes(q);
+    if (effectiveSearch) {
+      return l.cropName.toLowerCase().includes(effectiveSearch) || l.variety.toLowerCase().includes(effectiveSearch);
     }
     return true;
   });

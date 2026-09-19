@@ -7,7 +7,10 @@ import {
   MapPin,
   LogOut,
   Layers,
-  Truck
+  Truck,
+  ShoppingBasket,
+  TrendingUp,
+  Navigation
 } from "lucide-react";
 import type { User, UserRole } from "../types";
 
@@ -87,10 +90,37 @@ export const Sidebar: React.FC<SidebarProps> = ({
       shortLabelEn: "Mandi Rates",
       shortLabelHi: "मंडी भाव",
       icon: Radio
+    },
+    {
+      id: "ai_pricing",
+      targetTab: "ai_pricing",
+      labelEn: "AI Price Engine",
+      labelHi: "AI मूल्य इंजन",
+      shortLabelEn: "AI Price",
+      shortLabelHi: "AI भाव",
+      icon: TrendingUp
+    },
+    {
+      id: "route_optimizer",
+      targetTab: "route_optimizer",
+      labelEn: "Logistics Routes",
+      labelHi: "लॉजिस्टिक्स मार्ग",
+      shortLabelEn: "Routes",
+      shortLabelHi: "मार्ग",
+      icon: Navigation
     }
   ];
 
   const buyerNavItems: NavItemConfig[] = [
+    {
+      id: "marketplace",
+      targetTab: "marketplace",
+      labelEn: "Crop Marketplace",
+      labelHi: "फसल बाज़ार",
+      shortLabelEn: "Marketplace",
+      shortLabelHi: "बाज़ार",
+      icon: ShoppingBasket
+    },
     {
       id: "bulk_orders",
       targetTab: "bulk_orders",
@@ -126,6 +156,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
       shortLabelEn: "Mandi Rates",
       shortLabelHi: "मंडी भाव",
       icon: Radio
+    },
+    {
+      id: "ai_pricing",
+      targetTab: "ai_pricing",
+      labelEn: "AI Price Engine",
+      labelHi: "AI मूल्य इंजन",
+      shortLabelEn: "AI Price",
+      shortLabelHi: "AI भाव",
+      icon: TrendingUp
+    },
+    {
+      id: "route_optimizer",
+      targetTab: "route_optimizer",
+      labelEn: "Logistics Routes",
+      labelHi: "लॉजिस्टिक्स मार्ग",
+      shortLabelEn: "Routes",
+      shortLabelHi: "मार्ग",
+      icon: Navigation
     }
   ];
 
@@ -145,6 +193,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   // Split farmer navigation into left/right groups for mobile bottom bar center CTA slot
+  // Only show first 4 items on mobile (the core ones); extended items like AI & Routes are desktop-only on mobile
   const farmerLeftNav = farmerNavItems.slice(0, 2);
   const farmerRightNav = farmerNavItems.slice(2, 4);
 
@@ -338,8 +387,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             })}
           </>
         ) : (
-          /* Buyer Navigation Items */
-          buyerNavItems.map((item) => {
+          /* Buyer Navigation Items — show first 4 on mobile (core items); AI/Routes accessible via desktop sidebar */
+          buyerNavItems.slice(0, 4).map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.targetTab;
             const shortLabel = lang === "hi" ? item.shortLabelHi : item.shortLabelEn;

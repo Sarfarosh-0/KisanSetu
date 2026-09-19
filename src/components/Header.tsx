@@ -19,6 +19,7 @@ import {
   Sprout
 } from "lucide-react";
 import type { User } from "../types";
+import { API } from "../api";
 
 export interface HeaderProps {
   user: User;
@@ -99,6 +100,19 @@ export const Header: React.FC<HeaderProps> = ({
       type: "mandi"
     }
   ]);
+
+  // Fetch real contextual notifications from backend (Gap 10)
+  useEffect(() => {
+    let isMounted = true;
+    API.getNotifications(user.id, user.role)
+      .then((data) => {
+        if (isMounted && Array.isArray(data) && data.length > 0) {
+          setNotifications(data as NotificationItem[]);
+        }
+      })
+      .catch(() => {});
+    return () => { isMounted = false; };
+  }, [user.id, user.role]);
 
   const unreadCount = notifications.filter(n => n.unread).length;
 
