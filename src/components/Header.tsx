@@ -176,11 +176,11 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Left: Desktop Sidebar Toggle + App Name                             */}
         {/* =================================================================== */}
         <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-          {/* Desktop-only Sidebar Toggle Button */}
+          {/* Sidebar Toggle Button (Desktop & Mobile) */}
           <button
             type="button"
             onClick={onToggleSidebar}
-            className="hidden lg:flex w-10 h-10 rounded-xl items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 border border-slate-200/80 bg-white shadow-2xs transition-all cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]/30 shrink-0"
+            className="flex w-10 h-10 rounded-xl items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 border border-slate-200/80 bg-white shadow-2xs transition-all cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]/30 shrink-0"
             title={isOpen ? "Close navigation sidebar" : "Open navigation sidebar"}
             aria-label={isOpen ? "Close navigation sidebar" : "Open navigation sidebar"}
             aria-expanded={isOpen}
