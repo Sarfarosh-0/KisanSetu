@@ -320,6 +320,15 @@ export default function App() {
     return currentUser?.role === "LOGISTICS" || currentUser?.role === "GOVT_OFFICIAL";
   }, [currentUser]);
 
+  // Check if activeTab belongs to role-specific dashboard views
+  const isFarmerSubTab = useMemo(() => {
+    return ["inventory", "buyer_requests", "payouts", "pricing"].includes(activeTab);
+  }, [activeTab]);
+
+  const isBuyerSubTab = useMemo(() => {
+    return ["marketplace", "bulk_orders", "contracts", "payments"].includes(activeTab);
+  }, [activeTab]);
+
   if (loading || !currentUser) {
     return (
       <div className="min-h-screen bg-[#F0FDF4] flex flex-col items-center justify-center p-6 text-slate-900">

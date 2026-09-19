@@ -15,126 +15,211 @@
 
 ## 📌 Overview
 
-**KisanSetu** ("Farmer's Bridge") is an open, transparent digital agricultural marketplace designed to transform how produce moves from Indian farms directly to buyers.
+**KisanSetu** ("Farmer's Bridge") is a digital agricultural marketplace built to eliminate multi-layered intermediaries between Indian agricultural producers and commercial/institutional buyers.
 
-In traditional agricultural supply chains, farm produce passes through 4 to 6 layers of intermediaries—including village aggregators, commission agents (*arhatiyas*), wholesale mandis, transport brokers, and local retailers. Because of this fragmented chain:
-- **Farmers** receive only **30% to 50%** of the final retail price and frequently face distress selling due to lack of market information.
-- **Buyers** (institutional buyers, retail consumers, FPOs, hotels, restaurants, and food processors) pay inflated prices to cover middleman margins.
-- **Perishable food crops** suffer **15% to 25% post-harvest transit wastage** due to unoptimized, uncoordinated logistics.
+In traditional agricultural supply chains, farm produce passes through 4 to 6 layers of middlemen (village aggregators, commission agents / *arhatiyas*, wholesale mandis, transport brokers, and local retailers). As a result:
+- **Farmers** receive only **30% to 50%** of the final retail price and frequently face distress selling due to information asymmetry.
+- **Buyers** (institutional buyers, retail consumers, FPOs, hotels, restaurants, and food processors) pay inflated prices to cover intermediary commissions and handling markups.
+- **Perishable food crops** suffer **15% to 25% post-harvest transit wastage** due to uncoordinated, individual farm transport.
 
-**KisanSetu bridges this gap** by empowering farmers to list and sell produce directly to verified institutional and retail buyers. Built-in Machine Learning fair-pricing algorithms ensure farmers receive fair, market-tested rates, while smart logistics route optimization minimizes transit costs and food spoilage.
+**KisanSetu bridges this gap** through direct farm-gate listing, an AI-assisted fair pricing engine benchmarked against APMC mandis, multi-pickup logistics route optimization, and milestone-based escrow payments verified via dual-OTP handshakes.
+
+---
+
+## 🔍 Implementation Status & Architecture Tiers
+
+To provide full clarity on platform maturity, features are classified into three operational categories:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        KISANSETU PLATFORM TIERS                        │
+├─────────────────────┬──────────────────────────┬───────────────────────┤
+│ ✅ FULLY IMPLEMENTED│ 🧪 DEMO / SIMULATED      │ 🔮 PLANNED / ROADMAP  │
+├─────────────────────┼──────────────────────────┼───────────────────────┤
+│ • Farmer Inventory  │ • UPI Payment Sandbox    │ • Dedicated Logistics │
+│ • Multi-Image Upload│   (Mock UTR validation)  │   & Govt Portals      │
+│ • Buyer Marketplace │ • Phone / OTP Auth       │ • Live Agmarknet /    │
+│ • AI Pricing Engine │   (Simulated SMS delivery)│   e-NAM API Feeds     │
+│ • Geodetic TSP Route│ • Static Mandi Database  │ • Real Banking Gate-  │
+│   Optimization      │   (Curated APMC rates)   │   ways (Razorpay/eRUPI│
+│ • Vernacular (Hi/En)│ • Agro-Advisories/Weather│ • Production Telecom  │
+│ • Dual-Run Modes    │   (Curated mock data)    │   DLT SMS Gateways    │
+│   (Full-Stack/Node) │ • Logistics Tracking     │ • IoT Truck Telematics│
+│ • RBAC Navigation   │   (Static coordinate TSP)│   & Cold-Chain Sensors│
+└─────────────────────┴──────────────────────────┴───────────────────────┘
+```
 
 ---
 
 ## 🚀 Key Features & Workflows
 
 ### 🌾 1. Role-Based Marketplace Workflows (RBAC)
-KisanSetu provides dedicated user interfaces and access controls tailored to specific market participants:
+
+KisanSetu provides role-tailored workspaces with strict route guarding, deep-link query parameter synchronization (`?tab=...`), and automatic redirection:
+
 - **Farmer Workspace**:
-  - **Produce Inventory**: View active crop listings, available stock, quality grade badges, and harvest dates.
-  - **Listing Creation & Photo Management**: Publish crop listings with quality grade (Grade A/B/C), organic certification, harvest date, location, moisture %, packaging, shelf life, and multi-image photo uploads (supports up to 10 photos with local disk storage / Cloudinary / Data URL fallbacks).
-  - **Buyer RFQs & Direct Orders**: Review Requests for Quotation (RFQs) and accept or track incoming buyer purchase orders.
-  - **Payouts & Financials**: Monitor escrow balances, completed trades, and instant payouts upon delivery verification.
+  - **Produce Inventory (`FarmerInventory.tsx`)**: Monitor active listings, stock availability, quality grades, harvest dates, and packaging specs with search and status filtering.
+  - **Listing Creation & Photo Management (`FarmerCropForm.tsx`)**: Create and update crop listings with quality grade (Grade A/B/C), organic certification, harvest date, location, moisture %, packaging type, shelf life, and multi-image photo uploads (supports up to 10 photos, ≤5MB each, stored via local disk or Cloudinary).
+  - **Automated AI Price Fetching**: Automatically calculates fair price targets and min-max boundaries when creating listings.
+  - **Buyer RFQs (`FarmerBuyerRequests.tsx`)**: Review incoming Requests for Quotation (RFQs) and purchase requests directly from wholesale buyers.
+  - **Payouts & Escrow Tracking (`FarmerPayouts.tsx`)**: Monitor escrow holdings, completed transactions, and payout history.
+  - **Weather & Agronomy Insights (`FarmerWeatherInsights.tsx`)**: View localized weather alerts, harvest forecasts, and soil-specific advisories (curated demo dataset).
+
 - **Buyer Workspace**:
-  - **Produce Catalog & Discovery**: Browse available produce with search and multi-parameter filters (crop name, district, quality grade, organic badge, max price).
-  - **Crop Details Page**: View granular lot specifications, farm origin coordinates, harvest dates, seller trust score, and packaging info.
-  - **RFQ Submission & Direct Ordering**: Submit custom RFQs or place instant purchase orders with quantity selection and shipping address details.
-  - **Contracts & Payment Management**: Track active orders, simulate UPI escrow payments, and manage contract status.
-- **Authentication & Role Switching**: Full-screen login with phone/OTP simulation (`LoginPage.tsx`) and smooth demo role switching between Farmer and Buyer accounts with automatic RBAC route guarding.
+  - **Catalog Discovery (`BuyerMarketplace.tsx` / `BuyerDashboard.tsx`)**: Browse available farm produce with real-time multi-parameter filters (crop, grade, district, organic certification, max price, and global text search).
+  - **Crop Details Modal (`CropDetailsPage.tsx`)**: Granular lot specifications, farm origin coordinates, harvest dates, seller trust score, and packaging info.
+  - **Bulk Orders & RFQs (`BuyerBulkOrders.tsx`)**: Submit Requests for Quotation for bulk volume procurement directly to producers.
+  - **Contracts & Purchase Orders (`BuyerContracts.tsx`)**: Review binding farm-gate purchase orders and fulfillment milestones.
+  - **Payment & Escrow Management (`BuyerPaymentEscrow.tsx`)**: Track escrow milestones and verify order settlements.
+
+- **Authentication & Role Switching (`components/auth/`)**:
+  - Full-screen login and registration (`LoginPage.tsx`, `RegistrationForm.tsx`) supporting phone, password, and simulated OTP verification.
+  - Smooth role switcher between Farmer and Buyer accounts with automatic RBAC tab correction.
+  - User profiles backed by JWT tokens stored securely in `localStorage`.
+  - Unsupported role safeguards: Users logged in as `LOGISTICS` or `GOVT_OFFICIAL` receive a "Portal Coming Soon" notification with one-click role switching.
+
+---
 
 ### 🤖 2. AI Fair Price Recommendation Engine
-- **Data-Driven Valuation**: Powered by a Scikit-Learn regression model (`RandomForestRegressor` with fallback to deterministic regression formulas when scikit-learn is not installed) trained on historical APMC mandi feeds.
-- **Dynamic Price Band**: Automatically calculates a recommended target fair price along with a confidence interval `[Min, Recommended Target, Max]` per quintal to guard farmers against predatory underpricing.
-- **Factor Breakdown**: Displays transparent pricing factors including Quality Grade premiums (e.g. +15% for Grade A), direct disintermediation margin (+18.5%), certified organic premium (+22%), and seasonal supply-demand indices.
-- **Retail & Mandi Spread**: Visualizes retail markup vs. farm-gate realization so both sides trade with confidence.
 
-### 📊 3. Live APMC Mandi Comparison & Market Analytics
-- **Market Benchmarking**: Instant side-by-side comparison between local government APMC mandi rates, AI fair price targets, average platform buyer offers, and retail consumer rates (`/api/pricing/mandi-compare/{crop_name}`).
-- **Public Impact Summary**: Real-time market disintermediation analytics (`/api/analytics/summary`) showcasing farmer price realization uplift (61.8% vs. 32.4% baseline mandi), consumer savings (19.5%), middlemen layers bypassed (4 of 5), and logistics savings.
+- **Data-Driven Valuation**: Powered by a Scikit-Learn regression engine (`RandomForestRegressor` in `backend/ml_engine.py` with automatic mathematical fallback if scikit-learn is not installed) trained on historical APMC mandi trading data.
+- **Dynamic Price Band**: Recommends an equitable target price along with confidence bands `[Min, Target, Max]` per quintal, protecting farmers from distress underpricing.
+- **Transparent Factor Breakdown**: Visualizes exact valuation adjustments:
+  - **Quality Grade Premium**: Grade A (+15%), Grade B (baseline), Grade C (-12%)
+  - **Disintermediation Margin**: +18.5% captured from bypassed middleman commissions
+  - **Organic Certification**: +22% premium for certified natural cultivation
+  - **Seasonal Supply-Demand Index**: Adjusted based on harvest peak and lean cycles
+- **Mandi vs. Retail Spread**: Side-by-side comparison between local APMC mandi modal rates, AI fair price, and consumer retail prices.
+
+---
+
+### 📊 3. APMC Mandi Comparison & Market Analytics
+
+- **Market Benchmarking (`/api/pricing/mandi-compare/{crop_name}`)**: Evaluates current mandi rates against platform price recommendations, buyer offers, and end-consumer prices.
+- **Platform Impact Metrics (`/api/analytics/summary`)**: Aggregates macro platform metrics including:
+  - Farmer price realization uplift (61.8% vs. 32.4% traditional mandi baseline)
+  - Consumer price savings (19.5%)
+  - Intermediary tiers eliminated (4 out of 5 layers)
+  - Logistics distance and carbon emissions saved via batching
+
+---
 
 ### 🚚 4. Smart Logistics & Route Optimization
-- **2-Stage Geodetic TSP Solver**: Employs a nearest-neighbor Traveling Salesperson Problem (TSP) algorithm with Haversine distance matrix clustering (`route_optimizer.py`).
-- **Multi-Farm Pickup Batching**: Groups nearby farm pickups into consolidated transit batches, reducing transportation distance by up to 33.5% and cutting CO2 carbon emissions.
-- **Transit & Spoilage Metrics**: Interactive routing dashboard displaying stop sequences, distance comparison (batched vs. naive individual trips), estimated transit time, CO2 savings, and post-harvest spoilage reduction stats (~24.5%).
+
+- **2-Stage Geodetic TSP Solver (`backend/route_optimizer.py`)**: Uses the Haversine formula to compute great-circle distance matrices across farm pickup locations and market destinations.
+- **Multi-Farm Batching**: Groups nearby farm pickups into consolidated logistics batches, reducing vehicle kilometers traveled by up to 33.5%.
+- **Route Visualization Dashboard (`RouteOptimizationView.tsx`)**:
+  - Sequential stop ordering for drivers (Origin ➔ Farm Pickups ➔ Distribution Center / Mandi)
+  - Distance comparison: Batched consolidated route vs. naive uncoordinated trips
+  - Estimated transit duration, fuel savings, and CO₂ emissions reduction
+  - Perishable post-harvest transit spoilage reduction estimate (~24.5%)
+
+---
 
 ### 🛡️ 5. Escrow Payments & Dual-OTP Delivery Verification
-- **Order Lifecycle**: Tracks progression through strict order states: `PLACED` ➔ `CONFIRMED` ➔ `BATCH_ASSIGNED` ➔ `IN_TRANSIT` ➔ `DELIVERED` ➔ `COMPLETED`.
-- **UPI Payment Sandbox**: Simulated UPI digital payment verification with UTR reference generation and RBI-aligned escrow holding (`PENDING` ➔ `ESCROW_HELD` ➔ `RELEASED_TO_FARMER`).
-- **Cryptographic Delivery OTP**: Custody transfer and escrow payment release require a 4-digit OTP provided by the buyer upon physical inspection at destination delivery.
 
-### 🌐 6. Vernacular & Rural-First Accessibility (i18n)
-- **Multi-Language Support**: Full internationalization for **Hindi (हिंदी)** and **English** with persistent selection saved in `localStorage`.
-- **Mobile-Responsive UI**: Fast, modern interface built with Tailwind CSS 4 designed for low-bandwidth rural networks and mobile screen sizes.
-- **Interactive In-App API Reference**: Built-in API documentation viewer (`ApiDocsModal.tsx`) for exploring backend REST endpoints directly inside the web UI.
+- **Order State Machine**: Strict progression through tracked states:  
+  `PLACED` ➔ `CONFIRMED` ➔ `BATCH_ASSIGNED` ➔ `IN_TRANSIT` ➔ `DELIVERED` ➔ `COMPLETED`
+- **Simulated UPI Escrow Sandbox (`/api/payments/upi-verify`)**:  
+  Simulates digital UPI payment verification with UTR reference generation, holding funds in escrow (`PENDING` ➔ `ESCROW_HELD` ➔ `RELEASED_TO_FARMER`).
+- **Cryptographic Delivery OTP**:  
+  Custody handover and escrow fund release require entering a secure 4-digit OTP provided by the buyer upon physical inspection and acceptance at the delivery point.
 
 ---
 
-## 🛠️ Tech Stack
+### 🌐 6. Vernacular & Rural-First Accessibility
 
-| Domain | Technology | Description |
+- **Bilingual Internationalization (`src/i18n/`)**: Complete translation support for **Hindi (हिंदी)** and **English**, with instant switching and persistent `localStorage` preference.
+- **Responsive Design**: Mobile-first interface built with Tailwind CSS 4, optimized for low-bandwidth rural networks and handheld devices.
+- **In-App API Documentation (`ApiDocsModal.tsx`)**: Interactive REST API reference accessible directly from the application header and footer.
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technology | Purpose & Implementation |
 | :--- | :--- | :--- |
-| **Frontend Framework** | [React 19](https://react.dev/) + [TypeScript 5.8](https://www.typescriptlang.org/) | Component-driven UI with strict type safety |
-| **Build Tool & Bundler** | [Vite 6](https://vitejs.dev/) | Ultra-fast HMR frontend bundler |
-| **UI Styling & Icons** | [Tailwind CSS 4](https://tailwindcss.com/), [Lucide React](https://lucide.dev/), [Motion](https://motion.dev/) | Modern styling, icon set, and smooth animations |
-| **Dev Server & Integration** | [Express](https://expressjs.com/), [tsx](https://github.com/privatenumber/tsx), [esbuild](https://esbuild.github.io/) | Full-stack Node dev server (`server.ts`) with Vite integration & fallback API endpoints |
-| **Backend API Framework** | [FastAPI 0.110+](https://fastapi.tiangolo.com/) (Python 3.10+) | High-performance Python REST API backend |
-| **ASGI Web Server** | [Uvicorn](https://www.uvicorn.org/) | Async server for FastAPI running on port 8000 |
+| **Frontend Framework** | [React 19](https://react.dev/) + [TypeScript 5.8](https://www.typescriptlang.org/) | Component-driven, strongly typed user interface |
+| **Frontend Bundler** | [Vite 6](https://vitejs.dev/) | High-speed Hot Module Replacement (HMR) and production bundling |
+| **Styling & Icons** | [Tailwind CSS 4](https://tailwindcss.com/), [Lucide React](https://lucide.dev/), [Motion](https://motion.dev/) | Utility-first responsive styling, icons, and micro-interactions |
+| **Dev Server & API Fallback** | [Express 4](https://expressjs.com/), [tsx](https://github.com/privatenumber/tsx), [esbuild](https://esbuild.github.io/) | Standalone dev server (`server.ts`) with Vite integration & complete mock APIs |
+| **Backend API Framework** | [FastAPI 0.110+](https://fastapi.tiangolo.com/) (Python 3.10+) | High-performance async REST backend with OpenAPI/Swagger |
+| **ASGI Server** | [Uvicorn](https://www.uvicorn.org/) | Asynchronous server running FastAPI on port 8000 |
 | **Database & ORM** | [SQLAlchemy 2.0](https://www.sqlalchemy.org/) | SQLite (`backend/agrimarket.db`) by default; PostgreSQL ready via `DATABASE_URL` |
-| **Machine Learning / AI** | [Scikit-learn](https://scikit-learn.org/), [NumPy](https://numpy.org/), [Pandas](https://pandas.pydata.org/) | RandomForestRegressor fair-price recommendation model & deterministic fallbacks |
-| **Data Validation** | [Pydantic v2](https://docs.pydantic.dev/) | API request/response schema validation |
+| **Data Validation** | [Pydantic v2](https://docs.pydantic.dev/) | Strict request and response schema validation |
+| **Machine Learning** | [Scikit-learn](https://scikit-learn.org/), [NumPy](https://numpy.org/), [Pandas](https://pandas.pydata.org/) | RandomForest price predictor with deterministic mathematical fallback |
+| **Authentication & Security** | [Passlib](https://passlib.readthedocs.io/) (bcrypt), [Python-JOSE](https://python-jose.readthedocs.io/) (JWT), [SlowAPI](https://slowapi.readthedocs.io/) | Password hashing, JWT token handling, rate limiting & HTTP security headers |
+| **Media Storage** | [Cloudinary](https://cloudinary.com/) & Local Disk | Cloud storage when `CLOUDINARY_URL` is configured, with local disk fallback |
+| **Monitoring** | [Sentry](https://sentry.io/) (FastAPI & React) | Crash and error reporting when `SENTRY_DSN` is configured |
 
 ---
 
-## 📁 Directory Structure
+## 📁 Repository Structure
 
 ```text
 SIH-26033-KisanSetu/
 │
-├── backend/                      # Python FastAPI Backend & AI Engines
-│   ├── main.py                   # FastAPI application entrypoint & REST endpoints
-│   ├── ml_engine.py              # Scikit-learn AI fair price recommendation model
-│   ├── route_optimizer.py        # Logistics Haversine & nearest-neighbor TSP route optimizer
-│   ├── database.py               # Database engine, session maker & SQLite/PostgreSQL config
-│   ├── models.py                 # SQLAlchemy ORM database models (Users, CropListing, Order, etc.)
-│   ├── schemas.py                # Pydantic validation schemas for API endpoints
-│   ├── seed_data.py              # Database seeder script with sample crops, mandis, and orders
-│   ├── requirements.txt          # Python dependencies
-│   └── README.md                 # Backend-specific architecture documentation
+├── backend/                              # Python FastAPI Backend & ML Services
+│   ├── main.py                           # FastAPI app entrypoint, CORS, security & REST routes
+│   ├── auth.py                           # JWT generation, password hashing & RBAC dependencies
+│   ├── ml_engine.py                      # Scikit-learn AI fair price model & baseline mandi rates
+│   ├── route_optimizer.py                # Haversine geodetic matrix & nearest-neighbor TSP optimizer
+│   ├── database.py                       # SQLAlchemy engine, session maker & SQLite/Postgres config
+│   ├── models.py                         # SQLAlchemy ORM models (Users, CropListing, Order, etc.)
+│   ├── schemas.py                        # Pydantic validation schemas for requests and responses
+│   ├── seed_data.py                      # Database seeder script with realistic agricultural data
+│   ├── requirements.txt                  # Python dependencies
+│   └── README.md                         # Backend architecture documentation
 │
-├── src/                          # React + TypeScript Frontend
-│   ├── components/               # Core UI components & views
-│   │   ├── auth/                 # Full-screen Login & OTP components (LoginPage, OtpVerification, etc.)
-│   │   ├── farmer/               # Farmer sub-components (FarmerInventory, FarmerCropForm, FarmerPayouts, etc.)
-│   │   ├── buyer/                # Buyer sub-components (BuyerDashboard, BuyerBulkOrders, CropDetailsPage, etc.)
-│   │   ├── AIPricingDashboard.tsx    # Live AI pricing & mandi comparison dashboard
-│   │   ├── BuyerMarketplace.tsx      # Produce catalog, filtering & ordering for buyers
-│   │   ├── FarmerView.tsx            # Main farmer management container view
-│   │   ├── RouteOptimizationView.tsx # Logistics batching & multi-farm route map viewer
-│   │   ├── OrdersAndPaymentModal.tsx # Order tracking, escrow payment & OTP verification modal
-│   │   ├── ApiDocsModal.tsx          # In-app interactive REST API documentation viewer
-│   │   ├── Layout.tsx / Header.tsx   # Responsive application layout, header & role switcher
-│   │   ├── Footer.tsx / Sidebar.tsx  # Application footer with policy modals & navigation sidebar
-│   │   └── ErrorBoundary.tsx         # React runtime error boundary container
-│   ├── data/                     # Data constants & fallback feeds
-│   ├── i18n/                     # Localization dictionaries (Hindi & English)
-│   │   ├── index.ts              # Translation helper hook & initial language resolver
-│   │   └── translations.ts       # English & Hindi translation mappings
-│   ├── types/ & types.ts         # TypeScript interfaces & domain types
-│   ├── api.ts                    # Frontend API client service (safeFetchJson wrapper)
-│   ├── App.tsx                   # Top-level router, state management & RBAC controllers
-│   ├── main.tsx                  # React DOM entrypoint
-│   └── index.css                 # Global CSS stylesheet & Tailwind directives
+├── src/                                  # React 19 + TypeScript Frontend
+│   ├── components/                       # Core UI component tree
+│   │   ├── auth/                         # Authentication & login screens
+│   │   │   ├── LoginPage.tsx             # Full-screen login with phone/OTP and role selector
+│   │   │   ├── OtpVerification.tsx       # 4-digit OTP input and timer
+│   │   │   ├── RegistrationForm.tsx      # New farmer/buyer onboarding form
+│   │   │   └── RoleSelectionModal.tsx    # Role switching dialog
+│   │   ├── farmer/                       # Farmer-specific sub-components
+│   │   │   ├── FarmerInventory.tsx       # Produce stock & status manager
+│   │   │   ├── FarmerCropForm.tsx        # Multi-photo listing creation modal
+│   │   │   ├── FarmerBuyerRequests.tsx   # Inbound RFQs and buyer inquiries
+│   │   │   ├── FarmerPayouts.tsx         # Escrow balance and transaction logs
+│   │   │   └── FarmerWeatherInsights.tsx # Weather advisory and harvest forecasts
+│   │   ├── buyer/                        # Buyer-specific sub-components
+│   │   │   ├── BuyerDashboard.tsx        # Buyer container & tab coordinator
+│   │   │   ├── BuyerBulkOrders.tsx       # Bulk procurement and RFQ creator
+│   │   │   ├── BuyerContracts.tsx        # Contract commitments and milestone view
+│   │   │   ├── BuyerPaymentEscrow.tsx    # Escrow release and UPI sandbox view
+│   │   │   └── CropDetailsPage.tsx       # Detailed produce lot specifications modal
+│   │   ├── AIPricingDashboard.tsx        # Live AI pricing & mandi comparison dashboard
+│   │   ├── BuyerMarketplace.tsx          # Produce catalog, filtering & ordering for buyers
+│   │   ├── FarmerView.tsx                # Main farmer management container view
+│   │   ├── RouteOptimizationView.tsx     # Logistics batching & multi-farm route map viewer
+│   │   ├── OrdersAndPaymentModal.tsx     # Direct order placement & escrow modal
+│   │   ├── ApiDocsModal.tsx              # In-app interactive REST API documentation viewer
+│   │   ├── Layout.tsx / Header.tsx       # Responsive layout, topbar & search synchronization
+│   │   ├── Footer.tsx / Sidebar.tsx      # Policy modals, quick navigation & language toggles
+│   │   └── ErrorBoundary.tsx             # React runtime error boundary container
+│   ├── data/                             # Mock feeds & fallback constants
+│   │   └── mockAgriData.ts               # Static mandi, crop, and advisory datasets
+│   ├── i18n/                             # Vernacular localization dictionaries
+│   │   ├── index.ts                      # Translation helper hook (`t`) & language detector
+│   │   └── translations.ts               # English and Hindi dictionary strings
+│   ├── types/ & types.ts                 # TypeScript interfaces and domain types
+│   ├── api.ts                            # API client service (`safeFetchJson` with JWT headers)
+│   ├── App.tsx                           # Top-level router, state management & RBAC controllers
+│   ├── main.tsx                          # React DOM entrypoint
+│   └── index.css                         # Global styles & Tailwind CSS 4 directives
 │
-├── setup_guide/                  # Detailed execution manuals
-│   ├── Manual.txt                # Daily runtime reference commands
-│   └── SetupManual.txt           # Step-by-step setup walkthrough for full-stack, frontend, and backend modes
+├── setup_guide/                          # Execution manuals and references
+│   ├── Manual.txt                        # Daily runtime commands quick-reference
+│   └── SetupManual.txt                   # Detailed full-stack setup instructions
 │
-├── server.ts                     # Full-stack Node/Express dev server with Vite integration & fallback APIs
-├── package.json                  # Frontend scripts & Node dependencies
-├── vite.config.ts                # Vite frontend bundler configuration
-├── tsconfig.json                 # TypeScript compiler configuration
-├── .env.example                  # Environment variable configuration template
-└── README.md                     # Main project documentation (this file)
+├── server.ts                             # Node/Express dev server with Vite integration & fallback APIs
+├── package.json                          # Frontend dependencies & run scripts
+├── vite.config.ts                        # Vite configuration with Tailwind CSS plugin
+├── tsconfig.json                         # TypeScript compiler configuration
+├── .env.example                          # Environment variable configuration template
+└── README.md                             # Main project documentation (this file)
 ```
 
 ---
@@ -144,16 +229,17 @@ SIH-26033-KisanSetu/
 > [!TIP]
 > **Detailed Execution Manuals:**  
 > Refer to the [`setup_guide/`](setup_guide/) directory for detailed manuals:
-> - 📄 **[`setup_guide/SetupManual.txt`](setup_guide/SetupManual.txt)** — Step-by-step setup guide for Full-Stack, Frontend-Only, and Backend-Only configurations.
-> - 📄 **[`setup_guide/Manual.txt`](setup_guide/Manual.txt)** — Daily reference commands for starting the servers.
+> - 📄 **[`setup_guide/SetupManual.txt`](setup_guide/SetupManual.txt)** — Comprehensive walkthrough for Full-Stack, Frontend-Only, and Backend-Only configurations.
+> - 📄 **[`setup_guide/Manual.txt`](setup_guide/Manual.txt)** — Daily reference commands for starting services.
 
 ### 📋 Prerequisites
-Ensure the following software is installed on your machine:
+
+Ensure the following runtimes are installed:
 - **Node.js**: Version `18.0.0` or higher ([Download Node.js](https://nodejs.org/))
 - **Python**: Version `3.10` or higher ([Download Python](https://www.python.org/))
 - **Git**: ([Download Git](https://git-scm.com/))
 
-Verify installed versions:
+Verify your environment:
 ```bash
 node -v
 npm -v
@@ -164,7 +250,7 @@ python --version
 
 ### 🚀 Option A: Full-Stack Setup (Recommended)
 
-Running in Full-Stack mode connects the React frontend to the Python FastAPI backend on port 8000.
+Running in Full-Stack mode connects the React frontend to the Python FastAPI backend on port 8000 for live ML model inference and SQLite/PostgreSQL persistence.
 
 #### Step 1: Clone the Repository
 ```bash
@@ -172,47 +258,45 @@ git clone https://github.com/your-username/SIH-26033-KisanSetu.git
 cd SIH-26033-KisanSetu
 ```
 
-#### Step 2: Set Up & Start the Backend Server (Terminal 1)
-1. Navigate to the `backend` folder:
+#### Step 2: Start the Backend Server (Terminal 1)
+1. Navigate to the `backend` directory:
    ```bash
    cd backend
    ```
-2. Create a Python virtual environment:
-   ```bash
-   python -m venv venv
-   ```
-3. Activate the virtual environment:
-   - **Windows (PowerShell / Command Prompt)**:
+2. Create and activate a Python virtual environment:
+   - **Windows (PowerShell)**:
      ```powershell
+     python -m venv venv
+     Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
      venv\Scripts\activate
      ```
-     *(If PowerShell blocks script execution, run: `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`)*
    - **macOS / Linux**:
      ```bash
+     python3 -m venv venv
      source venv/bin/activate
      ```
-4. Install Python dependencies:
+3. Install Python dependencies:
    ```bash
    pip install -r requirements.txt
    ```
-5. Seed the database with sample data:
+4. Seed the database with sample agricultural listings and mandi rates:
    ```bash
    python seed_data.py
    ```
-6. Start the FastAPI server:
+5. Launch the FastAPI server:
    ```bash
    uvicorn main:app --reload --host 0.0.0.0 --port 8000
    ```
-   > 💡 Backend API is now live at **http://localhost:8000**  
-   > 📖 View interactive Swagger API docs at **http://localhost:8000/docs**
+   > 💡 Backend API is now running at **http://localhost:8000**  
+   > 📖 Interactive Swagger docs are available at **http://localhost:8000/docs**
 
-#### Step 3: Set Up & Start the Frontend (Terminal 2)
-1. Open a **new terminal window** in the project root directory (`SIH-26033-KisanSetu`).
+#### Step 3: Start the Frontend Application (Terminal 2)
+1. Open a **second terminal window** in the project root (`SIH-26033-KisanSetu`).
 2. Install frontend dependencies:
    ```bash
    npm install
    ```
-3. Start the development server:
+3. Start the Vite development server:
    ```bash
    npm run dev
    ```
@@ -222,13 +306,13 @@ cd SIH-26033-KisanSetu
 
 ### ⚡ Option B: Standalone / Frontend-Only Mode
 
-KisanSetu features a built-in Express server (`server.ts`) equipped with complete fallback API implementations for offline development or quick UI exploration without Python:
+For offline development, UI testing, or environments without Python, KisanSetu includes a complete Express dev server (`server.ts`) with built-in mock endpoints that mirror all FastAPI routes:
 
 ```bash
 # 1. Install dependencies
 npm install
 
-# 2. Launch dev server
+# 2. Launch standalone server
 npm run dev
 
 # 3. Open in browser: http://localhost:3000
@@ -238,30 +322,55 @@ npm run dev
 
 ## 📡 API Endpoints Reference
 
-The FastAPI backend exposes comprehensive REST endpoints (mirrored in `server.ts` for standalone mode):
+The FastAPI backend exposes the following REST endpoints (also mirrored in `server.ts` for standalone mode):
 
 | Category | Method | Endpoint | Description |
 | :--- | :--- | :--- | :--- |
-| **Health** | `GET` | `/api/health` | Service health status and timestamp |
-| **Auth** | `POST` | `/api/auth/login` | Login or register demo user by phone and role |
-| **Auth** | `GET` | `/api/auth/users` | List registered users with optional role filtering |
-| **Marketplace** | `GET` | `/api/listings` | Fetch active crop listings with crop, grade, district & organic filters |
-| **Marketplace** | `POST` | `/api/listings` | Create a new crop listing with automated AI price calculation |
+| **Health** | `GET` | `/api/health` | Health check, service status, and storage engine info |
+| **Auth** | `POST` | `/api/auth/register` | Register a new user with bcrypt password hashing |
+| **Auth** | `POST` | `/api/auth/login` | Authenticate user via phone/password and issue JWT token |
+| **Auth** | `GET` | `/api/auth/me` | Fetch authenticated user profile via Bearer token |
+| **Auth** | `GET` | `/api/auth/users` | List registered demo users with optional role filtering |
+| **Marketplace** | `GET` | `/api/listings` | Fetch crop listings with filters (crop, district, grade, organic) |
+| **Marketplace** | `POST` | `/api/listings` | Create a new crop listing with automated fair-price tagging |
 | **Marketplace** | `PUT` | `/api/listings/{id}` | Update existing crop listing details and photos |
 | **Marketplace** | `DELETE` | `/api/listings/{id}` | Delete a crop listing by ID |
-| **Upload** | `POST` | `/api/upload` | Upload produce photos (max 10 files, ≤5MB each, JPEG/PNG/WEBP) |
-| **AI Pricing** | `POST` | `/api/pricing/recommend` | **AI Price Engine**: Calculates fair price range `[Min, Target, Max]` |
-| **AI Pricing** | `GET` | `/api/pricing/mandi-compare/{crop}` | Compare APMC Mandi price vs. AI Fair Price vs. Retail rate |
+| **Uploads** | `POST` | `/api/upload` | Upload produce photos (max 10 files, ≤5MB each, JPEG/PNG/WEBP) |
+| **AI Pricing** | `POST` | `/api/pricing/recommend` | Calculate AI fair price band `[Min, Target, Max]` per quintal |
+| **AI Pricing** | `GET` | `/api/pricing/mandi-compare/{crop}` | Compare APMC Mandi rate vs. AI Fair Price vs. Retail price |
 | **Orders** | `GET` | `/api/orders` | List purchase orders filtered by user ID and role |
-| **Orders** | `POST` | `/api/orders` | Place a direct farm-to-buyer purchase order |
-| **Orders** | `PATCH` | `/api/orders/{id}/status` | Progress order status (`CONFIRMED`, `IN_TRANSIT`, `DELIVERED` with OTP) |
-| **Payments** | `POST` | `/api/payments/upi-verify` | Verify simulated UPI payment and hold funds in escrow |
-| **RFQs** | `POST` | `/api/rfqs` | Submit Request for Quotation (RFQ) for bulk produce procurement |
+| **Orders** | `POST` | `/api/orders` | Place a farm-gate purchase order with dual-OTP generation |
+| **Orders** | `PATCH` | `/api/orders/{id}/status` | Update order state (`CONFIRMED`, `IN_TRANSIT`, `DELIVERED` with OTP) |
+| **Payments** | `POST` | `/api/payments/upi-verify` | Verify simulated UPI payment and lock funds in escrow |
+| **RFQs** | `POST` | `/api/rfqs` | Submit Request for Quotation (RFQ) for bulk procurement |
 | **RFQs** | `GET` | `/api/rfqs` | Retrieve submitted RFQs filtered by buyer/farmer/listing |
-| **Logistics** | `GET` | `/api/logistics/routes` | **Logistics Engine**: Multi-pickup route batching & distance savings |
-| **Analytics** | `GET` | `/api/analytics/summary` | Real-time market disintermediation metrics & traded volume |
+| **Logistics** | `GET` | `/api/logistics/routes` | Compute multi-farm pickup batches and geodetic TSP route order |
+| **Analytics** | `GET` | `/api/analytics/summary` | Real-time disintermediation, price realization & savings metrics |
+| **Dev Utility** | `POST` | `/api/dev/reset-seed` | Reset database with fresh baseline demo listings and mandi prices |
 
-Explore interactive Swagger documentation live at **http://localhost:8000/docs** or inside the web app via the **API Docs** tab.
+Interactive API documentation can be explored live at **http://localhost:8000/docs** or inside the web application via the **API Docs** tab.
+
+---
+
+## 🔐 Environment Variables
+
+Template configuration is provided in `.env.example`:
+
+```bash
+# Backend Configuration
+PORT=8000
+DATABASE_URL=sqlite:///./agrimarket.db    # Or postgresql://user:pass@host:5432/kisansetu
+SECRET_KEY=your-secret-key-for-jwt-signing
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
+
+# Optional Services (Safe to leave blank in development)
+CLOUDINARY_URL=                           # Persistent image storage (cloudinary://api_key:secret@cloud)
+SENTRY_DSN=                               # Crash and error monitoring
+SENTRY_TRACES_SAMPLE_RATE=0.1
+
+# Frontend Configuration
+VITE_API_BASE_URL=                        # Leave blank for local proxy to port 3000
+```
 
 ---
 
@@ -270,21 +379,21 @@ Explore interactive Swagger documentation live at **http://localhost:8000/docs**
 <details>
 <summary><b>1. PowerShell script execution error when activating virtual environment on Windows?</b></summary>
 <p>
-Windows PowerShell blocks script execution by default. Run the following command in your terminal session before activating:
+Windows PowerShell restricts script execution by default. Run the following command in your terminal session before activating:
 
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 venv\Scripts\activate
 ```
-This temporarily bypasses the script execution restriction for the active terminal window.
+This temporarily bypasses the script execution restriction for the current terminal window.
 </p>
 </details>
 
 <details>
 <summary><b>2. How does KisanSetu handle dual execution modes (Full-Stack vs. Standalone)?</b></summary>
 <p>
-KisanSetu is built with a resilient architecture:
-- <b>Full-Stack Mode</b>: Runs FastAPI backend (`http://localhost:8000`) for ML model predictions, ORM database persistence, and logistics algorithms.
+KisanSetu is built with a resilient dual-mode architecture:
+- <b>Full-Stack Mode</b>: Runs the FastAPI backend (`http://localhost:8000`) for Scikit-learn ML inference, ORM database persistence, and logistics TSP algorithms.
 - <b>Standalone Mode</b>: The Express server in `server.ts` includes built-in fallback implementations of all API endpoints. If the FastAPI backend is not running, the frontend seamlessly uses fallback data without crashing.
 </p>
 </details>
