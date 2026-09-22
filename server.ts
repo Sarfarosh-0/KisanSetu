@@ -433,12 +433,12 @@ function getInitialData() {
       aiRecommendedTarget: 3100,
       status: "ACTIVE",
       notes: "NPOP Certified organic Sharbati grain. Heavy test weight (81 kg/hl), rich golden luster, perfect for premium stone-ground flour and artisanal bakeries. Dry storage in hermetic bags.",
-      imageUrl: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://images.unsplash.com/photo-hq43w4uqKls?w=900&auto=format&fit=crop&q=80",
       images: [
-        "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1543257580-7269da773bf5?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1437252611977-07f74518abb7?w=900&auto=format&fit=crop&q=80"
+        "https://images.unsplash.com/photo-hq43w4uqKls?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-WRp3fZpmHyM?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-GXt_auM21Ig?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-zsvnVQOAnDc?w=900&auto=format&fit=crop&q=80"
       ],
       createdAt: new Date(Date.now() - 4 * 86400000).toISOString(),
       farmerName: "Sardar Gurpreet Singh",
@@ -471,12 +471,12 @@ function getInitialData() {
       aiRecommendedTarget: 4350,
       status: "ACTIVE",
       notes: "Aromatic extra long grain basmati paddy. Average grain length 8.4mm with 2.2x elongation ratio upon cooking. Clean sorted with minimal broken percentage (<1%).",
-      imageUrl: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://images.unsplash.com/photo-b-AYmZeowJQ?w=900&auto=format&fit=crop&q=80",
       images: [
-        "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1594489428504-5c0c480a15fd?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1516684732162-798a0062be99?w=900&auto=format&fit=crop&q=80"
+        "https://images.unsplash.com/photo-b-AYmZeowJQ?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-LShWR3roTX0?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-b-AYmZeowJQ?w=900&h=600&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-LShWR3roTX0?w=900&h=600&auto=format&fit=crop&q=80"
       ],
       createdAt: new Date(Date.now() - 6 * 86400000).toISOString(),
       farmerName: "Sardar Gurpreet Singh",
@@ -509,12 +509,12 @@ function getInitialData() {
       aiRecommendedTarget: 1580,
       status: "ACTIVE",
       notes: "High dry matter content (>21%) and minimal reducing sugars. Specially curated for chips, french fries, and industrial food processing. Zero greening, uniform 55-65mm size.",
-      imageUrl: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://images.unsplash.com/photo-LSZfNPVZjTw?w=900&auto=format&fit=crop&q=80",
       images: [
-        "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1508313880080-c4bef0730395?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1590165482129-1b8b27698980?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1525253086316-d0c936c81452?w=900&auto=format&fit=crop&q=80"
+        "https://images.unsplash.com/photo-LSZfNPVZjTw?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-LSZfNPVZjTw?w=900&h=600&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-LSZfNPVZjTw?w=700&h=700&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-LSZfNPVZjTw?w=800&h=500&auto=format&fit=crop&q=80"
       ],
       createdAt: new Date(Date.now() - 3 * 86400000).toISOString(),
       farmerName: "Ramesh Kumar Patel",
@@ -547,12 +547,12 @@ function getInitialData() {
       aiRecommendedTarget: 1750,
       status: "ACTIVE",
       notes: "Firm, thick-walled breaker stage fruit tailored for long-distance cold transit (5-7 days transport safety). Uniform pinkish-red coloration with 4.5+ Brix sweetness index.",
-      imageUrl: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://images.unsplash.com/photo-hmoDcZnB7uw?w=900&auto=format&fit=crop&q=80",
       images: [
-        "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1546470427-227c7369a9b8?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1582284540020-8acbe03f4924?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1561136594-7f68413baa99?w=900&auto=format&fit=crop&q=80"
+        "https://images.unsplash.com/photo-hmoDcZnB7uw?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-s-hw64ghWEA?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-sSWGRQe76DY?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-sa_0g0-PZHw?w=900&auto=format&fit=crop&q=80"
       ],
       createdAt: new Date(Date.now() - 1 * 86400000).toISOString(),
       farmerName: "Ramesh Kumar Patel",
@@ -584,12 +584,12 @@ function getInitialData() {
       aiRecommendedTarget: 2200,
       status: "ACTIVE",
       notes: "Export grade Garwa onions with tightly clinging dark red skins, single center, and dry necks. Cured under shaded solar ventilation. Excellent 4-5 month shelf stability.",
-      imageUrl: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://images.unsplash.com/photo-LIFM0uTWzHU?w=900&auto=format&fit=crop&q=80",
       images: [
-        "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1508747703725-719777637510?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1580201092675-a0a6a6cafbb1?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1620574387735-3624d75b2dbc?w=900&auto=format&fit=crop&q=80"
+        "https://images.unsplash.com/photo-LIFM0uTWzHU?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-6YYYrqFb0EU?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-LIFM0uTWzHU?w=900&h=600&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-6YYYrqFb0EU?w=900&h=600&auto=format&fit=crop&q=80"
       ],
       createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
       farmerName: "Ramesh Kumar Patel",
@@ -622,12 +622,12 @@ function getInitialData() {
       aiRecommendedTarget: 2150,
       status: "ACTIVE",
       notes: "High-density yellow maize grains rich in carbohydrates (72% starch). Tested low aflatoxin (<10 ppb). Ideal for livestock feed, poultry integration, and starch extraction mills.",
-      imageUrl: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://images.unsplash.com/photo-MkX079sLnWc?w=900&auto=format&fit=crop&q=80",
       images: [
-        "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=900&auto=format&fit=crop&q=80"
+        "https://images.unsplash.com/photo-MkX079sLnWc?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-NfINVBGUFS4?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-YuIDs5hKyhc?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-FGRCWHgWwQY?w=900&auto=format&fit=crop&q=80"
       ],
       createdAt: new Date(Date.now() - 5 * 86400000).toISOString(),
       farmerName: "Rajeshwar Shinde",
@@ -660,12 +660,12 @@ function getInitialData() {
       aiRecommendedTarget: 5600,
       status: "ACTIVE",
       notes: "High oil yield variety with 41.5% oil recovery index. Clean double-gravity separated seeds free from argemone adulteration. Cold-pressed kachi ghani quality benchmark.",
-      imageUrl: "https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://images.unsplash.com/photo-GP1gj87By7U?w=900&auto=format&fit=crop&q=80",
       images: [
-        "https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1508873696983-2df5293cb32f?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1607672632458-9eb56696346b?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=900&auto=format&fit=crop&q=80"
+        "https://images.unsplash.com/photo-GP1gj87By7U?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-989kkLIq49w?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-ZsGWcH8PSjA?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-GP1gj87By7U?w=900&h=600&auto=format&fit=crop&q=80"
       ],
       createdAt: new Date(Date.now() - 4 * 86400000).toISOString(),
       farmerName: "Mahendra Singh Yadav",
@@ -698,12 +698,12 @@ function getInitialData() {
       aiRecommendedTarget: 380,
       status: "ACTIVE",
       notes: "Prime ratoon crop with 19.8% Brix sugar content and high juice recovery. Cut within 12 hours of scheduled transport to prevent sugar inversion. Ready for direct mill crushing or jaggery units.",
-      imageUrl: "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://images.unsplash.com/photo-n5YzXR2f0lg?w=900&auto=format&fit=crop&q=80",
       images: [
-        "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=900&auto=format&fit=crop&q=80"
+        "https://images.unsplash.com/photo-n5YzXR2f0lg?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-Ib5LA79xJ4c?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-n5YzXR2f0lg?w=900&h=600&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-Ib5LA79xJ4c?w=900&h=600&auto=format&fit=crop&q=80"
       ],
       createdAt: new Date(Date.now() - 1 * 86400000).toISOString(),
       farmerName: "Balasaheb Patil",
@@ -735,12 +735,12 @@ function getInitialData() {
       aiRecommendedTarget: 6250,
       status: "ACTIVE",
       notes: "NPOP Organic certified Desi Chana with deep golden color and uniform size. 99.5% purity with zero foreign matter. Ideal for besan flour processing, wholesale dal mills, and organic retail.",
-      imageUrl: "https://images.unsplash.com/photo-1585994192701-f1a505c817ea?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://images.unsplash.com/photo-uXkoRg78ZD8?w=900&auto=format&fit=crop&q=80",
       images: [
-        "https://images.unsplash.com/photo-1585994192701-f1a505c817ea?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=900&auto=format&fit=crop&q=80"
+        "https://images.unsplash.com/photo-uXkoRg78ZD8?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-dyCBXpTTNCs?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-uXkoRg78ZD8?w=900&h=600&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-dyCBXpTTNCs?w=900&h=600&auto=format&fit=crop&q=80"
       ],
       createdAt: new Date(Date.now() - 3 * 86400000).toISOString(),
       farmerName: "Shivraj Singh Chouhan",
@@ -773,12 +773,12 @@ function getInitialData() {
       aiRecommendedTarget: 2400,
       status: "ACTIVE",
       notes: "Mountain farm cultivated fresh snowball white cauliflower heads alongside crisp green capsicum. Farm-to-fork harvested early morning with zero chemical residues. Excellent retail crispness.",
-      imageUrl: "https://images.unsplash.com/photo-1568584711075-3d021a7c3ca3?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://images.unsplash.com/photo-0XVrBLy73rw?w=900&auto=format&fit=crop&q=80",
       images: [
-        "https://images.unsplash.com/photo-1568584711075-3d021a7c3ca3?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1598170845058-32b9d6a5c317?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=900&auto=format&fit=crop&q=80"
+        "https://images.unsplash.com/photo-0XVrBLy73rw?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-D8ZrftlvNDE?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-UljCflnP1ik?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-0XVrBLy73rw?w=900&h=600&auto=format&fit=crop&q=80"
       ],
       createdAt: new Date().toISOString(),
       farmerName: "Dinesh Chandra Joshi",
@@ -810,12 +810,12 @@ function getInitialData() {
       aiRecommendedTarget: 19500,
       status: "ACTIVE",
       notes: "High pungency (35,000-40,000 SHU), bright crimson red, moisture under 10%. Thoroughly sun-cured on concrete yards with stem intact. Prime quality for spice grinding and oleoresin extractors.",
-      imageUrl: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://images.unsplash.com/photo-4xc6i5BKPWs?w=900&auto=format&fit=crop&q=80",
       images: [
-        "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1601648764658-cf37e8c89b70?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1563227812-0ea4c22e6cc8?w=900&auto=format&fit=crop&q=80"
+        "https://images.unsplash.com/photo-4xc6i5BKPWs?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-4xc6i5BKPWs?w=900&h=600&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-4xc6i5BKPWs?w=700&h=700&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-4xc6i5BKPWs?w=800&h=500&auto=format&fit=crop&q=80"
       ],
       createdAt: new Date(Date.now() - 5 * 86400000).toISOString(),
       farmerName: "Venkat Ramanayya",
@@ -848,12 +848,12 @@ function getInitialData() {
       aiRecommendedTarget: 4650,
       status: "ACTIVE",
       notes: "High protein (39.5%) and high oil content (19.2%). Well-matured round golden grains with less than 1% moisture damage or split seed. Ready for solvent extraction plants or soya flour milling.",
-      imageUrl: "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://images.unsplash.com/photo-SAvq2xCAokc?w=900&auto=format&fit=crop&q=80",
       images: [
-        "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1585994192701-f1a505c817ea?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1543257580-7269da773bf5?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=900&auto=format&fit=crop&q=80"
+        "https://images.unsplash.com/photo-SAvq2xCAokc?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-cby39RDiPAM?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-r_rXoOYAvy4?w=900&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1iA_8Zf9wyA?w=900&auto=format&fit=crop&q=80"
       ],
       createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
       farmerName: "Rajeshwar Shinde",
