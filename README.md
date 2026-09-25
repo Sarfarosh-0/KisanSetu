@@ -213,6 +213,9 @@ SIH-26033-KisanSetu/
 ├── setup_guide/                          # Execution manuals and references
 │   ├── kisansetu_runtime_manual.md           # Daily runtime commands quick-reference
 │   └── kisansetu_setup_guide.md              # Detailed full-stack setup instructions
+├── doucments/
+│   ├── SINISTER SIX-SIH26033.pptx        # Idea PPT file for SIH submission 
+│   └── SINISTER SIX-SIH26033.pdf         # Idea PDF file for SIH submission
 │
 ├── server.ts                             # Node/Express dev server with Vite integration & fallback APIs
 ├── package.json                          # Frontend dependencies & run scripts
