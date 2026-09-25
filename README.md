@@ -432,11 +432,12 @@ Click the language selector in the top navigation header to toggle between <b>En
 - Developed for **Smart India Hackathon (SIH 2026)** — Problem Statement: **SIH26033**.
 - Built with a mission to empower Indian farmers with direct market access, AI-backed price discovery, transparent escrow payments, and optimized agri-logistics.
 
-- Build by Team Sinister Six
-    - 
-    -
-    - Rabiya 
-    - Kaushlesh kumar
-    - Mohammad Anas
-    -
+### 🛠️ Team Sinister Six
+
+- **Sarfarosh Alam** — Full-Stack Developer ([GitHub](https://github.com/sarfarosh-0))
+- **Mohd Hamza** — AI/ML Engineer ([GitHub](https://github.com/mohdhamza-4))
+- **Rabiya** — Frontend Developer ([GitHub](https://github.com/rabiyaaa06))
+- **Kaushlesh Kumar** — UI/UX Designer ([GitHub](https://github.com/Kaushlesh-stack))
+- **Mohammad Anas** — AI/ML Engineer ([GitHub](https://github.com/Siddanas123))
+- **Moniza Akram** — Researcher
 
