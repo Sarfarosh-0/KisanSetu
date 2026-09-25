@@ -352,28 +352,6 @@ Interactive API documentation can be explored live at **http://localhost:8000/do
 
 ---
 
-## 🔐 Environment Variables
-
-Template configuration is provided in `.env.example`:
-
-```bash
-# Backend Configuration
-PORT=8000
-DATABASE_URL=sqlite:///./agrimarket.db    # Or postgresql://user:pass@host:5432/kisansetu
-SECRET_KEY=your-secret-key-for-jwt-signing
-ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
-
-# Optional Services (Safe to leave blank in development)
-CLOUDINARY_URL=                           # Persistent image storage (cloudinary://api_key:secret@cloud)
-SENTRY_DSN=                               # Crash and error monitoring
-SENTRY_TRACES_SAMPLE_RATE=0.1
-
-# Frontend Configuration
-VITE_API_BASE_URL=                        # Leave blank for local proxy to port 3000
-```
-
----
-
 ## ❓ Frequently Asked Questions & Troubleshooting
 
 <details>
