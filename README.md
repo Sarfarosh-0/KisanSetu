@@ -231,8 +231,8 @@ SIH-26033-KisanSetu/
 
 > **Detailed Execution Manuals:**  
 > Refer to the [`setup_guide/`](setup_guide/) directory for detailed manuals:
-> - 📄 **[`setup_guide/SetupManual.txt`](kisansetu_setup_guide.md)** — Comprehensive walkthrough for Full-Stack, Frontend-Only, and Backend-Only configurations.
-> - 📄 **[`setup_guide/Manual.txt`](kisansetu_runtime_manual.md)** — Daily reference commands for starting services.
+> - 📄 **[`setup_guide/kisansetu_setup_guide.md`](kisansetu_setup_guide.md)** — Comprehensive walkthrough for Full-Stack, Frontend-Only, and Backend-Only configurations.
+> - 📄 **[`setup_guide/kisansetu_runtime_manual.md`](kisansetu_runtime_manual.md)** — Daily reference commands for starting services.
 
 ## 📡 API Endpoints Reference
 
