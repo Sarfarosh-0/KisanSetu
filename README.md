@@ -226,99 +226,10 @@ SIH-26033-KisanSetu/
 
 ## ⚙️ Setup & Installation Guide
 
-> [!TIP]
 > **Detailed Execution Manuals:**  
 > Refer to the [`setup_guide/`](setup_guide/) directory for detailed manuals:
 > - 📄 **[`setup_guide/SetupManual.txt`](setup_guide/SetupManual.txt)** — Comprehensive walkthrough for Full-Stack, Frontend-Only, and Backend-Only configurations.
 > - 📄 **[`setup_guide/Manual.txt`](setup_guide/Manual.txt)** — Daily reference commands for starting services.
-
-### 📋 Prerequisites
-
-Ensure the following runtimes are installed:
-- **Node.js**: Version `18.0.0` or higher ([Download Node.js](https://nodejs.org/))
-- **Python**: Version `3.10` or higher ([Download Python](https://www.python.org/))
-- **Git**: ([Download Git](https://git-scm.com/))
-
-Verify your environment:
-```bash
-node -v
-npm -v
-python --version
-```
-
----
-
-### 🚀 Option A: Full-Stack Setup (Recommended)
-
-Running in Full-Stack mode connects the React frontend to the Python FastAPI backend on port 8000 for live ML model inference and SQLite/PostgreSQL persistence.
-
-#### Step 1: Clone the Repository
-```bash
-git clone https://github.com/your-username/SIH-26033-KisanSetu.git
-cd SIH-26033-KisanSetu
-```
-
-#### Step 2: Start the Backend Server (Terminal 1)
-1. Navigate to the `backend` directory:
-   ```bash
-   cd backend
-   ```
-2. Create and activate a Python virtual environment:
-   - **Windows (PowerShell)**:
-     ```powershell
-     python -m venv venv
-     Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-     venv\Scripts\activate
-     ```
-   - **macOS / Linux**:
-     ```bash
-     python3 -m venv venv
-     source venv/bin/activate
-     ```
-3. Install Python dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Seed the database with sample agricultural listings and mandi rates:
-   ```bash
-   python seed_data.py
-   ```
-5. Launch the FastAPI server:
-   ```bash
-   uvicorn main:app --reload --host 0.0.0.0 --port 8000
-   ```
-   > 💡 Backend API is now running at **http://localhost:8000**  
-   > 📖 Interactive Swagger docs are available at **http://localhost:8000/docs**
-
-#### Step 3: Start the Frontend Application (Terminal 2)
-1. Open a **second terminal window** in the project root (`SIH-26033-KisanSetu`).
-2. Install frontend dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the Vite development server:
-   ```bash
-   npm run dev
-   ```
-   > 🌐 Open your browser at **http://localhost:3000**
-
----
-
-### ⚡ Option B: Standalone / Frontend-Only Mode
-
-For offline development, UI testing, or environments without Python, KisanSetu includes a complete Express dev server (`server.ts`) with built-in mock endpoints that mirror all FastAPI routes:
-
-```bash
-# 1. Install dependencies
-npm install
-
-# 2. Launch standalone server
-npm run dev
-
-# 3. Open in browser: http://localhost:3000
-```
-
----
 
 ## 📡 API Endpoints Reference
 
@@ -349,7 +260,6 @@ The FastAPI backend exposes the following REST endpoints (also mirrored in `serv
 | **Dev Utility** | `POST` | `/api/dev/reset-seed` | Reset database with fresh baseline demo listings and mandi prices |
 
 Interactive API documentation can be explored live at **http://localhost:8000/docs** or inside the web application via the **API Docs** tab.
-
 ---
 
 ## ❓ Frequently Asked Questions & Troubleshooting
@@ -413,7 +323,7 @@ Click the language selector in the top navigation header to toggle between <b>En
 ### 🛠️ Team Sinister Six
 
 - **Sarfarosh Alam** — Full-Stack Developer ([GitHub](https://github.com/sarfarosh-0))
-- **Mohd Hamza** — AI/ML Engineer ([GitHub](https://github.com/mohdhamza-4))
+- **Mohd Hamza** — AI/ML Engineer **(Team Leader)** ([GitHub](https://github.com/mohdhamza-4))
 - **Rabiya** — Frontend Developer ([GitHub](https://github.com/rabiyaaa06))
 - **Kaushlesh Kumar** — UI/UX Designer ([GitHub](https://github.com/Kaushlesh-stack))
 - **Mohammad Anas** — AI/ML Engineer ([GitHub](https://github.com/Siddanas123))
