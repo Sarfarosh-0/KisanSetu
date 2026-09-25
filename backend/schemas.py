@@ -113,6 +113,20 @@ class CropListingUpdate(BaseModel):
 
 class CropListingResponse(CropListingCreate):
     id: int
+    farmer_id: int
+    crop_name: str
+    variety: str
+    quantity_quintals: float
+    quality_grade: str
+    harvest_date: str
+    district: str
+    state: str
+    pincode: str
+    lat: float
+    lng: float
+    is_organic: bool
+    expected_price_per_quintal: float
+    image_url: Optional[str] = None
     mandi_benchmark_price: float
     ai_recommended_min: float
     ai_recommended_max: float
