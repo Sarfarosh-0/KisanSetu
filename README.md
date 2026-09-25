@@ -211,8 +211,8 @@ SIH-26033-KisanSetu/
 │   └── index.css                         # Global styles & Tailwind CSS 4 directives
 │
 ├── setup_guide/                          # Execution manuals and references
-│   ├── Manual.txt                        # Daily runtime commands quick-reference
-│   └── SetupManual.txt                   # Detailed full-stack setup instructions
+│   ├── kisansetu_runtime_manual.md           # Daily runtime commands quick-reference
+│   └── kisansetu_setup_guide.md              # Detailed full-stack setup instructions
 │
 ├── server.ts                             # Node/Express dev server with Vite integration & fallback APIs
 ├── package.json                          # Frontend dependencies & run scripts
