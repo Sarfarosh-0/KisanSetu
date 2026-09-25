@@ -95,16 +95,16 @@ export default function App() {
   // Read initial tab from ?tab= in URL; push updates back on change
   // ---------------------------------------------------------------------------
   const getTabFromUrl = (): string => {
-    if (typeof window === "undefined") return "inventory";
+    if (typeof window === "undefined") return "auth";
     try {
       const params = new URLSearchParams(window.location.search);
-      return params.get("tab") || "inventory";
+      return params.get("tab") || "auth";
     } catch {
-      return "inventory";
+      return "auth";
     }
   };
 
-  // Navigation tab state — initializes from URL query param
+  // Navigation tab state — initializes to "auth" (Login page as initial entry point)
   const [activeTab, setActiveTab] = useState<string>(getTabFromUrl);
 
   // Modal triggers
@@ -132,13 +132,11 @@ export default function App() {
       if (!currentUser) {
         const defaultFarmer = validUsers.find(u => u.role === "FARMER") || validUsers[0];
         setCurrentUser(defaultFarmer);
-        setActiveTab("inventory");
       }
     } catch (err) {
       console.error("Failed to load platform data:", err);
       if (!currentUser) {
         setCurrentUser(FALLBACK_USERS[0]);
-        setActiveTab("inventory");
       }
     } finally {
       setLoading(false);
@@ -161,6 +159,12 @@ export default function App() {
       if (activeTab && activeTab !== "auth") {
         params.set("tab", activeTab);
         const newUrl = `${window.location.pathname}?${params.toString()}${window.location.hash}`;
+        window.history.replaceState(null, "", newUrl);
+      } else if (activeTab === "auth" && params.has("tab")) {
+        params.delete("tab");
+        const newUrl = params.toString()
+          ? `${window.location.pathname}?${params.toString()}${window.location.hash}`
+          : window.location.pathname;
         window.history.replaceState(null, "", newUrl);
       }
     } catch {
@@ -345,9 +349,10 @@ export default function App() {
   if (activeTab === "auth") {
     return (
       <LoginPage
-        initialRole={currentUser.role === "BUYER" ? "buyer" : "farmer"}
+        initialRole={currentUser?.role === "BUYER" ? "buyer" : "farmer"}
+        onRoleChange={(role) => handleSelectUserRole(role === "buyer" ? "BUYER" : "FARMER")}
         onLoginSuccess={handleAuthSuccess}
-        onBackToApp={() => setActiveTab(currentUser.role === "FARMER" ? "inventory" : "marketplace")}
+        onBackToApp={() => setActiveTab(currentUser?.role === "BUYER" ? "marketplace" : "inventory")}
         lang={lang}
       />
     );

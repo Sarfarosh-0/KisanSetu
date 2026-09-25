@@ -7,6 +7,7 @@ import { CheckCircle2, ArrowRight } from "lucide-react";
 
 interface LoginPageProps {
   initialRole?: UserRole;
+  onRoleChange?: (role: UserRole) => void;
   onLoginSuccess?: (payload: AuthSuccessPayload) => void;
   onBackToApp?: () => void;
   lang?: "en" | "hi";
@@ -14,6 +15,7 @@ interface LoginPageProps {
 
 export const LoginPage: React.FC<LoginPageProps> = ({
   initialRole = "farmer",
+  onRoleChange,
   onLoginSuccess,
   onBackToApp,
   lang = "en"
@@ -33,6 +35,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       ...prev,
       role: newRole
     }));
+    onRoleChange?.(newRole);
   };
 
   // Step 1: Submit phone number -> move to OTP
