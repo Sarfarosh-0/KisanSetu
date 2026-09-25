@@ -353,12 +353,12 @@ export const MOCK_CROP_LISTINGS: CropListing[] = [
     aiRecommendedTarget: 1580,
     status: "ACTIVE",
     notes: "High dry matter content (>21%) and minimal reducing sugars. Specially curated for chips, french fries, and industrial food processing. Zero greening, uniform 55-65mm size.",
-    imageUrl: "https://images.unsplash.com/photo-LSZfNPVZjTw?w=900&auto=format&fit=crop&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cG90YXRvfGVufDB8fDB8fHww",
     images: [
-      "https://images.unsplash.com/photo-LSZfNPVZjTw?w=900&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-LSZfNPVZjTw?w=900&h=600&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-LSZfNPVZjTw?w=700&h=700&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-LSZfNPVZjTw?w=800&h=500&auto=format&fit=crop&q=80"
+      "https://images.unsplash.com/photo-1518977676601-b53f82aba655?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cG90YXRvfGVufDB8fDB8fHww",
+      "https://images.unsplash.com/photo-1518977676601-b53f82aba655?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cG90YXRvfGVufDB8fDB8fHww",
+      "https://images.unsplash.com/photo-1518977676601-b53f82aba655?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cG90YXRvfGVufDB8fDB8fHww",
+      "https://images.unsplash.com/photo-1518977676601-b53f82aba655?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cG90YXRvfGVufDB8fDB8fHww"
     ],
     createdAt: new Date(Date.now() - 3 * 86400000).toISOString(),
     farmerName: "Ramesh Kumar Patel",

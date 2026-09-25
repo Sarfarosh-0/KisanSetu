@@ -310,6 +310,17 @@ export const API = {
     }>>(`/api/notifications${qs}`);
   },
 
+  async getPayouts() {
+    return safeFetchJson<any[]>("/api/payouts", undefined, []);
+  },
+
+  async getWeather(district?: string, state?: string) {
+    const q = new URLSearchParams();
+    if (district) q.append("district", district);
+    if (state) q.append("state", state);
+    return safeFetchJson<any>(`/api/weather?${q.toString()}`, undefined, null);
+  },
+
   async resetSeedData() {
     return safeFetchJson<{ message: string }>("/api/seed/reset", { method: "POST" });
   },

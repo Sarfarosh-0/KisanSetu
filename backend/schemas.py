@@ -38,8 +38,25 @@ class UserResponse(UserBase):
     created_at: datetime
     access_token: Optional[str] = None
 
+    # camelCase mirrors for frontend compatibility
+    trustScore: Optional[float] = None
+    kycStatus: Optional[str] = None
+    totalTrades: Optional[int] = None
+    ratingCount: Optional[int] = None
+    fpoName: Optional[str] = None
+    createdAt: Optional[str] = None
+
     class Config:
         from_attributes = True
+
+    def model_post_init(self, __context) -> None:
+        # Populate camelCase mirrors from snake_case values
+        object.__setattr__(self, 'trustScore', self.trust_score)
+        object.__setattr__(self, 'kycStatus', self.kyc_status)
+        object.__setattr__(self, 'totalTrades', self.total_trades)
+        object.__setattr__(self, 'ratingCount', self.rating_count)
+        object.__setattr__(self, 'fpoName', self.fpo_name)
+        object.__setattr__(self, 'createdAt', self.created_at.isoformat() if self.created_at else None)
 
 class TokenResponse(BaseModel):
     access_token: str
@@ -53,40 +70,46 @@ class LoginRequest(BaseModel):
 
 # --- Crop Listing Schemas ---
 class CropListingCreate(BaseModel):
-    farmer_id: Optional[int] = None
-    crop_name: str
+    farmer_id: Optional[int] = Field(None, alias="farmerId")
+    crop_name: str = Field(..., alias="cropName")
     variety: str
-    quantity_quintals: float
-    quality_grade: str = "Grade A"
-    harvest_date: str
+    quantity_quintals: float = Field(..., alias="quantityQuintals")
+    quality_grade: str = Field("Grade A", alias="qualityGrade")
+    harvest_date: str = Field(..., alias="harvestDate")
     district: str
     state: str
     pincode: str
     lat: float
     lng: float
-    is_organic: bool = False
-    expected_price_per_quintal: float
+    is_organic: bool = Field(False, alias="isOrganic")
+    expected_price_per_quintal: float = Field(..., alias="expectedPricePerQuintal")
     notes: Optional[str] = None
-    image_url: Optional[str] = None
+    image_url: Optional[str] = Field(None, alias="imageUrl")
     images: Optional[List[str]] = Field(default_factory=list)
 
+    class Config:
+        populate_by_name = True
+
 class CropListingUpdate(BaseModel):
-    crop_name: Optional[str] = None
+    crop_name: Optional[str] = Field(None, alias="cropName")
     variety: Optional[str] = None
-    quantity_quintals: Optional[float] = None
-    quality_grade: Optional[str] = None
-    harvest_date: Optional[str] = None
+    quantity_quintals: Optional[float] = Field(None, alias="quantityQuintals")
+    quality_grade: Optional[str] = Field(None, alias="qualityGrade")
+    harvest_date: Optional[str] = Field(None, alias="harvestDate")
     district: Optional[str] = None
     state: Optional[str] = None
     pincode: Optional[str] = None
     lat: Optional[float] = None
     lng: Optional[float] = None
-    is_organic: Optional[bool] = None
-    expected_price_per_quintal: Optional[float] = None
+    is_organic: Optional[bool] = Field(None, alias="isOrganic")
+    expected_price_per_quintal: Optional[float] = Field(None, alias="expectedPricePerQuintal")
     notes: Optional[str] = None
-    image_url: Optional[str] = None
+    image_url: Optional[str] = Field(None, alias="imageUrl")
     images: Optional[List[str]] = None
     status: Optional[str] = None
+
+    class Config:
+        populate_by_name = True
 
 class CropListingResponse(CropListingCreate):
     id: int
@@ -100,6 +123,27 @@ class CropListingResponse(CropListingCreate):
     farmer_name: Optional[str] = None
     farmer_trust_score: Optional[float] = None
     farmer_verified: Optional[bool] = None
+    fpo_name: Optional[str] = None
+
+    # camelCase mirrors for frontend compatibility
+    farmerId: Optional[int] = None
+    cropName: Optional[str] = None
+    variety: Optional[str] = None
+    quantityQuintals: Optional[float] = None
+    qualityGrade: Optional[str] = None
+    harvestDate: Optional[str] = None
+    isOrganic: Optional[bool] = None
+    expectedPricePerQuintal: Optional[float] = None
+    mandiBenchmarkPrice: Optional[float] = None
+    aiRecommendedMin: Optional[float] = None
+    aiRecommendedMax: Optional[float] = None
+    aiRecommendedTarget: Optional[float] = None
+    imageUrl: Optional[str] = None
+    farmerName: Optional[str] = None
+    farmerTrustScore: Optional[float] = None
+    farmerVerified: Optional[bool] = None
+    fpoName: Optional[str] = None
+    createdAt: Optional[str] = None
 
     @field_validator("images", mode="before")
     @classmethod
@@ -117,16 +161,38 @@ class CropListingResponse(CropListingCreate):
     class Config:
         from_attributes = True
 
+    def model_post_init(self, __context) -> None:
+        object.__setattr__(self, 'farmerId', self.farmer_id)
+        object.__setattr__(self, 'cropName', self.crop_name)
+        object.__setattr__(self, 'quantityQuintals', self.quantity_quintals)
+        object.__setattr__(self, 'qualityGrade', self.quality_grade)
+        object.__setattr__(self, 'harvestDate', self.harvest_date)
+        object.__setattr__(self, 'isOrganic', self.is_organic)
+        object.__setattr__(self, 'expectedPricePerQuintal', self.expected_price_per_quintal)
+        object.__setattr__(self, 'mandiBenchmarkPrice', self.mandi_benchmark_price)
+        object.__setattr__(self, 'aiRecommendedMin', self.ai_recommended_min)
+        object.__setattr__(self, 'aiRecommendedMax', self.ai_recommended_max)
+        object.__setattr__(self, 'aiRecommendedTarget', self.ai_recommended_target)
+        object.__setattr__(self, 'imageUrl', self.image_url)
+        object.__setattr__(self, 'farmerName', self.farmer_name)
+        object.__setattr__(self, 'farmerTrustScore', self.farmer_trust_score)
+        object.__setattr__(self, 'farmerVerified', self.farmer_verified)
+        object.__setattr__(self, 'fpoName', self.fpo_name)
+        object.__setattr__(self, 'createdAt', self.created_at.isoformat() if self.created_at else None)
+
 # --- AI Fair Price Engine Schemas ---
 class PricePredictionRequest(BaseModel):
-    crop_name: str
+    crop_name: str = Field(..., alias="cropName")
     variety: Optional[str] = "Standard"
-    quantity_quintals: float
-    quality_grade: str = "Grade A"
+    quantity_quintals: float = Field(..., alias="quantityQuintals")
+    quality_grade: str = Field("Grade A", alias="qualityGrade")
     district: str
     state: str
     month: Optional[int] = None
-    is_organic: bool = False
+    is_organic: bool = Field(False, alias="isOrganic")
+
+    class Config:
+        populate_by_name = True
 
 class PriceFactorDetail(BaseModel):
     factor_name: str
@@ -148,13 +214,16 @@ class PricePredictionResponse(BaseModel):
 
 # --- Order & Payment Schemas ---
 class OrderCreate(BaseModel):
-    listing_id: int
-    buyer_id: int
-    quantity_ordered: float
-    delivery_address: str
-    delivery_pincode: str
-    delivery_lat: Optional[float] = None
-    delivery_lng: Optional[float] = None
+    listing_id: int = Field(..., alias="listingId")
+    buyer_id: int = Field(..., alias="buyerId")
+    quantity_ordered: float = Field(..., alias="quantityOrdered")
+    delivery_address: str = Field(..., alias="deliveryAddress")
+    delivery_pincode: str = Field(..., alias="deliveryPincode")
+    delivery_lat: Optional[float] = Field(None, alias="deliveryLat")
+    delivery_lng: Optional[float] = Field(None, alias="deliveryLng")
+
+    class Config:
+        populate_by_name = True
 
 class OrderStatusUpdate(BaseModel):
     status: str
@@ -180,17 +249,65 @@ class OrderResponse(BaseModel):
     delivery_pincode: str
     delivery_otp: str
     created_at: datetime
+    updated_at: Optional[datetime] = None
     buyer_name: Optional[str] = None
     farmer_name: Optional[str] = None
+
+    # camelCase mirrors for frontend compatibility
+    orderNumber: Optional[str] = None
+    listingId: Optional[int] = None
+    buyerId: Optional[int] = None
+    farmerId: Optional[int] = None
+    cropName: Optional[str] = None
+    quantityOrdered: Optional[float] = None
+    pricePerQuintal: Optional[float] = None
+    totalProduceAmount: Optional[float] = None
+    logisticsFee: Optional[float] = None
+    platformFee: Optional[float] = None
+    totalAmount: Optional[float] = None
+    paymentStatus: Optional[str] = None
+    paymentRef: Optional[str] = None
+    deliveryAddress: Optional[str] = None
+    deliveryPincode: Optional[str] = None
+    deliveryOtp: Optional[str] = None
+    createdAt: Optional[str] = None
+    updatedAt: Optional[str] = None
+    buyerName: Optional[str] = None
+    farmerName: Optional[str] = None
 
     class Config:
         from_attributes = True
 
+    def model_post_init(self, __context) -> None:
+        object.__setattr__(self, 'orderNumber', self.order_number)
+        object.__setattr__(self, 'listingId', self.listing_id)
+        object.__setattr__(self, 'buyerId', self.buyer_id)
+        object.__setattr__(self, 'farmerId', self.farmer_id)
+        object.__setattr__(self, 'cropName', self.crop_name)
+        object.__setattr__(self, 'quantityOrdered', self.quantity_ordered)
+        object.__setattr__(self, 'pricePerQuintal', self.price_per_quintal)
+        object.__setattr__(self, 'totalProduceAmount', self.total_produce_amount)
+        object.__setattr__(self, 'logisticsFee', self.logistics_fee)
+        object.__setattr__(self, 'platformFee', self.platform_fee)
+        object.__setattr__(self, 'totalAmount', self.total_amount)
+        object.__setattr__(self, 'paymentStatus', self.payment_status)
+        object.__setattr__(self, 'paymentRef', self.payment_ref)
+        object.__setattr__(self, 'deliveryAddress', self.delivery_address)
+        object.__setattr__(self, 'deliveryPincode', self.delivery_pincode)
+        object.__setattr__(self, 'deliveryOtp', self.delivery_otp)
+        object.__setattr__(self, 'createdAt', self.created_at.isoformat() if self.created_at else None)
+        object.__setattr__(self, 'updatedAt', self.updated_at.isoformat() if self.updated_at else None)
+        object.__setattr__(self, 'buyerName', self.buyer_name)
+        object.__setattr__(self, 'farmerName', self.farmer_name)
+
 class UPIPaymentVerifyRequest(BaseModel):
-    order_id: int
-    upi_id: str
+    order_id: int = Field(..., alias="orderId")
+    upi_id: str = Field(..., alias="upiId")
     amount: float
-    utr_number: str
+    utr_number: str = Field(..., alias="utrNumber")
+
+    class Config:
+        populate_by_name = True
 
 # --- Logistics & Route Optimization Schemas ---
 class RouteStop(BaseModel):

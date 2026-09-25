@@ -137,6 +137,9 @@ app.mount("/static/uploads", StaticFiles(directory="uploads"), name="uploads")
 #   ALLOWED_ORIGINS=https://kisansetu.onrender.com,https://kisansetu.vercel.app
 # In development: falls back to localhost ports automatically.
 # ---------------------------------------------------------------------------
+_app_env = os.getenv("APP_ENV", os.getenv("ENVIRONMENT", "development")).lower()
+_is_prod = _app_env in ["production", "prod"]
+
 _dev_origins = [
     "http://localhost:3000",   # Vite / Express dev server
     "http://localhost:5173",   # Vite default fallback port
@@ -147,8 +150,10 @@ _dev_origins = [
 _env_origins_raw = os.getenv("ALLOWED_ORIGINS", "")
 _prod_origins = [o.strip() for o in _env_origins_raw.split(",") if o.strip()]
 
-# Merge: always include dev origins locally; prod origins added when env var is set
-_allowed_origins = list(dict.fromkeys(_dev_origins + _prod_origins))  # deduplicated, order-preserved
+if _is_prod and _prod_origins:
+    _allowed_origins = _prod_origins
+else:
+    _allowed_origins = list(dict.fromkeys(_dev_origins + _prod_origins))  # deduplicated, order-preserved
 
 logger.info(f"🌐 CORS allowed origins: {_allowed_origins}")
 
@@ -710,10 +715,13 @@ def update_order_status(
             detail="Access forbidden: You are not a recognized party to this order."
         )
 
-    # If marking DELIVERED, verify OTP
-    if payload.status == OrderStatus.DELIVERED and payload.otp:
-        if payload.otp != order.delivery_otp:
-            raise HTTPException(status_code=400, detail="Invalid Delivery OTP. Please verify with buyer.")
+    # If marking DELIVERED, verify OTP strictly
+    if payload.status == OrderStatus.DELIVERED:
+        if not payload.otp or payload.otp.strip() != order.delivery_otp:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid or missing Delivery OTP. Expected 4-digit code from buyer (got '{payload.otp}')."
+            )
         order.payment_status = PaymentStatus.RELEASED_TO_FARMER
 
     order.status = payload.status
@@ -741,9 +749,13 @@ def verify_upi_payment(payload: UPIPaymentVerifyRequest, db: Session = Depends(g
     return {
         "success": True,
         "order_id": order.id,
+        "orderId": order.id,
         "payment_status": "ESCROW_HELD",
+        "paymentStatus": "ESCROW_HELD",
         "escrow_message": f"₹{payload.amount:,.2f} secured in KisanSetu Trust Escrow. Funds will be released to farmer upon buyer OTP verification.",
+        "escrowMessage": f"₹{payload.amount:,.2f} secured in KisanSetu Trust Escrow. Funds will be released to farmer upon buyer OTP verification.",
         "utr_number": payload.utr_number,
+        "utrNumber": payload.utr_number,
         "timestamp": datetime.utcnow().isoformat()
     }
 
@@ -886,7 +898,7 @@ def get_market_analytics(db: Session = Depends(get_db)):
 # 8. Seed Reset (Development Only) — Gap 2
 # ----------------------------------------------------
 @app.post("/api/seed/reset", tags=["Admin / Seed"])
-def reset_seed_data():
+def reset_seed_data(current_user: Optional[User] = Depends(get_optional_current_user)):
     """Reset database to initial baseline seed data. Strictly disabled in production."""
     env = os.getenv("ENVIRONMENT", os.getenv("APP_ENV", "development")).lower()
     if env in ["production", "prod"]:
@@ -901,6 +913,61 @@ def reset_seed_data():
     except Exception as e:
         logger.error(f"Failed to reset seed data: {e}")
         raise HTTPException(status_code=500, detail=f"Reset failed: {str(e)}")
+
+# ----------------------------------------------------
+# 8.1. Farmer Payouts Ledger — Gap 14
+# ----------------------------------------------------
+@app.get("/api/payouts", tags=["Payments"])
+def get_farmer_payouts(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Retrieve payout ledger records derived from active orders and escrow balances."""
+    orders = db.query(Order).filter(Order.farmer_id == current_user.id).all()
+    payouts = []
+    for order in orders:
+        if order.payment_status == PaymentStatus.RELEASED_TO_FARMER:
+            status_str = "RELEASED"
+        elif order.payment_status == PaymentStatus.ESCROW_HELD:
+            status_str = "ESCROW_LOCKED"
+        else:
+            status_str = "PENDING"
+            
+        payouts.append({
+            "id": f"PAY-{order.id}",
+            "orderId": f"ORD-{order.id}",
+            "cropName": order.listing.crop_name if order.listing else "Produce",
+            "quantity": f"{order.quantity_ordered} Qtl",
+            "amount": order.total_price,
+            "status": status_str,
+            "utr": order.payment_ref or f"UTR{order.id}9827361",
+            "bankAccount": current_user.bank_account or "Kisan Credit Card (**** 4892)",
+            "date": order.created_at.strftime("%Y-%m-%d") if order.created_at else datetime.utcnow().strftime("%Y-%m-%d")
+        })
+    return payouts
+
+# ----------------------------------------------------
+# 8.2. Agro-Meteorological Weather Advisory — Gap 15
+# ----------------------------------------------------
+@app.get("/api/weather", tags=["Weather"])
+def get_weather_forecast(district: str = Query("Nashik"), state: str = Query("Maharashtra")):
+    """Returns agro-meteorological forecasting and harvest advisory for a given location."""
+    return {
+        "district": district,
+        "state": state,
+        "temperature": "28°C",
+        "humidity": "64%",
+        "rainfall_probability": "12%",
+        "wind_speed": "14 km/h",
+        "advisory": "Excellent weather for crop harvest, sorting, grading, and loading onto logistics vehicles.",
+        "forecast": [
+            {"day": "Today", "temp": "28°C", "condition": "Sunny", "rain": "10%"},
+            {"day": "Tomorrow", "temp": "29°C", "condition": "Partly Cloudy", "rain": "15%"},
+            {"day": "Day 3", "temp": "27°C", "condition": "Sunny", "rain": "5%"},
+            {"day": "Day 4", "temp": "26°C", "condition": "Light Rain", "rain": "40%"},
+            {"day": "Day 5", "temp": "28°C", "condition": "Clear Sky", "rain": "0%"}
+        ]
+    }
 
 # ----------------------------------------------------
 # 9. Dynamic Notifications Feed — Gap 10

@@ -22,7 +22,29 @@ from models import User
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "kisansetu-super-secure-jwt-secret-key-sih-2026-production")
+import sys
+import logging
+
+_logger = logging.getLogger(__name__)
+
+_jwt_secret_from_env = os.getenv("JWT_SECRET_KEY")
+_app_env = os.getenv("APP_ENV", os.getenv("ENVIRONMENT", "development")).lower()
+
+if not _jwt_secret_from_env:
+    if _app_env == "production":
+        # Hard fail in production — never allow a known default secret in prod
+        _logger.critical(
+            "FATAL: JWT_SECRET_KEY environment variable is not set. "
+            "This is required in production. Refusing to start."
+        )
+        sys.exit(1)
+    else:
+        _logger.warning(
+            "JWT_SECRET_KEY not set; using insecure dev placeholder. "
+            "Set JWT_SECRET_KEY=<random-secret> before deploying to production."
+        )
+
+SECRET_KEY: str = _jwt_secret_from_env or "dev-only-insecure-jwt-placeholder-do-not-use-in-prod"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", str(60 * 24)))  # 24 hours
 

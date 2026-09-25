@@ -7,10 +7,10 @@ import {
   MapPin,
   LogOut,
   Layers,
-  Truck,
   ShoppingBasket,
   TrendingUp,
   Navigation,
+  Truck,
   X
 } from "lucide-react";
 import type { User, UserRole } from "../types";
@@ -90,7 +90,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       labelEn: "Mandi Rates",
       labelHi: "लाइव मंडी भाव",
       shortLabelEn: "Mandi",
-      shortLabelHi: "मंडी भाव",
+      shortLabelHi: "मंडी",
       icon: Radio
     },
     {
@@ -119,7 +119,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       targetTab: "marketplace",
       labelEn: "Crop Marketplace",
       labelHi: "फसल बाज़ार",
-      shortLabelEn: "Marketplace",
+      shortLabelEn: "Market",
       shortLabelHi: "बाज़ार",
       icon: ShoppingBasket
     },
@@ -174,7 +174,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       labelEn: "Mandi Rates",
       labelHi: "लाइव मंडी भाव",
       shortLabelEn: "Mandi",
-      shortLabelHi: "मंडी भाव",
+      shortLabelHi: "मंडी",
       icon: Radio
     }
   ];
@@ -182,21 +182,45 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const navItems = user.role === "FARMER" ? farmerNavItems : buyerNavItems;
   const userInitial = user.name ? user.name.charAt(0).toUpperCase() : "U";
 
+  // Helper for tab selection: only close drawer on mobile screen sizes (< 1024px)
+  const handleNavSelect = (targetTab: string) => {
+    onSelectTab(targetTab);
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      onClose?.();
+    }
+  };
+
   const handleQuickAction = () => {
     if (user.role === "FARMER") {
       if (onOpenNewListing) {
         onOpenNewListing();
       } else {
-        onSelectTab("inventory");
+        handleNavSelect("inventory");
       }
     } else {
-      onSelectTab("marketplace");
+      handleNavSelect("marketplace");
     }
   };
 
-  // Split farmer navigation into left/right groups for mobile bottom bar center CTA slot
-  const farmerLeftNav = farmerNavItems.slice(0, 2); // inventory, ai_pricing
-  const farmerRightNav = farmerNavItems.slice(2);   // route_optimizer, pricing, buyer_requests, payouts
+  // Simplified 4-item mobile bottom nav for Farmer (2 left, 1 center CTA, 2 right)
+  const mobileFarmerLeft = [
+    farmerNavItems[0], // inventory
+    farmerNavItems[3]  // pricing (Mandi Rates)
+  ];
+  const mobileFarmerRight = [
+    farmerNavItems[4], // buyer_requests (Demands)
+    farmerNavItems[5]  // payouts (Payouts)
+  ];
+
+  // Simplified 4-item mobile bottom nav for Buyer (2 left, 1 center CTA, 2 right)
+  const mobileBuyerLeft = [
+    buyerNavItems[0], // marketplace
+    buyerNavItems[1]  // ai_pricing
+  ];
+  const mobileBuyerRight = [
+    buyerNavItems[4], // contracts
+    buyerNavItems[5]  // payments
+  ];
 
   return (
     <>
@@ -224,8 +248,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             type="button"
             onClick={() => {
               const defaultTab = user.role === "FARMER" ? "inventory" : "marketplace";
-              onSelectTab(defaultTab);
-              onClose?.();
+              handleNavSelect(defaultTab);
             }}
             className="flex items-center gap-2.5 text-left rounded-xl cursor-pointer group focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]/30"
             title="किसानSetu Agricultural Exchange"
@@ -269,10 +292,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => {
-                    onSelectTab(item.targetTab);
-                    onClose?.();
-                  }}
+                  onClick={() => handleNavSelect(item.targetTab)}
                   className={`w-full group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 cursor-pointer text-left focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]/40 ${
                     isActive
                       ? "bg-[#0F6A53] text-white shadow-xs"
@@ -299,7 +319,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             type="button"
             onClick={() => {
               handleQuickAction();
-              onClose?.();
+              if (typeof window !== "undefined" && window.innerWidth < 1024) {
+                onClose?.();
+              }
             }}
             className="w-full h-10 px-3 rounded-xl flex items-center justify-center gap-2 font-semibold text-xs text-white bg-gradient-to-r from-[#0F6A53] to-[#0B5745] hover:brightness-105 active:scale-[0.99] transition shadow-xs hover:shadow cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]/40"
           >
@@ -335,7 +357,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 type="button"
                 onClick={() => {
                   onSignOut();
-                  onClose?.();
+                  if (typeof window !== "undefined" && window.innerWidth < 1024) {
+                    onClose?.();
+                  }
                 }}
                 className="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-rose-600 hover:bg-rose-50 text-[11px] font-bold transition cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-rose-500/30"
               >
@@ -348,16 +372,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </aside>
 
       {/* =================================================================== */}
-      {/* MOBILE BOTTOM NAVIGATION BAR (Visible on screens below lg)          */}
+      {/* MOBILE BOTTOM NAVIGATION BAR (Simplified 5-slot layout)             */}
       {/* =================================================================== */}
       <nav
-        className="flex lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200/90 shadow-lg px-1.5 py-1 items-center justify-start sm:justify-center overflow-x-auto no-scrollbar min-h-[58px] pb-[max(0.35rem,env(safe-area-inset-bottom))] gap-1"
+        className="flex lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-lg px-2 py-1 items-center justify-between min-h-[60px] pb-[max(0.4rem,env(safe-area-inset-bottom))]"
         aria-label="Mobile Navigation"
       >
         {user.role === "FARMER" ? (
           <>
-            {/* Left Farmer Nav Items (Inventory + AI Price Engine) */}
-            {farmerLeftNav.map((item) => {
+            {/* Left 2 Items: Inventory, Mandi Rates */}
+            {mobileFarmerLeft.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.targetTab;
               const shortLabel = lang === "hi" ? item.shortLabelHi : item.shortLabelEn;
@@ -367,37 +391,37 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   key={item.id}
                   type="button"
                   onClick={() => onSelectTab(item.targetTab)}
-                  className={`flex-1 min-w-[56px] max-w-[72px] shrink-0 flex flex-col items-center justify-center min-h-[52px] py-1 px-0.5 text-center transition-colors cursor-pointer rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]/30 ${
+                  className={`flex-1 flex flex-col items-center justify-center min-h-[48px] py-1 px-1 text-center transition-all cursor-pointer rounded-xl ${
                     isActive ? "text-[#0F6A53] font-bold" : "text-slate-500 hover:text-slate-800 font-medium"
                   }`}
                   aria-current={isActive ? "page" : undefined}
                 >
                   <Icon
-                    className={`w-5 h-5 ${isActive ? "text-[#0F6A53]" : "text-slate-400"}`}
+                    className={`w-5 h-5 ${isActive ? "text-[#0F6A53] scale-110" : "text-slate-400"}`}
                     strokeWidth={isActive ? 2.4 : 1.8}
                   />
-                  <span className="text-[10px] leading-tight mt-1 truncate max-w-[62px]">{shortLabel}</span>
+                  <span className="text-[11px] leading-tight mt-1 truncate max-w-[68px]">{shortLabel}</span>
                 </button>
               );
             })}
 
-            {/* Prominent Center "Add New Crop" Action Button */}
-            <div className="flex flex-col items-center justify-center -mt-4 shrink-0 px-1">
+            {/* Prominent Center "New / Add" Action Button */}
+            <div className="flex flex-col items-center justify-center -mt-5 shrink-0 px-2 z-10">
               <button
                 type="button"
-                onClick={handleQuickAction}
+                onClick={onOpenNewListing || handleQuickAction}
                 aria-label={lang === "hi" ? "नई फसल जोड़ें" : "List New Harvest"}
-                className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0F6A53] to-[#0B5745] text-white flex items-center justify-center shadow-md hover:brightness-105 active:scale-95 transition-transform border-2 border-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]"
+                className="w-13 h-13 rounded-full bg-gradient-to-br from-[#0F6A53] via-emerald-600 to-[#0B5745] text-white flex items-center justify-center shadow-lg shadow-emerald-800/30 hover:brightness-110 active:scale-95 transition-all border-4 border-white cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]"
               >
-                <Plus className="w-6 h-6 text-white" strokeWidth={2.6} />
+                <Plus className="w-7 h-7 text-white" strokeWidth={2.8} />
               </button>
-              <span className="text-[10px] font-bold text-[#0F6A53] mt-0.5 truncate max-w-[68px]">
-                {lang === "hi" ? "नई फसल" : "Add Crop"}
+              <span className="text-[10px] font-extrabold text-[#0F6A53] mt-0.5 tracking-tight truncate max-w-[70px]">
+                {lang === "hi" ? "+ फसल जोड़ें" : "+ Add Crop"}
               </span>
             </div>
 
-            {/* Right Farmer Nav Items (Logistics Routes + Mandi + Demands + Payouts) */}
-            {farmerRightNav.map((item) => {
+            {/* Right 2 Items: Buyer Demands, Payouts */}
+            {mobileFarmerRight.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.targetTab;
               const shortLabel = lang === "hi" ? item.shortLabelHi : item.shortLabelEn;
@@ -407,45 +431,88 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   key={item.id}
                   type="button"
                   onClick={() => onSelectTab(item.targetTab)}
-                  className={`flex-1 min-w-[56px] max-w-[72px] shrink-0 flex flex-col items-center justify-center min-h-[52px] py-1 px-0.5 text-center transition-colors cursor-pointer rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]/30 ${
+                  className={`flex-1 flex flex-col items-center justify-center min-h-[48px] py-1 px-1 text-center transition-all cursor-pointer rounded-xl ${
                     isActive ? "text-[#0F6A53] font-bold" : "text-slate-500 hover:text-slate-800 font-medium"
                   }`}
                   aria-current={isActive ? "page" : undefined}
                 >
                   <Icon
-                    className={`w-5 h-5 ${isActive ? "text-[#0F6A53]" : "text-slate-400"}`}
+                    className={`w-5 h-5 ${isActive ? "text-[#0F6A53] scale-110" : "text-slate-400"}`}
                     strokeWidth={isActive ? 2.4 : 1.8}
                   />
-                  <span className="text-[10px] leading-tight mt-1 truncate max-w-[62px]">{shortLabel}</span>
+                  <span className="text-[11px] leading-tight mt-1 truncate max-w-[68px]">{shortLabel}</span>
                 </button>
               );
             })}
           </>
         ) : (
-          /* Buyer Navigation Items — All items including AI Price & Routes with smooth horizontal scroll */
-          buyerNavItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.targetTab;
-            const shortLabel = lang === "hi" ? item.shortLabelHi : item.shortLabelEn;
+          /* Buyer Simplified Mobile Bottom Nav */
+          <>
+            {/* Left 2 Items: Marketplace, AI Price */}
+            {mobileBuyerLeft.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.targetTab;
+              const shortLabel = lang === "hi" ? item.shortLabelHi : item.shortLabelEn;
 
-            return (
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => onSelectTab(item.targetTab)}
+                  className={`flex-1 flex flex-col items-center justify-center min-h-[48px] py-1 px-1 text-center transition-all cursor-pointer rounded-xl ${
+                    isActive ? "text-[#0F6A53] font-bold" : "text-slate-500 hover:text-slate-800 font-medium"
+                  }`}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  <Icon
+                    className={`w-5 h-5 ${isActive ? "text-[#0F6A53] scale-110" : "text-slate-400"}`}
+                    strokeWidth={isActive ? 2.4 : 1.8}
+                  />
+                  <span className="text-[11px] leading-tight mt-1 truncate max-w-[68px]">{shortLabel}</span>
+                </button>
+              );
+            })}
+
+            {/* Prominent Center Action: Bulk RFQ */}
+            <div className="flex flex-col items-center justify-center -mt-5 shrink-0 px-2 z-10">
               <button
-                key={item.id}
                 type="button"
-                onClick={() => onSelectTab(item.targetTab)}
-                className={`flex-1 min-w-[56px] max-w-[72px] shrink-0 flex flex-col items-center justify-center min-h-[52px] py-1 px-0.5 text-center transition-colors cursor-pointer rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]/30 ${
-                  isActive ? "text-[#0F6A53] font-bold" : "text-slate-500 hover:text-slate-800 font-medium"
-                }`}
-                aria-current={isActive ? "page" : undefined}
+                onClick={() => onSelectTab("bulk_orders")}
+                aria-label={lang === "hi" ? "थोक मांग (RFQ)" : "Post Bulk RFQ"}
+                className="w-13 h-13 rounded-full bg-gradient-to-br from-[#0F6A53] via-emerald-600 to-[#0B5745] text-white flex items-center justify-center shadow-lg shadow-emerald-800/30 hover:brightness-110 active:scale-95 transition-all border-4 border-white cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#0F6A53]"
               >
-                <Icon
-                  className={`w-5 h-5 ${isActive ? "text-[#0F6A53]" : "text-slate-400"}`}
-                  strokeWidth={isActive ? 2.4 : 1.8}
-                />
-                <span className="text-[10px] leading-tight mt-1 truncate max-w-[62px]">{shortLabel}</span>
+                <Layers className="w-6 h-6 text-white" strokeWidth={2.4} />
               </button>
-            );
-          })
+              <span className="text-[10px] font-extrabold text-[#0F6A53] mt-0.5 tracking-tight truncate max-w-[70px]">
+                {lang === "hi" ? "+ थोक मांग" : "+ Post RFQ"}
+              </span>
+            </div>
+
+            {/* Right 2 Items: Contracts, Payments */}
+            {mobileBuyerRight.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.targetTab;
+              const shortLabel = lang === "hi" ? item.shortLabelHi : item.shortLabelEn;
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => onSelectTab(item.targetTab)}
+                  className={`flex-1 flex flex-col items-center justify-center min-h-[48px] py-1 px-1 text-center transition-all cursor-pointer rounded-xl ${
+                    isActive ? "text-[#0F6A53] font-bold" : "text-slate-500 hover:text-slate-800 font-medium"
+                  }`}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  <Icon
+                    className={`w-5 h-5 ${isActive ? "text-[#0F6A53] scale-110" : "text-slate-400"}`}
+                    strokeWidth={isActive ? 2.4 : 1.8}
+                  />
+                  <span className="text-[11px] leading-tight mt-1 truncate max-w-[68px]">{shortLabel}</span>
+                </button>
+              );
+            })}
+          </>
         )}
       </nav>
     </>
