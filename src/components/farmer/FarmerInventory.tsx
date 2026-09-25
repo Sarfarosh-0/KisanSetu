@@ -20,7 +20,7 @@ import {
 import { CropListing, Order, User } from "../../types";
 import { t, translateCrop, translateStatus, translateGrade } from "../../i18n";
 
-const DEFAULT_INVENTORY_IMAGE = "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=80";
+const DEFAULT_INVENTORY_IMAGE = "https://media.istockphoto.com/id/1426640386/photo/barley-of-wheat-crop-and-heap-of-grain-close-up.jpg?s=1024x1024&w=is&k=20&c=CBUCVfCozlwlYoi58Kg222nsppchkeAlCsIRmY_1QhY=";
 
 // ─── Per-card gallery component ─────────────────────────────────────────────
 interface InventoryCardImageProps {

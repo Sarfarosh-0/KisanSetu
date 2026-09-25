@@ -433,12 +433,12 @@ function getInitialData() {
       aiRecommendedTarget: 3100,
       status: "ACTIVE",
       notes: "NPOP Certified organic Sharbati grain. Heavy test weight (81 kg/hl), rich golden luster, perfect for premium stone-ground flour and artisanal bakeries. Dry storage in hermetic bags.",
-      imageUrl: "https://images.unsplash.com/photo-hq43w4uqKls?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://media.istockphoto.com/id/1426640386/photo/barley-of-wheat-crop-and-heap-of-grain-close-up.jpg?s=1024x1024&w=is&k=20&c=CBUCVfCozlwlYoi58Kg222nsppchkeAlCsIRmY_1QhY=",
       images: [
-        "https://images.unsplash.com/photo-hq43w4uqKls?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-WRp3fZpmHyM?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-GXt_auM21Ig?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-zsvnVQOAnDc?w=900&auto=format&fit=crop&q=80"
+        "https://media.istockphoto.com/id/1426640386/photo/barley-of-wheat-crop-and-heap-of-grain-close-up.jpg?s=1024x1024&w=is&k=20&c=CBUCVfCozlwlYoi58Kg222nsppchkeAlCsIRmY_1QhY=",
+        "https://media.istockphoto.com/id/1426640386/photo/barley-of-wheat-crop-and-heap-of-grain-close-up.jpg?s=1024x1024&w=is&k=20&c=CBUCVfCozlwlYoi58Kg222nsppchkeAlCsIRmY_1QhY=",
+        "https://media.istockphoto.com/id/1426640386/photo/barley-of-wheat-crop-and-heap-of-grain-close-up.jpg?s=1024x1024&w=is&k=20&c=CBUCVfCozlwlYoi58Kg222nsppchkeAlCsIRmY_1QhY=",
+        "https://media.istockphoto.com/id/1426640386/photo/barley-of-wheat-crop-and-heap-of-grain-close-up.jpg?s=1024x1024&w=is&k=20&c=CBUCVfCozlwlYoi58Kg222nsppchkeAlCsIRmY_1QhY="
       ],
       createdAt: new Date(Date.now() - 4 * 86400000).toISOString(),
       farmerName: "Sardar Gurpreet Singh",
@@ -471,12 +471,12 @@ function getInitialData() {
       aiRecommendedTarget: 4350,
       status: "ACTIVE",
       notes: "Aromatic extra long grain basmati paddy. Average grain length 8.4mm with 2.2x elongation ratio upon cooking. Clean sorted with minimal broken percentage (<1%).",
-      imageUrl: "https://images.unsplash.com/photo-b-AYmZeowJQ?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://media.istockphoto.com/id/671580286/photo/rice.jpg?s=612x612&w=0&k=20&c=Eo4qfXQVximdCyp5OBfDEi5eObBM17zphPv_V_DOuOg=",
       images: [
-        "https://images.unsplash.com/photo-b-AYmZeowJQ?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-LShWR3roTX0?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-b-AYmZeowJQ?w=900&h=600&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-LShWR3roTX0?w=900&h=600&auto=format&fit=crop&q=80"
+        "https://media.istockphoto.com/id/671580286/photo/rice.jpg?s=612x612&w=0&k=20&c=Eo4qfXQVximdCyp5OBfDEi5eObBM17zphPv_V_DOuOg=",
+        "https://media.istockphoto.com/id/671580286/photo/rice.jpg?s=612x612&w=0&k=20&c=Eo4qfXQVximdCyp5OBfDEi5eObBM17zphPv_V_DOuOg=",
+        "https://media.istockphoto.com/id/671580286/photo/rice.jpg?s=612x612&w=0&k=20&c=Eo4qfXQVximdCyp5OBfDEi5eObBM17zphPv_V_DOuOg=",
+        "https://media.istockphoto.com/id/671580286/photo/rice.jpg?s=612x612&w=0&k=20&c=Eo4qfXQVximdCyp5OBfDEi5eObBM17zphPv_V_DOuOg="
       ],
       createdAt: new Date(Date.now() - 6 * 86400000).toISOString(),
       farmerName: "Sardar Gurpreet Singh",
@@ -509,12 +509,12 @@ function getInitialData() {
       aiRecommendedTarget: 1580,
       status: "ACTIVE",
       notes: "High dry matter content (>21%) and minimal reducing sugars. Specially curated for chips, french fries, and industrial food processing. Zero greening, uniform 55-65mm size.",
-      imageUrl: "https://images.unsplash.com/photo-LSZfNPVZjTw?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://media.istockphoto.com/id/1220924272/photo/potatoes-in-the-field.jpg?s=612x612&w=0&k=20&c=CnQo4b1Nk55CLAPOgGzspKo2JYTpNwflSiMMXFYqcC0=",
       images: [
-        "https://images.unsplash.com/photo-LSZfNPVZjTw?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-LSZfNPVZjTw?w=900&h=600&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-LSZfNPVZjTw?w=700&h=700&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-LSZfNPVZjTw?w=800&h=500&auto=format&fit=crop&q=80"
+        "https://media.istockphoto.com/id/1220924272/photo/potatoes-in-the-field.jpg?s=612x612&w=0&k=20&c=CnQo4b1Nk55CLAPOgGzspKo2JYTpNwflSiMMXFYqcC0=",
+        "https://media.istockphoto.com/id/1220924272/photo/potatoes-in-the-field.jpg?s=612x612&w=0&k=20&c=CnQo4b1Nk55CLAPOgGzspKo2JYTpNwflSiMMXFYqcC0=",
+        "https://media.istockphoto.com/id/1220924272/photo/potatoes-in-the-field.jpg?s=612x612&w=0&k=20&c=CnQo4b1Nk55CLAPOgGzspKo2JYTpNwflSiMMXFYqcC0=",
+        "https://media.istockphoto.com/id/1220924272/photo/potatoes-in-the-field.jpg?s=612x612&w=0&k=20&c=CnQo4b1Nk55CLAPOgGzspKo2JYTpNwflSiMMXFYqcC0="
       ],
       createdAt: new Date(Date.now() - 3 * 86400000).toISOString(),
       farmerName: "Ramesh Kumar Patel",
@@ -547,12 +547,12 @@ function getInitialData() {
       aiRecommendedTarget: 1750,
       status: "ACTIVE",
       notes: "Firm, thick-walled breaker stage fruit tailored for long-distance cold transit (5-7 days transport safety). Uniform pinkish-red coloration with 4.5+ Brix sweetness index.",
-      imageUrl: "https://images.unsplash.com/photo-hmoDcZnB7uw?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://media.istockphoto.com/id/1132371208/photo/three-ripe-tomatoes-on-green-branch.jpg?s=612x612&w=0&k=20&c=qVjDb5Tk3-UccV-E9gqvoz97PTsP1QmBftw27qA9kEo=",
       images: [
-        "https://images.unsplash.com/photo-hmoDcZnB7uw?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-s-hw64ghWEA?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-sSWGRQe76DY?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-sa_0g0-PZHw?w=900&auto=format&fit=crop&q=80"
+        "https://media.istockphoto.com/id/1132371208/photo/three-ripe-tomatoes-on-green-branch.jpg?s=612x612&w=0&k=20&c=qVjDb5Tk3-UccV-E9gqvoz97PTsP1QmBftw27qA9kEo=",
+        "https://media.istockphoto.com/id/1132371208/photo/three-ripe-tomatoes-on-green-branch.jpg?s=612x612&w=0&k=20&c=qVjDb5Tk3-UccV-E9gqvoz97PTsP1QmBftw27qA9kEo=",
+        "https://media.istockphoto.com/id/1132371208/photo/three-ripe-tomatoes-on-green-branch.jpg?s=612x612&w=0&k=20&c=qVjDb5Tk3-UccV-E9gqvoz97PTsP1QmBftw27qA9kEo=",
+        "https://media.istockphoto.com/id/1132371208/photo/three-ripe-tomatoes-on-green-branch.jpg?s=612x612&w=0&k=20&c=qVjDb5Tk3-UccV-E9gqvoz97PTsP1QmBftw27qA9kEo="
       ],
       createdAt: new Date(Date.now() - 1 * 86400000).toISOString(),
       farmerName: "Ramesh Kumar Patel",
@@ -584,12 +584,12 @@ function getInitialData() {
       aiRecommendedTarget: 2200,
       status: "ACTIVE",
       notes: "Export grade Garwa onions with tightly clinging dark red skins, single center, and dry necks. Cured under shaded solar ventilation. Excellent 4-5 month shelf stability.",
-      imageUrl: "https://images.unsplash.com/photo-LIFM0uTWzHU?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://media.istockphoto.com/id/1181631588/photo/onions-for-sale-in-the-weekly-market-malkapur-maharashtra.jpg?s=612x612&w=0&k=20&c=KYz1slV6Ly-T7v2vH7jns7ab9i_M6Atjq52uNPh3gRo=",
       images: [
-        "https://images.unsplash.com/photo-LIFM0uTWzHU?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-6YYYrqFb0EU?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-LIFM0uTWzHU?w=900&h=600&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-6YYYrqFb0EU?w=900&h=600&auto=format&fit=crop&q=80"
+        "https://media.istockphoto.com/id/1181631588/photo/onions-for-sale-in-the-weekly-market-malkapur-maharashtra.jpg?s=612x612&w=0&k=20&c=KYz1slV6Ly-T7v2vH7jns7ab9i_M6Atjq52uNPh3gRo=",
+        "https://media.istockphoto.com/id/1181631588/photo/onions-for-sale-in-the-weekly-market-malkapur-maharashtra.jpg?s=612x612&w=0&k=20&c=KYz1slV6Ly-T7v2vH7jns7ab9i_M6Atjq52uNPh3gRo=",
+        "https://media.istockphoto.com/id/1181631588/photo/onions-for-sale-in-the-weekly-market-malkapur-maharashtra.jpg?s=612x612&w=0&k=20&c=KYz1slV6Ly-T7v2vH7jns7ab9i_M6Atjq52uNPh3gRo=",
+        "https://media.istockphoto.com/id/1181631588/photo/onions-for-sale-in-the-weekly-market-malkapur-maharashtra.jpg?s=612x612&w=0&k=20&c=KYz1slV6Ly-T7v2vH7jns7ab9i_M6Atjq52uNPh3gRo="
       ],
       createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
       farmerName: "Ramesh Kumar Patel",
@@ -622,12 +622,12 @@ function getInitialData() {
       aiRecommendedTarget: 2150,
       status: "ACTIVE",
       notes: "High-density yellow maize grains rich in carbohydrates (72% starch). Tested low aflatoxin (<10 ppb). Ideal for livestock feed, poultry integration, and starch extraction mills.",
-      imageUrl: "https://images.unsplash.com/photo-MkX079sLnWc?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://media.istockphoto.com/id/1408203125/photo/yellow-ripe-corn-on-stalks-for-harvest-in-agricultural-cultivated-field-in-the-day.jpg?s=612x612&w=0&k=20&c=zbQr0MiHfeV5poEBtQnJe3L9u40KSsV54CcK9QHLQoM=",
       images: [
-        "https://images.unsplash.com/photo-MkX079sLnWc?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-NfINVBGUFS4?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-YuIDs5hKyhc?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-FGRCWHgWwQY?w=900&auto=format&fit=crop&q=80"
+        "https://media.istockphoto.com/id/1408203125/photo/yellow-ripe-corn-on-stalks-for-harvest-in-agricultural-cultivated-field-in-the-day.jpg?s=612x612&w=0&k=20&c=zbQr0MiHfeV5poEBtQnJe3L9u40KSsV54CcK9QHLQoM=",
+        "https://media.istockphoto.com/id/1408203125/photo/yellow-ripe-corn-on-stalks-for-harvest-in-agricultural-cultivated-field-in-the-day.jpg?s=612x612&w=0&k=20&c=zbQr0MiHfeV5poEBtQnJe3L9u40KSsV54CcK9QHLQoM=",
+        "https://media.istockphoto.com/id/1408203125/photo/yellow-ripe-corn-on-stalks-for-harvest-in-agricultural-cultivated-field-in-the-day.jpg?s=612x612&w=0&k=20&c=zbQr0MiHfeV5poEBtQnJe3L9u40KSsV54CcK9QHLQoM=",
+        "https://media.istockphoto.com/id/1408203125/photo/yellow-ripe-corn-on-stalks-for-harvest-in-agricultural-cultivated-field-in-the-day.jpg?s=612x612&w=0&k=20&c=zbQr0MiHfeV5poEBtQnJe3L9u40KSsV54CcK9QHLQoM="
       ],
       createdAt: new Date(Date.now() - 5 * 86400000).toISOString(),
       farmerName: "Rajeshwar Shinde",
@@ -660,12 +660,12 @@ function getInitialData() {
       aiRecommendedTarget: 5600,
       status: "ACTIVE",
       notes: "High oil yield variety with 41.5% oil recovery index. Clean double-gravity separated seeds free from argemone adulteration. Cold-pressed kachi ghani quality benchmark.",
-      imageUrl: "https://images.unsplash.com/photo-GP1gj87By7U?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://media.istockphoto.com/id/1395333183/photo/different-types-of-mustard-and-mustard-seeds-on-a-rustic-wooden-board.jpg?s=612x612&w=0&k=20&c=idnWzVsKOMlwyeeHFRpouiKvUzQ9YRu39tJSUIxm51o=",
       images: [
-        "https://images.unsplash.com/photo-GP1gj87By7U?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-989kkLIq49w?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-ZsGWcH8PSjA?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-GP1gj87By7U?w=900&h=600&auto=format&fit=crop&q=80"
+        "https://media.istockphoto.com/id/1395333183/photo/different-types-of-mustard-and-mustard-seeds-on-a-rustic-wooden-board.jpg?s=612x612&w=0&k=20&c=idnWzVsKOMlwyeeHFRpouiKvUzQ9YRu39tJSUIxm51o=",
+        "https://media.istockphoto.com/id/1395333183/photo/different-types-of-mustard-and-mustard-seeds-on-a-rustic-wooden-board.jpg?s=612x612&w=0&k=20&c=idnWzVsKOMlwyeeHFRpouiKvUzQ9YRu39tJSUIxm51o=",
+        "https://media.istockphoto.com/id/1395333183/photo/different-types-of-mustard-and-mustard-seeds-on-a-rustic-wooden-board.jpg?s=612x612&w=0&k=20&c=idnWzVsKOMlwyeeHFRpouiKvUzQ9YRu39tJSUIxm51o=",
+        "https://media.istockphoto.com/id/1395333183/photo/different-types-of-mustard-and-mustard-seeds-on-a-rustic-wooden-board.jpg?s=612x612&w=0&k=20&c=idnWzVsKOMlwyeeHFRpouiKvUzQ9YRu39tJSUIxm51o="
       ],
       createdAt: new Date(Date.now() - 4 * 86400000).toISOString(),
       farmerName: "Mahendra Singh Yadav",
@@ -698,12 +698,12 @@ function getInitialData() {
       aiRecommendedTarget: 380,
       status: "ACTIVE",
       notes: "Prime ratoon crop with 19.8% Brix sugar content and high juice recovery. Cut within 12 hours of scheduled transport to prevent sugar inversion. Ready for direct mill crushing or jaggery units.",
-      imageUrl: "https://images.unsplash.com/photo-n5YzXR2f0lg?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://media.istockphoto.com/id/93541349/photo/sugar-cane-plantation.jpg?s=612x612&w=0&k=20&c=mj-rR4mE718aFrPtXg8P7ZW7eZNROItjXlYjz5A9AvU=",
       images: [
-        "https://images.unsplash.com/photo-n5YzXR2f0lg?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-Ib5LA79xJ4c?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-n5YzXR2f0lg?w=900&h=600&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-Ib5LA79xJ4c?w=900&h=600&auto=format&fit=crop&q=80"
+        "https://media.istockphoto.com/id/93541349/photo/sugar-cane-plantation.jpg?s=612x612&w=0&k=20&c=mj-rR4mE718aFrPtXg8P7ZW7eZNROItjXlYjz5A9AvU=",
+        "https://media.istockphoto.com/id/93541349/photo/sugar-cane-plantation.jpg?s=612x612&w=0&k=20&c=mj-rR4mE718aFrPtXg8P7ZW7eZNROItjXlYjz5A9AvU=",
+        "https://media.istockphoto.com/id/93541349/photo/sugar-cane-plantation.jpg?s=612x612&w=0&k=20&c=mj-rR4mE718aFrPtXg8P7ZW7eZNROItjXlYjz5A9AvU=",
+        "https://media.istockphoto.com/id/93541349/photo/sugar-cane-plantation.jpg?s=612x612&w=0&k=20&c=mj-rR4mE718aFrPtXg8P7ZW7eZNROItjXlYjz5A9AvU="
       ],
       createdAt: new Date(Date.now() - 1 * 86400000).toISOString(),
       farmerName: "Balasaheb Patil",
@@ -735,12 +735,12 @@ function getInitialData() {
       aiRecommendedTarget: 6250,
       status: "ACTIVE",
       notes: "NPOP Organic certified Desi Chana with deep golden color and uniform size. 99.5% purity with zero foreign matter. Ideal for besan flour processing, wholesale dal mills, and organic retail.",
-      imageUrl: "https://images.unsplash.com/photo-uXkoRg78ZD8?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://media.istockphoto.com/id/163729647/photo/an-up-close-picture-of-organic-legumes.jpg?s=612x612&w=0&k=20&c=E9NdcSr4SxRaYtKjjjk6rFoHvw69mooX5aY78J34DMY=",
       images: [
-        "https://images.unsplash.com/photo-uXkoRg78ZD8?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-dyCBXpTTNCs?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-uXkoRg78ZD8?w=900&h=600&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-dyCBXpTTNCs?w=900&h=600&auto=format&fit=crop&q=80"
+        "https://media.istockphoto.com/id/163729647/photo/an-up-close-picture-of-organic-legumes.jpg?s=612x612&w=0&k=20&c=E9NdcSr4SxRaYtKjjjk6rFoHvw69mooX5aY78J34DMY=",
+        "https://media.istockphoto.com/id/163729647/photo/an-up-close-picture-of-organic-legumes.jpg?s=612x612&w=0&k=20&c=E9NdcSr4SxRaYtKjjjk6rFoHvw69mooX5aY78J34DMY=",
+        "https://media.istockphoto.com/id/163729647/photo/an-up-close-picture-of-organic-legumes.jpg?s=612x612&w=0&k=20&c=E9NdcSr4SxRaYtKjjjk6rFoHvw69mooX5aY78J34DMY=",
+        "https://media.istockphoto.com/id/163729647/photo/an-up-close-picture-of-organic-legumes.jpg?s=612x612&w=0&k=20&c=E9NdcSr4SxRaYtKjjjk6rFoHvw69mooX5aY78J34DMY="
       ],
       createdAt: new Date(Date.now() - 3 * 86400000).toISOString(),
       farmerName: "Shivraj Singh Chouhan",
@@ -773,12 +773,12 @@ function getInitialData() {
       aiRecommendedTarget: 2400,
       status: "ACTIVE",
       notes: "Mountain farm cultivated fresh snowball white cauliflower heads alongside crisp green capsicum. Farm-to-fork harvested early morning with zero chemical residues. Excellent retail crispness.",
-      imageUrl: "https://images.unsplash.com/photo-0XVrBLy73rw?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://media.istockphoto.com/id/853523014/photo/autumn-concept-with-seasonal-fruits-and-vegetables.jpg?s=612x612&w=0&k=20&c=SjwT0JTtzvVehnDf32x2XW2SzUUDN0-8EYPmkEMP_qk=",
       images: [
-        "https://images.unsplash.com/photo-0XVrBLy73rw?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-D8ZrftlvNDE?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-UljCflnP1ik?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-0XVrBLy73rw?w=900&h=600&auto=format&fit=crop&q=80"
+        "https://media.istockphoto.com/id/853523014/photo/autumn-concept-with-seasonal-fruits-and-vegetables.jpg?s=612x612&w=0&k=20&c=SjwT0JTtzvVehnDf32x2XW2SzUUDN0-8EYPmkEMP_qk=",
+        "https://media.istockphoto.com/id/853523014/photo/autumn-concept-with-seasonal-fruits-and-vegetables.jpg?s=612x612&w=0&k=20&c=SjwT0JTtzvVehnDf32x2XW2SzUUDN0-8EYPmkEMP_qk=",
+        "https://media.istockphoto.com/id/853523014/photo/autumn-concept-with-seasonal-fruits-and-vegetables.jpg?s=612x612&w=0&k=20&c=SjwT0JTtzvVehnDf32x2XW2SzUUDN0-8EYPmkEMP_qk=",
+        "https://media.istockphoto.com/id/853523014/photo/autumn-concept-with-seasonal-fruits-and-vegetables.jpg?s=612x612&w=0&k=20&c=SjwT0JTtzvVehnDf32x2XW2SzUUDN0-8EYPmkEMP_qk="
       ],
       createdAt: new Date().toISOString(),
       farmerName: "Dinesh Chandra Joshi",
@@ -810,12 +810,12 @@ function getInitialData() {
       aiRecommendedTarget: 19500,
       status: "ACTIVE",
       notes: "High pungency (35,000-40,000 SHU), bright crimson red, moisture under 10%. Thoroughly sun-cured on concrete yards with stem intact. Prime quality for spice grinding and oleoresin extractors.",
-      imageUrl: "https://images.unsplash.com/photo-4xc6i5BKPWs?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://media.istockphoto.com/id/1138440046/photo/closed-up-dried-red-chili-bangkok-fresh-market.jpg?s=612x612&w=0&k=20&c=chT7SeNJmO4gy9cRzUSaMHPcKKwFESCvLmDpAZkAu9U=",
       images: [
-        "https://images.unsplash.com/photo-4xc6i5BKPWs?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-4xc6i5BKPWs?w=900&h=600&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-4xc6i5BKPWs?w=700&h=700&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-4xc6i5BKPWs?w=800&h=500&auto=format&fit=crop&q=80"
+        "https://media.istockphoto.com/id/1138440046/photo/closed-up-dried-red-chili-bangkok-fresh-market.jpg?s=612x612&w=0&k=20&c=chT7SeNJmO4gy9cRzUSaMHPcKKwFESCvLmDpAZkAu9U=",
+        "https://media.istockphoto.com/id/1138440046/photo/closed-up-dried-red-chili-bangkok-fresh-market.jpg?s=612x612&w=0&k=20&c=chT7SeNJmO4gy9cRzUSaMHPcKKwFESCvLmDpAZkAu9U=",
+        "https://media.istockphoto.com/id/1138440046/photo/closed-up-dried-red-chili-bangkok-fresh-market.jpg?s=612x612&w=0&k=20&c=chT7SeNJmO4gy9cRzUSaMHPcKKwFESCvLmDpAZkAu9U=",
+        "https://media.istockphoto.com/id/1138440046/photo/closed-up-dried-red-chili-bangkok-fresh-market.jpg?s=612x612&w=0&k=20&c=chT7SeNJmO4gy9cRzUSaMHPcKKwFESCvLmDpAZkAu9U="
       ],
       createdAt: new Date(Date.now() - 5 * 86400000).toISOString(),
       farmerName: "Venkat Ramanayya",
@@ -848,12 +848,12 @@ function getInitialData() {
       aiRecommendedTarget: 4650,
       status: "ACTIVE",
       notes: "High protein (39.5%) and high oil content (19.2%). Well-matured round golden grains with less than 1% moisture damage or split seed. Ready for solvent extraction plants or soya flour milling.",
-      imageUrl: "https://images.unsplash.com/photo-SAvq2xCAokc?w=900&auto=format&fit=crop&q=80",
+      imageUrl: "https://media.istockphoto.com/id/1273914984/photo/soya-bean-the-vegetable-protein.jpg?s=612x612&w=0&k=20&c=pw1CvYBIx-SnyhDZlP6_3fv8F97e5gXUH-lnzkYUWF0=",
       images: [
-        "https://images.unsplash.com/photo-SAvq2xCAokc?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-cby39RDiPAM?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-r_rXoOYAvy4?w=900&auto=format&fit=crop&q=80",
-        "https://images.unsplash.com/photo-1iA_8Zf9wyA?w=900&auto=format&fit=crop&q=80"
+        "https://media.istockphoto.com/id/1273914984/photo/soya-bean-the-vegetable-protein.jpg?s=612x612&w=0&k=20&c=pw1CvYBIx-SnyhDZlP6_3fv8F97e5gXUH-lnzkYUWF0=",
+        "https://media.istockphoto.com/id/1273914984/photo/soya-bean-the-vegetable-protein.jpg?s=612x612&w=0&k=20&c=pw1CvYBIx-SnyhDZlP6_3fv8F97e5gXUH-lnzkYUWF0=",
+        "https://media.istockphoto.com/id/1273914984/photo/soya-bean-the-vegetable-protein.jpg?s=612x612&w=0&k=20&c=pw1CvYBIx-SnyhDZlP6_3fv8F97e5gXUH-lnzkYUWF0=",
+        "https://media.istockphoto.com/id/1273914984/photo/soya-bean-the-vegetable-protein.jpg?s=612x612&w=0&k=20&c=pw1CvYBIx-SnyhDZlP6_3fv8F97e5gXUH-lnzkYUWF0="
       ],
       createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
       farmerName: "Rajeshwar Shinde",
@@ -1059,7 +1059,7 @@ app.post("/api/listings", (req, res) => {
   const imagesList: string[] = Array.isArray(data.images) && data.images.length > 0 
     ? data.images 
     : (data.imageUrl ? [data.imageUrl] : []);
-  const primaryImage = imagesList[0] || data.imageUrl || "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=80";
+  const primaryImage = imagesList[0] || data.imageUrl || "https://media.istockphoto.com/id/1426640386/photo/barley-of-wheat-crop-and-heap-of-grain-close-up.jpg?s=1024x1024&w=is&k=20&c=CBUCVfCozlwlYoi58Kg222nsppchkeAlCsIRmY_1QhY=";
 
   const newListing: CropListing = {
     id: store.listings.length + 1,

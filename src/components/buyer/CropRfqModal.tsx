@@ -137,7 +137,7 @@ export const CropRfqModal: React.FC<CropRfqModalProps> = ({
 
   const primaryImage = listing.images && listing.images.length > 0 
     ? listing.images[0] 
-    : (listing.imageUrl || "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&auto=format&fit=crop&q=80");
+    : (listing.imageUrl || "https://media.istockphoto.com/id/1426640386/photo/barley-of-wheat-crop-and-heap-of-grain-close-up.jpg?s=1024x1024&w=is&k=20&c=CBUCVfCozlwlYoi58Kg222nsppchkeAlCsIRmY_1QhY=");
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto">

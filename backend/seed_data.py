@@ -142,7 +142,7 @@ def seed():
         ai_recommended_target=2200.0,
         status=ListingStatus.ACTIVE,
         notes="Export quality, tightly sorted, single-center dry outer skin. Low moisture content suitable for storage.",
-        image_url="https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=600&auto=format&fit=crop&q=80"
+        image_url="https://media.istockphoto.com/id/1181631588/photo/onions-for-sale-in-the-weekly-market-malkapur-maharashtra.jpg?s=612x612&w=0&k=20&c=KYz1slV6Ly-T7v2vH7jns7ab9i_M6Atjq52uNPh3gRo="
     )
 
     l2 = CropListing(
@@ -166,7 +166,7 @@ def seed():
         ai_recommended_target=3100.0,
         status=ListingStatus.ACTIVE,
         notes="NPOP Certified organic Sharbati grain. Heavy test weight (81 kg/hl), rich golden luster, perfect for premium flour brands.",
-        image_url="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&auto=format&fit=crop&q=80"
+        image_url="https://media.istockphoto.com/id/1426640386/photo/barley-of-wheat-crop-and-heap-of-grain-close-up.jpg?s=1024x1024&w=is&k=20&c=CBUCVfCozlwlYoi58Kg222nsppchkeAlCsIRmY_1QhY="
     )
 
     l3 = CropListing(
@@ -190,7 +190,7 @@ def seed():
         ai_recommended_target=19500.0,
         status=ListingStatus.ACTIVE,
         notes="High pungency (35,000-40,000 SHU), bright crimson red, moisture under 10%. Direct from farmer collective.",
-        image_url="https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=600&auto=format&fit=crop&q=80"
+        image_url="https://media.istockphoto.com/id/1138440046/photo/closed-up-dried-red-chili-bangkok-fresh-market.jpg?s=612x612&w=0&k=20&c=chT7SeNJmO4gy9cRzUSaMHPcKKwFESCvLmDpAZkAu9U="
     )
 
     l4 = CropListing(
@@ -214,7 +214,7 @@ def seed():
         ai_recommended_target=1750.0,
         status=ListingStatus.ACTIVE,
         notes="Firm, uniform medium size fruit with 7+ days transit shelf life. Plucked at breaker stage for long-haul transport.",
-        image_url="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600&auto=format&fit=crop&q=80"
+        image_url="https://media.istockphoto.com/id/1132371208/photo/three-ripe-tomatoes-on-green-branch.jpg?s=612x612&w=0&k=20&c=qVjDb5Tk3-UccV-E9gqvoz97PTsP1QmBftw27qA9kEo="
     )
 
     db.add_all([l1, l2, l3, l4])

@@ -35,7 +35,7 @@ const COMMON_CROPS = [
   { name: "Maize", varieties: ["Kaveri 50 Sweet", "Pioneer Yellow Feed"], unit: "Quintals" }
 ];
 
-const DEFAULT_IMAGE_PLACEHOLDER = "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=80";
+const DEFAULT_IMAGE_PLACEHOLDER = "https://media.istockphoto.com/id/1426640386/photo/barley-of-wheat-crop-and-heap-of-grain-close-up.jpg?s=1024x1024&w=is&k=20&c=CBUCVfCozlwlYoi58Kg222nsppchkeAlCsIRmY_1QhY=";
 
 interface FarmerCropFormProps {
   farmer: User;
