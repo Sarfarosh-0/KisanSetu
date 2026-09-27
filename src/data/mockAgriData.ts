@@ -1,4 +1,4 @@
-import { BuyerContract, BuyerRequest, CropListing, PayoutRecord, WeatherForecast } from "../types";
+import { BuyerContract, BuyerRequest, CropListing, Order, PayoutRecord, User, WeatherForecast } from "../types";
 
 export const MOCK_BUYER_REQUESTS: BuyerRequest[] = [
   {
@@ -707,5 +707,149 @@ export const MOCK_CROP_LISTINGS: CropListing[] = [
     moisturePct: 10.5,
     packagingType: "50 kg PP Bags",
     shelfLifeDays: 300
+  }
+];
+
+export const MOCK_USERS: User[] = [
+  {
+    id: 1,
+    name: "Ramesh Kumar Patel",
+    phone: "+91 98220 11223",
+    email: "ramesh.patel@sahyadrikisan.in",
+    role: "FARMER",
+    fpoName: "Sahyadri Krishi Vikas Producer Co.",
+    district: "Nashik",
+    state: "Maharashtra",
+    lat: 20.1746,
+    lng: 73.9875,
+    trustScore: 4.9,
+    verified: true,
+    kycStatus: "AADHAAR_KYC_VERIFIED",
+    totalTrades: 42,
+    ratingCount: 39,
+    createdAt: new Date(Date.now() - 60 * 86400000).toISOString()
+  },
+  {
+    id: 2,
+    name: "Sardar Gurpreet Singh",
+    phone: "+91 98140 22334",
+    email: "gurpreet.singh@punjabkisan.in",
+    role: "FARMER",
+    fpoName: "Malwa Agro Farmer Producer Org",
+    district: "Ludhiana",
+    state: "Punjab",
+    lat: 30.9010,
+    lng: 75.8573,
+    trustScore: 4.8,
+    verified: true,
+    kycStatus: "AADHAAR_KYC_VERIFIED",
+    totalTrades: 58,
+    ratingCount: 54,
+    createdAt: new Date(Date.now() - 90 * 86400000).toISOString()
+  },
+  {
+    id: 3,
+    name: "Venkat Ramanayya",
+    phone: "+91 94401 55667",
+    email: "venkat.spices@andhrakisan.in",
+    role: "FARMER",
+    fpoName: "Guntur Chilli Growers Collective",
+    district: "Guntur",
+    state: "Andhra Pradesh",
+    lat: 16.3067,
+    lng: 80.4365,
+    trustScore: 4.95,
+    verified: true,
+    kycStatus: "AADHAAR_KYC_VERIFIED",
+    totalTrades: 31,
+    ratingCount: 29,
+    createdAt: new Date(Date.now() - 45 * 86400000).toISOString()
+  },
+  {
+    id: 4,
+    name: "Priya Sharma (GreenBite Organics)",
+    phone: "+91 98200 44556",
+    email: "procurement@greenbite.co.in",
+    role: "BUYER",
+    fpoName: "GreenBite Organics Wholesale",
+    district: "Mumbai",
+    state: "Maharashtra",
+    lat: 19.0760,
+    lng: 72.8777,
+    trustScore: 4.9,
+    verified: true,
+    kycStatus: "GST_VERIFIED_BUSINESS",
+    totalTrades: 89,
+    ratingCount: 84,
+    createdAt: new Date(Date.now() - 120 * 86400000).toISOString()
+  },
+  {
+    id: 5,
+    name: "Santosh Rao (KisanExpress)",
+    phone: "+91 98231 99881",
+    email: "dispatch@kisanexpress.in",
+    role: "LOGISTICS",
+    fpoName: "KisanExpress ColdChain Fleet",
+    district: "Nashik",
+    state: "Maharashtra",
+    lat: 19.9975,
+    lng: 73.7898,
+    trustScore: 4.85,
+    verified: true,
+    kycStatus: "COMMERCIAL_CARRIER_VERIFIED",
+    totalTrades: 165,
+    ratingCount: 152,
+    createdAt: new Date(Date.now() - 150 * 86400000).toISOString()
+  }
+];
+
+export const MOCK_ORDERS: Order[] = [
+  {
+    id: 1,
+    orderNumber: "ORD-2026-9041",
+    listingId: 5,
+    buyerId: 4,
+    farmerId: 1,
+    cropName: "Onion (Nashik Red Garwa)",
+    quantityOrdered: 40,
+    pricePerQuintal: 2200,
+    totalProduceAmount: 88000,
+    logisticsFee: 3400,
+    platformFee: 0,
+    totalAmount: 91400,
+    status: "IN_TRANSIT",
+    paymentStatus: "ESCROW_HELD",
+    paymentRef: "UPI/RAZORPAY-SIM-99812480",
+    deliveryAddress: "GreenBite Central Fulfillment Center, Plot 42, Turbhe MIDC, Navi Mumbai",
+    deliveryPincode: "400705",
+    deliveryOtp: "5821",
+    buyerName: "Priya Sharma (GreenBite Organics)",
+    farmerName: "Ramesh Kumar Patel",
+    createdAt: new Date(Date.now() - 18 * 3600000).toISOString(),
+    updatedAt: new Date(Date.now() - 2 * 3600000).toISOString()
+  },
+  {
+    id: 2,
+    orderNumber: "ORD-2026-9038",
+    listingId: 1,
+    buyerId: 4,
+    farmerId: 2,
+    cropName: "Wheat (Sharbati Gold Organic)",
+    quantityOrdered: 50,
+    pricePerQuintal: 3100,
+    totalProduceAmount: 155000,
+    logisticsFee: 4800,
+    platformFee: 0,
+    totalAmount: 159800,
+    status: "DELIVERED",
+    paymentStatus: "RELEASED_TO_FARMER",
+    paymentRef: "UPI/RAZORPAY-SIM-88219033",
+    deliveryAddress: "GreenBite Wholesale Hub, Sector 18, Vashi APMC, Navi Mumbai",
+    deliveryPincode: "400703",
+    deliveryOtp: "4190",
+    buyerName: "Priya Sharma (GreenBite Organics)",
+    farmerName: "Sardar Gurpreet Singh",
+    createdAt: new Date(Date.now() - 3 * 86400000).toISOString(),
+    updatedAt: new Date(Date.now() - 1 * 86400000).toISOString()
   }
 ];

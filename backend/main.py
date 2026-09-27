@@ -91,6 +91,14 @@ try:
 except Exception:
     pass
 
+# Safe auto-seeding: ensure initial sample data is populated in production Neon PostgreSQL
+try:
+    from seed_data import seed_if_empty
+    seed_if_empty()
+except Exception as _seed_err:
+    logger.warning(f"Startup seed notice: {_seed_err}")
+
+
 # ----------------------------------------------------
 # Cloudinary Initialization (runs once at startup)
 # Set CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@<cloud_name>
@@ -188,6 +196,18 @@ def health_check():
         "image_storage": "cloudinary" if _cloudinary_enabled else "local_disk",
         "timestamp": datetime.utcnow().isoformat()
     }
+
+@app.post("/api/seed/reset", tags=["Admin"])
+def reset_seed():
+    """Resets the marketplace database to initial demo state with all 12 listings, 5 verified users, and sample orders."""
+    try:
+        from seed_data import reset_db_and_seed
+        reset_db_and_seed()
+        return {"message": "Marketplace data reset to initial state successfully."}
+    except Exception as e:
+        logger.error(f"Reset seed failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 # ----------------------------------------------------
 # 2. Auth & Profiles (Role-based with JWT)

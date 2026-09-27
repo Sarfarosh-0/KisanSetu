@@ -22,49 +22,18 @@ import {
   Construction
 } from "lucide-react";
 
-const FALLBACK_USERS: User[] = [
-  {
-    id: 1,
-    name: "Ramesh Kumar Patel",
-    phone: "+91 98220 11223",
-    email: "ramesh.patel@sahyadrikisan.in",
-    role: "FARMER",
-    fpoName: "Sahyadri Krishi Vikas Producer Co.",
-    district: "Nashik",
-    state: "Maharashtra",
-    lat: 20.1746,
-    lng: 73.9875,
-    trustScore: 4.9,
-    verified: true,
-    kycStatus: "AADHAAR_KYC_VERIFIED",
-    totalTrades: 42,
-    ratingCount: 39,
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 4,
-    name: "BigBasket Fresh Sourcing (Tata Enterprise)",
-    phone: "+91 80 4040 5000",
-    email: "procurement@bigbasket.com",
-    role: "BUYER",
-    district: "Bengaluru Urban",
-    state: "Karnataka",
-    lat: 12.9716,
-    lng: 77.5946,
-    trustScore: 5.0,
-    verified: true,
-    kycStatus: "GST_ROC_VERIFIED",
-    totalTrades: 124,
-    ratingCount: 118,
-    createdAt: new Date().toISOString()
-  }
-];
+import { MOCK_CROP_LISTINGS, MOCK_ORDERS, MOCK_USERS } from "./data/mockAgriData";
+
+const FALLBACK_USERS: User[] = MOCK_USERS;
+const FALLBACK_LISTINGS: CropListing[] = MOCK_CROP_LISTINGS;
+const FALLBACK_ORDERS: Order[] = MOCK_ORDERS;
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(FALLBACK_USERS[0]);
   const [users, setUsers] = useState<User[]>(FALLBACK_USERS);
-  const [listings, setListings] = useState<CropListing[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [listings, setListings] = useState<CropListing[]>(FALLBACK_LISTINGS);
+  const [orders, setOrders] = useState<Order[]>(FALLBACK_ORDERS);
+
   const [loading, setLoading] = useState(true);
   
   // Persisted language state - defaults to Hindi ("hi") first
@@ -120,13 +89,16 @@ export default function App() {
       setLoading(true);
       const [usersData, listingsData, ordersData] = await Promise.all([
         API.getUsers().catch(() => FALLBACK_USERS),
-        API.getListings().catch(() => []),
-        API.getOrders().catch(() => [])
+        API.getListings().catch(() => FALLBACK_LISTINGS),
+        API.getOrders().catch(() => FALLBACK_ORDERS)
       ]);
       const validUsers = Array.isArray(usersData) && usersData.length > 0 ? usersData : FALLBACK_USERS;
+      const validListings = Array.isArray(listingsData) && listingsData.length > 0 ? listingsData : FALLBACK_LISTINGS;
+      const validOrders = Array.isArray(ordersData) && ordersData.length > 0 ? ordersData : FALLBACK_ORDERS;
       setUsers(validUsers);
-      setListings(Array.isArray(listingsData) ? listingsData : []);
-      setOrders(Array.isArray(ordersData) ? ordersData : []);
+      setListings(validListings);
+      setOrders(validOrders);
+
 
       // Default active user to Farmer Ramesh Patel if not set
       if (!currentUser) {
