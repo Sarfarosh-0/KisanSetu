@@ -314,6 +314,15 @@ class OrderResponse(BaseModel):
         object.__setattr__(self, 'buyerName', self.buyer_name)
         object.__setattr__(self, 'farmerName', self.farmer_name)
 
+    def sync_camel_fields(self) -> None:
+        """Re-sync camelCase mirrors after post-construction field mutations (e.g. resp.crop_name = '...')."""
+        object.__setattr__(self, 'cropName', self.crop_name)
+        object.__setattr__(self, 'buyerName', self.buyer_name)
+        object.__setattr__(self, 'farmerName', self.farmer_name)
+        object.__setattr__(self, 'paymentStatus', self.payment_status)
+        object.__setattr__(self, 'paymentRef', self.payment_ref)
+        object.__setattr__(self, 'orderNumber', self.order_number)
+
 class UPIPaymentVerifyRequest(BaseModel):
     order_id: int = Field(..., alias="orderId")
     upi_id: str = Field(..., alias="upiId")

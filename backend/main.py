@@ -652,6 +652,7 @@ def get_orders(user_id: Optional[int] = None, role: Optional[str] = None, db: Se
         farmer = db.query(User).filter(User.id == o.farmer_id).first()
         resp.buyer_name = buyer.name if buyer else "Buyer"
         resp.farmer_name = farmer.name if farmer else "Farmer"
+        resp.sync_camel_fields()
         results.append(resp)
     return results
 
@@ -714,6 +715,7 @@ def place_order(
     resp.buyer_name = current_user.name
     farmer = db.query(User).filter(User.id == listing.farmer_id).first()
     resp.farmer_name = farmer.name if farmer else "Farmer"
+    resp.sync_camel_fields()
     return resp
 
 @app.patch("/api/orders/{order_id}/status", response_model=OrderResponse, tags=["Orders"])
@@ -751,6 +753,7 @@ def update_order_status(
     resp = OrderResponse.model_validate(order)
     if order.listing:
         resp.crop_name = f"{order.listing.crop_name} ({order.listing.variety})"
+    resp.sync_camel_fields()
     return resp
 
 @app.post("/api/payments/upi-verify", tags=["Payments"])

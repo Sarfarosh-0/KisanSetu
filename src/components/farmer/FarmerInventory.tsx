@@ -347,7 +347,7 @@ export const FarmerInventory: React.FC<FarmerInventoryProps> = ({
                     </div>
                     <div className="flex justify-between font-medium">
                       <span className="text-slate-500">{lang === "hi" ? "कुल राशि:" : "Produce Total:"}</span>
-                      <span className="font-bold text-emerald-700 font-display">₹{order.totalProduceAmount.toLocaleString()}</span>
+                      <span className="font-bold text-emerald-700 font-display">₹{(order.totalProduceAmount ?? 0).toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-[11px] font-medium">
                       <span className="text-slate-500">{lang === "hi" ? "एस्क्रो सुरक्षा:" : "Escrow Security:"}</span>
@@ -401,8 +401,8 @@ export const FarmerInventory: React.FC<FarmerInventoryProps> = ({
                       <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
                       <span>
                         {lang === "hi"
-                          ? `डिलीवर हो गया! ₹${order.totalProduceAmount.toLocaleString()} आपके खाते में जमा कर दिए गए हैं।`
-                          : `Delivered! ₹${order.totalProduceAmount.toLocaleString()} released to your account.`}
+                          ? `डिलीवर हो गया! ₹${(order.totalProduceAmount ?? 0).toLocaleString()} आपके खाते में जमा कर दिए गए हैं।`
+                          : `Delivered! ₹${(order.totalProduceAmount ?? 0).toLocaleString()} released to your account.`}
                       </span>
                     </div>
                   )}

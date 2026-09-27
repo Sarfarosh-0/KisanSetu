@@ -313,19 +313,19 @@ export const OrdersAndPaymentModal: React.FC<OrdersAndPaymentModalProps> = ({
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-600">{lang === "hi" ? "मात्रा:" : "Quantity:"}</span>
-                        <span className="font-bold text-slate-900">{order.quantityOrdered} {lang === "hi" ? "क्विंटल" : "Quintals"}</span>
+                        <span className="font-bold text-slate-900">{order.quantityOrdered ?? 0} {lang === "hi" ? "क्विंटल" : "Quintals"}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-600">{lang === "hi" ? "खेत भाव:" : "Farm Rate:"}</span>
-                        <span className="font-bold text-slate-900">₹{order.pricePerQuintal.toLocaleString()}/{lang === "hi" ? "क्विं" : "qtl"}</span>
+                        <span className="font-bold text-slate-900">₹{(order.pricePerQuintal ?? 0).toLocaleString()}/{lang === "hi" ? "क्विं" : "qtl"}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-600">{lang === "hi" ? "लॉजिस्टिक्स शुल्क:" : "Logistics Fee:"}</span>
-                        <span className="text-slate-700 font-semibold">₹{order.logisticsFee.toLocaleString()}</span>
+                        <span className="text-slate-700 font-semibold">₹{(order.logisticsFee ?? 0).toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between border-t border-slate-200 pt-1.5 font-extrabold text-sm text-slate-900">
                         <span>{lang === "hi" ? "कुल राशि:" : "Total Amount:"}</span>
-                        <span className="text-emerald-700 font-display">₹{order.totalAmount.toLocaleString()}</span>
+                        <span className="text-emerald-700 font-display">₹{(order.totalAmount ?? 0).toLocaleString()}</span>
                       </div>
                     </div>
 
@@ -578,7 +578,7 @@ export const OrdersAndPaymentModal: React.FC<OrdersAndPaymentModalProps> = ({
                       {lang === "hi" ? "सुरक्षित राशि" : "Secured Amount"}
                     </span>
                     <div className="text-2xl font-black text-slate-900 font-display">
-                      ₹{paymentOrder.totalAmount.toLocaleString()}
+                      ₹{(paymentOrder.totalAmount ?? 0).toLocaleString()}
                     </div>
                     <div className="text-[11px] text-slate-500 font-medium">
                       {translateCrop(paymentOrder.cropName, lang)} ({paymentOrder.quantityOrdered} {lang === "hi" ? "क्विंटल" : "Qtl"})
@@ -640,7 +640,7 @@ export const OrdersAndPaymentModal: React.FC<OrdersAndPaymentModalProps> = ({
                   >
                     {processingPayment 
                       ? (lang === "hi" ? "बैंक एस्क्रो ट्रांसफर सत्यापित हो रहा है..." : "Verifying Bank Escrow Transfer...")
-                      : (lang === "hi" ? `UPI द्वारा ₹${paymentOrder.totalAmount.toLocaleString()} अधिकृत व एस्क्रो करें` : `Authorize & Escrow ₹${paymentOrder.totalAmount.toLocaleString()} via UPI`)}
+                      : (lang === "hi" ? `UPI द्वारा ₹${(paymentOrder.totalAmount ?? 0).toLocaleString()} अधिकृत व एस्क्रो करें` : `Authorize & Escrow ₹${(paymentOrder.totalAmount ?? 0).toLocaleString()} via UPI`)}
                   </button>
                 </>
               )}

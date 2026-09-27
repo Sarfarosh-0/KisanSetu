@@ -320,7 +320,7 @@ export const BuyerPaymentEscrow: React.FC<BuyerPaymentEscrowProps> = ({
 
                 <div className="text-right">
                   <div className="font-extrabold text-slate-900 font-display text-sm">
-                    ₹{order.totalAmount.toLocaleString()}
+                    ₹{(order.totalAmount ?? 0).toLocaleString()}
                   </div>
                   <button
                     onClick={() => setSelectedInvoiceOrder(order)}
@@ -390,14 +390,14 @@ export const BuyerPaymentEscrow: React.FC<BuyerPaymentEscrowProps> = ({
                     <td className="py-2 font-mono text-slate-500">07031010</td>
                     <td className="py-2 text-right">{selectedInvoiceOrder.quantityOrdered} {lang === "hi" ? "क्विंटल" : "Qtl"}</td>
                     <td className="py-2 text-right">₹{selectedInvoiceOrder.pricePerQuintal}</td>
-                    <td className="py-2 text-right font-bold">₹{selectedInvoiceOrder.totalProduceAmount.toLocaleString()}</td>
+                    <td className="py-2 text-right font-bold">₹{(selectedInvoiceOrder.totalProduceAmount ?? 0).toLocaleString()}</td>
                   </tr>
                   <tr>
                     <td className="py-2 text-slate-600">{lang === "hi" ? "कोल्ड चेन लॉजिस्टिक्स" : "Cold Chain Logistics"}</td>
                     <td className="py-2 font-mono text-slate-500">996511</td>
                     <td className="py-2 text-right">1 Trip</td>
                     <td className="py-2 text-right">₹{selectedInvoiceOrder.logisticsFee}</td>
-                    <td className="py-2 text-right font-bold">₹{selectedInvoiceOrder.logisticsFee.toLocaleString()}</td>
+                    <td className="py-2 text-right font-bold">₹{(selectedInvoiceOrder.logisticsFee ?? 0).toLocaleString()}</td>
                   </tr>
                 </tbody>
               </table>
@@ -405,7 +405,7 @@ export const BuyerPaymentEscrow: React.FC<BuyerPaymentEscrowProps> = ({
               <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1.5 text-right">
                 <div className="flex justify-between">
                   <span className="text-slate-500">{lang === "hi" ? "उप-योग:" : "Subtotal:"}</span>
-                  <span className="font-bold">₹{selectedInvoiceOrder.totalAmount.toLocaleString()}</span>
+                  <span className="font-bold">₹{(selectedInvoiceOrder.totalAmount ?? 0).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">{lang === "hi" ? "APMC मंडी शुल्क:" : "APMC Mandi Yard Tax:"}</span>
@@ -413,7 +413,7 @@ export const BuyerPaymentEscrow: React.FC<BuyerPaymentEscrowProps> = ({
                 </div>
                 <div className="flex justify-between border-t border-slate-200 pt-1.5 font-extrabold text-sm text-slate-900">
                   <span>{lang === "hi" ? "एस्क्रो द्वारा कुल भुगतान:" : "Total Settled via Escrow:"}</span>
-                  <span className="font-display">₹{selectedInvoiceOrder.totalAmount.toLocaleString()}</span>
+                  <span className="font-display">₹{(selectedInvoiceOrder.totalAmount ?? 0).toLocaleString()}</span>
                 </div>
               </div>
 

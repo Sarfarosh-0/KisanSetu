@@ -167,7 +167,7 @@ export const BuyerContractsTracking: React.FC<BuyerContractsTrackingProps> = ({
                     <div className="flex items-center gap-3">
                       <div className="text-right">
                         <div className="font-extrabold text-base text-slate-900 font-display">
-                          ₹{order.totalAmount.toLocaleString()}
+                          ₹{(order.totalAmount ?? 0).toLocaleString()}
                         </div>
                         <span className="text-[10px] text-slate-500 font-medium">
                           ₹{order.pricePerQuintal}/{lang === "hi" ? "क्विंटल" : "qtl"} {lang === "hi" ? "+ रसद" : "+ logistics"}
@@ -403,8 +403,8 @@ export const BuyerContractsTracking: React.FC<BuyerContractsTrackingProps> = ({
                 </h4>
                 <p className="text-xs text-slate-600 leading-relaxed font-medium">
                   {lang === "hi"
-                    ? `₹${verifyingOrder.totalProduceAmount.toLocaleString()} का भुगतान किसान के सत्यापित बैंक खाते में IMPS द्वारा स्थानांतरित कर दिया गया है।`
-                    : `Payment of ₹${verifyingOrder.totalProduceAmount.toLocaleString()} has been transferred via IMPS to the farmer's verified bank account.`}
+                    ? `₹${(verifyingOrder.totalProduceAmount ?? 0).toLocaleString()} का भुगतान किसान के सत्यापित बैंक खाते में IMPS द्वारा स्थानांतरित कर दिया गया है।`
+                    : `Payment of ₹${(verifyingOrder.totalProduceAmount ?? 0).toLocaleString()} has been transferred via IMPS to the farmer's verified bank account.`}
                 </p>
               </div>
             ) : (
@@ -448,7 +448,7 @@ export const BuyerContractsTracking: React.FC<BuyerContractsTrackingProps> = ({
                 >
                   {verifying 
                     ? (lang === "hi" ? "एस्क्रो राशि जारी हो रही है..." : "Releasing Escrow...") 
-                    : (lang === "hi" ? `रसीद पुष्टि करें और ₹${verifyingOrder.totalAmount.toLocaleString()} जारी करें` : `Confirm Receipt & Release ₹${verifyingOrder.totalAmount.toLocaleString()}`)}
+                    : (lang === "hi" ? `रसीद पुष्टि करें और ₹${(verifyingOrder.totalAmount ?? 0).toLocaleString()} जारी करें` : `Confirm Receipt & Release ₹${(verifyingOrder.totalAmount ?? 0).toLocaleString()}`)}
                 </button>
               </form>
             )}

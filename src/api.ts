@@ -10,6 +10,49 @@ import {
 } from "./types";
 
 // ---------------------------------------------------------------------------
+// Order normalization helper
+// ---------------------------------------------------------------------------
+// The Python backend may serialize both snake_case and camelCase keys in the
+// same response (Pydantic model_post_init sets camelCase mirrors, but FastAPI
+// may serialise only declared field names). This utility ensures all Order
+// objects the frontend works with always have valid camelCase numeric fields,
+// preventing the "Cannot read properties of undefined (reading 'toLocaleString')"
+// runtime crash in buyer dashboard components.
+// ---------------------------------------------------------------------------
+function normalizeOrder(raw: any): Order {
+  return {
+    // Prefer camelCase; fall back to snake_case; fall back to safe default
+    id:                   raw.id                    ?? 0,
+    orderNumber:          raw.orderNumber           ?? raw.order_number    ?? "",
+    listingId:            raw.listingId             ?? raw.listing_id      ?? 0,
+    buyerId:              raw.buyerId               ?? raw.buyer_id        ?? 0,
+    farmerId:             raw.farmerId              ?? raw.farmer_id       ?? 0,
+    cropName:             raw.cropName              ?? raw.crop_name       ?? "",
+    quantityOrdered:      raw.quantityOrdered       ?? raw.quantity_ordered ?? 0,
+    pricePerQuintal:      raw.pricePerQuintal       ?? raw.price_per_quintal ?? 0,
+    totalProduceAmount:   raw.totalProduceAmount    ?? raw.total_produce_amount ?? 0,
+    logisticsFee:         raw.logisticsFee          ?? raw.logistics_fee    ?? 0,
+    platformFee:          raw.platformFee           ?? raw.platform_fee     ?? 0,
+    totalAmount:          raw.totalAmount           ?? raw.total_amount     ?? 0,
+    status:               raw.status                ?? "PLACED",
+    paymentStatus:        raw.paymentStatus         ?? raw.payment_status  ?? "PENDING",
+    paymentRef:           raw.paymentRef            ?? raw.payment_ref,
+    deliveryAddress:      raw.deliveryAddress       ?? raw.delivery_address ?? "",
+    deliveryPincode:      raw.deliveryPincode       ?? raw.delivery_pincode ?? "",
+    deliveryOtp:          raw.deliveryOtp           ?? raw.delivery_otp    ?? "",
+    buyerName:            raw.buyerName             ?? raw.buyer_name,
+    farmerName:           raw.farmerName            ?? raw.farmer_name,
+    createdAt:            raw.createdAt             ?? raw.created_at      ?? new Date().toISOString(),
+    updatedAt:            raw.updatedAt             ?? raw.updated_at      ?? new Date().toISOString(),
+  } as Order;
+}
+
+function normalizeOrders(rawList: any[]): Order[] {
+  if (!Array.isArray(rawList)) return [];
+  return rawList.map(normalizeOrder);
+}
+
+// ---------------------------------------------------------------------------
 // API Base URL
 // ---------------------------------------------------------------------------
 // LOCAL DEV   : empty string → relative paths (/api/...) hit Express on :3000
@@ -248,7 +291,8 @@ export const API = {
     const query = new URLSearchParams();
     if (userId) query.append("userId", userId.toString());
     if (role) query.append("role", role);
-    return safeFetchJson<Order[]>(`/api/orders?${query.toString()}`, undefined, []);
+    const raw = await safeFetchJson<any[]>(`/api/orders?${query.toString()}`, undefined, []);
+    return normalizeOrders(raw);
   },
 
   async placeOrder(orderData: {
@@ -258,19 +302,21 @@ export const API = {
     deliveryAddress: string;
     deliveryPincode: string;
   }): Promise<Order> {
-    return safeFetchJson<Order>("/api/orders", {
+    const raw = await safeFetchJson<any>("/api/orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(orderData)
     });
+    return normalizeOrder(raw);
   },
 
   async updateOrderStatus(orderId: number, status: string, otp?: string): Promise<Order> {
-    return safeFetchJson<Order>(`/api/orders/${orderId}/status`, {
+    const raw = await safeFetchJson<any>(`/api/orders/${orderId}/status`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status, otp })
     });
+    return normalizeOrder(raw);
   },
 
   async verifyUpiPayment(payload: {
